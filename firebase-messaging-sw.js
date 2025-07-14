@@ -553,7 +553,7 @@
 
                     // Mendapatkan token pendaftaran perangkat (FCM Token)
                     // Ganti dengan VAPID Key Anda dari pengaturan proyek Firebase (Project settings -> Cloud Messaging)
-                    const vapidKey = 'BLgy6qLYxufc6dTD2a36U6NzmUzY1zKHaQUr2Iyx0bDglujQM5hL7y0yHpFQNRKoESjKDg6gMaVvwX4ok2PlpoE'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
+                    const vapidKey = 'BJ-LJBU-09cwNok7guCYQk3diDgcdvgS7grU2-nwagIuYqhrNm5p050W7CwDmvMLztB0zCvJKPebLQC4yw5ijaA'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
                     const currentToken = await getToken(window.messaging, { vapidKey: vapidKey }); // Gunakan window.messaging
                     if (currentToken) {
                         if (fcmTokenElement) {
