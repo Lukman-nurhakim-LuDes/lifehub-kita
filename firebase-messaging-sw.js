@@ -5,14 +5,15 @@ importScripts("https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging-comp
 
 // Inisialisasi aplikasi Firebase di dalam service worker.
 // Pastikan nilai konfigurasi ini sama dengan yang ada di index.html Anda.
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyA5GRzA83x8DbaxUb5pRH_Yx0ZWMsCVN0w",
-    authDomain: "jalan-cerita-5c989.firebaseapp.com",
-    projectId: "jalan-cerita-5c989",
-    storageBucket: "jalan-cerita-5c989.appspot.com",
-    messagingSenderId: "606590919634",
-    appId: "1:606590919634:web:039ddf6e2b7e13d0675e0b",
-    measurementId: "G-9L0MLVQCNL"
+  apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
+  authDomain: "coupleflow-3c5d2.firebaseapp.com",
+  projectId: "coupleflow-3c5d2",
+  storageBucket: "coupleflow-3c5d2.firebasestorage.app",
+  messagingSenderId: "1087616981568",
+  appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
+  measurementId: "G-Q49D43SNHH"
 };
 
 firebase.initializeApp(firebaseConfig);
