@@ -1,39 +1,79 @@
-// Mengimpor skrip yang diperlukan dari Firebase CDN.
-// Skrip ini akan tersedia di lingkup service worker.
-importScripts("https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging-compat.js");
+// firebase-messaging-sw.js
 
-// Inisialisasi aplikasi Firebase di dalam service worker.
-// Pastikan nilai konfigurasi ini sama dengan yang ada di index.html Anda.
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
-  authDomain: "coupleflow-3c5d2.firebaseapp.com",
-  projectId: "coupleflow-3c5d2",
-  storageBucket: "coupleflow-3c5d2.firebasestorage.app",
-  messagingSenderId: "1087616981568",
-  appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
-  measurementId: "G-Q49D43SNHH"
+// Import script Firebase SDK yang diperlukan untuk Service Worker
+// Menggunakan versi 9.17.1 yang sesuai dengan konfigurasi awal dan index.html Anda
+importScripts('https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js');
+
+// Variabel global yang disediakan oleh lingkungan Canvas
+// Jika Anda tidak menggunakan lingkungan Canvas, Anda bisa langsung menggunakan konfigurasi Firebase Anda di sini.
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Fallback jika tidak di Canvas
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+    apiKey: "AIzaSyA5GRzA83x8DbaxUb5pRH_Yx0ZWMsCVN0w",
+    authDomain: "jalan-cerita-5c989.firebaseapp.com",
+    projectId: "jalan-cerita-5c989",
+    storageBucket: "jalan-cerita-5c989.appspot.com",
+    messagingSenderId: "606590919634",
+    appId: "1:606590919634:web:039ddf6e2b7e13d0675e0b",
+    measurementId: "G-9L0MLVQCNL"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Inisialisasi Firebase di Service Worker
+try {
+    // Menggunakan firebase dari global scope yang dimuat oleh importScripts
+    const app = firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging(app); // Dapatkan instance Firebase Messaging
 
-// Mengambil instance Firebase Messaging agar bisa menangani pesan di latar belakang.
-const messaging = firebase.messaging();
+    // Menangani pesan latar belakang (saat aplikasi tidak aktif)
+    messaging.onBackgroundMessage((payload) => {
+        console.log('[firebase-messaging-sw.js] Pesan latar belakang diterima:', payload);
 
-messaging.onBackgroundMessage((payload) => {
-  console.log(
-    "[firebase-messaging-sw.js] Menerima pesan di latar belakang: ",
-    payload
-  );
-  
-  // Kustomisasi notifikasi yang akan muncul di HP di sini.
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "icon-192x192.png", // Path ke ikon aplikasi Anda
-  };
+        const notificationTitle = payload.notification?.title || 'Pesan Baru';
+        const notificationOptions = {
+            body: payload.notification?.body || 'Anda memiliki pesan baru.',
+            icon: '/icon/icon-192.png', // Diperbarui: Menggunakan /icon/icon-192.png
+            data: payload.data // Data kustom yang dapat Anda gunakan saat notifikasi diklik
+        };
 
-  // Menampilkan notifikasi ke pengguna.
-  self.registration.showNotification(notificationTitle, notificationOptions);
+        // Tampilkan notifikasi
+        self.registration.showNotification(notificationTitle, notificationOptions);
+    });
+
+} catch (error) {
+    console.error('[firebase-messaging-sw.js] Kesalahan inisialisasi Firebase di Service Worker:', error);
+}
+
+
+// Menangani klik notifikasi
+self.addEventListener('notificationclick', (event) => {
+    console.log('[firebase-messaging-sw.js] Notifikasi diklik:', event);
+    event.notification.close(); // Tutup notifikasi setelah diklik
+
+    // Dapatkan URL yang ingin Anda buka
+    const click_action = event.notification.data?.click_action || '/'; // Default ke root
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window' }).then((clientList) => {
+            for (const client of clientList) {
+                if (client.url.includes(click_action) && 'focus' in client) { // Menggunakan includes untuk fleksibilitas
+                    return client.focus(); // Fokus pada tab yang sudah ada
+                }
+            }
+            // Jika tidak ada tab yang cocok, buka tab baru
+            if (clients.openWindow) {
+                return clients.openWindow(click_action);
+            }
+        })
+    );
+});
+
+// Anda bisa menambahkan logika caching atau strategi offline lainnya di sini
+self.addEventListener('install', (event) => {
+    console.log('[firebase-messaging-sw.js] Service Worker terinstal.');
+    self.skipWaiting(); // Memaksa Service Worker baru untuk segera aktif
+});
+
+self.addEventListener('activate', (event) => {
+    console.log('[firebase-messaging-sw.js] Service Worker aktif.');
+    event.waitUntil(clients.claim()); // Mengklaim semua klien yang ada
 });
