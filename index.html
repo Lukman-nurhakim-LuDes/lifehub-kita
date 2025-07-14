@@ -17,10 +17,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- html2canvas for capturing HTML elements -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         /* Gaya CSS kustom Anda */
@@ -261,7 +257,7 @@
                     </div>
                 </section>
                 <section id="keuangan" class="content-section">
-                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Keuangan Harian</h1><button onclick="window.openModal('modal-transaksi')" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Keuangan Harian</h1><button onclick="openModal('modal-transaksi')" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
                     <div id="keuangan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-center">
                         <div><label for="filter-bulan" class="text-sm font-medium">Filter Bulan:</label><input type="month" id="filter-bulan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"></div>
@@ -270,16 +266,16 @@
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-x-auto"><table class="w-full text-left"><thead class="border-b dark:border-gray-700"><tr><th class="p-4">Tanggal</th><th class="p-4">Kategori</th><th class="p-4">Jumlah</th><th class="p-4">Oleh</th><th class="p-4">Catatan</th><th class="p-4">Aksi</th></tr></thead><tbody id="tabel-transaksi-body"></tbody></table></div>
                 </section>
                 <section id="tabungan" class="content-section">
-                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Target Tabungan</h1><button onclick="window.openModal('modal-tabungan')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Target Tabungan</h1><button onclick="openModal('modal-tabungan')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
                     <div id="tabungan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
                     <div id="savings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
                 <section id="diary" class="content-section">
-                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Diary Harian</h1><button onclick="window.openModal('modal-diary')" class="bg-purple-500 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Diary Harian</h1><button onclick="openModal('modal-diary')" class="bg-purple-500 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
                     <div id="diary-entries" class="space-y-6"></div>
                 </section>
                 <section id="habit" class="content-section">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"><h1 class="text-3xl font-bold hidden lg:block">Habit Tracker Bulanan</h1><button onclick="window.openModal('modal-habit')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 transition w-full sm:w-auto"><i class="fa-solid fa-plus mr-2"></i>Tambah Habit</button></div>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"><h1 class="text-3xl font-bold hidden lg:block">Habit Tracker Bulanan</h1><button onclick="openModal('modal-habit')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 transition w-full sm:w-auto"><i class="fa-solid fa-plus mr-2"></i>Tambah Habit</button></div>
                     <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md">
                         <div class="flex justify-between items-center mb-4">
                             <button id="habit-prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-left"></i></button>
@@ -290,11 +286,11 @@
                     </div>
                 </section>
                 <section id="wishlist" class="content-section">
-                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Wishlist Bersama</h1><button onclick="window.openModal('modal-wishlist')" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Wishlist Bersama</h1><button onclick="openModal('modal-wishlist')" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
                     <div id="wishlist-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
                 </section>
                 <section id="kalender" class="content-section">
-                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Kalender Aktivitas</h1><button onclick="window.openModal('modal-aktivitas')" class="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Kalender Aktivitas</h1><button onclick="openModal('modal-aktivitas')" class="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
                             <div class="flex justify-between items-center mb-4"><button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-left"></i></button><h2 id="calendar-month-year" class="text-xl font-bold"></h2><button id="next-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-right"></i></button></div>
@@ -370,26 +366,8 @@
                             <p class="mb-2">Bagikan ID Hub ini kepada pasangan Anda untuk bergabung.</p>
                             <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex items-center justify-between">
                                 <code id="profile-hub-id" class="font-mono text-lg break-all"></code>
-                                <button onclick="window.copyHubId()" class="text-gray-500 hover:text-blue-500 ml-4"><i class="fa-solid fa-copy"></i></button>
+                                <button onclick="copyHubId()" class="text-gray-500 hover:text-blue-500 ml-4"><i class="fa-solid fa-copy"></i></button>
                             </div>
-                        </div>
-                    </div>
-                </section>
-                <!-- New Section for Export PDF -->
-                <section id="export-pdf" class="content-section">
-                    <h1 class="text-3xl font-bold hidden lg:block mb-6">Ekspor Laporan</h1>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-lg mx-auto space-y-6">
-                        <h2 class="text-2xl font-bold mb-4">Ekspor Dashboard ke PDF</h2>
-                        <p class="text-gray-500 dark:text-gray-400 mb-4">
-                            Klik tombol di bawah ini untuk menghasilkan laporan dashboard Anda dalam format PDF.
-                            Laporan akan mencakup ringkasan keuangan, habit, dan mood.
-                        </p>
-                        <button id="export-dashboard-pdf-btn" class="w-full bg-purple-500 text-white p-3 rounded-lg font-semibold hover:bg-purple-600">
-                            <i class="fa-solid fa-file-pdf mr-2"></i> Ekspor Dashboard ke PDF
-                        </button>
-                        <div id="pdf-export-status" class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400 hidden">
-                            <div class="loader mx-auto mb-2"></div>
-                            <p>Mempersiapkan PDF...</p>
                         </div>
                     </div>
                 </section>
@@ -402,17 +380,17 @@
         <div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-8 text-center">
             <h2 class="text-2xl font-bold mb-2">Ide Kencan Malam Ini!</h2>
             <p id="hasil-kencan-text" class="text-4xl font-bold text-pink-500 my-6"></p>
-            <button onclick="window.closeModal('modal-kencan-hasil')" class="w-full bg-gray-300 dark:bg-gray-600 p-3 rounded-lg font-semibold hover:bg-gray-400">Tutup</button>
+            <button onclick="closeModal('modal-kencan-hasil')" class="w-full bg-gray-300 dark:bg-gray-600 p-3 rounded-lg font-semibold hover:bg-gray-400">Tutup</button>
         </div>
     </div>
     <!-- Other Modals (Unchanged) -->
-    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
-    <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
-    <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
-    <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
-    <div id="modal-diary" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-lg mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tulis Diary</h2><form id="form-diary"><div class="space-y-4"><input type="hidden" id="diary-id"><div><label for="diary-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="diary-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-judul" class="block mb-1 font-medium">Judul</label><input type="text" id="diary-judul" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-isi" class="block mb-1 font-medium">Isi Diary</label><textarea id="diary-isi" rows="5" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></textarea></div><div class="flex items-center justify-between"><div><label for="diary-mood" class="block mb-1 font-medium">Mood</label><select id="diary-mood" class="p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-2xl" required><option value="😊">😊 Bahagia</option><option value="😂">😂 Sangat Bahagia</option><option value="🙂">🙂 Biasa Saja</option><option value="😢">😢 Sedih</option><option value="😠">😠 Marah</option><option value="😴">😴 Lelah</option></select></div><div><label for="diary-oleh" class="block mb-1 font-medium">Penulis</label><select id="diary-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div></div><div><label for="diary-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="diary-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900"><img id="diary-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-diary')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Simpan</button></div></form></div></div>
-    <div id="modal-wishlist" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Wishlist</h2><form id="form-wishlist"><div class="space-y-4"><input type="hidden" id="wishlist-id"><div><label for="wishlist-nama" class="block mb-1 font-medium">Nama Barang</label><input type="text" id="wishlist-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="wishlist-kategori" class="block mb-1 font-medium">Kategori</label><select id="wishlist-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Liburan</option><option>Makan Bareng</option><option>Jalan-jalan</option><option>Bioskop Date</option><option>Caffe Date</option><option>Photobox Date</option></select></div><div><label for="wishlist-oleh" class="block mb-1 font-medium">Keinginan</label><select id="wishlist-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option><option>Bersama</option></select></div><div><label for="wishlist-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="wishlist-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="wishlist-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="wishlist-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 dark:file:bg-yellow-900/50 dark:file:text-yellow-300 dark:hover:file:bg-yellow-900"><img id="wishlist-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-wishlist')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Simpan</button></div></form></div></div>
-    <div id="modal-aktivitas" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Aktivitas</h2><form id="form-aktivitas"><input type="hidden" id="aktivitas-id"><div><label for="aktivitas-nama" class="block mb-1 font-medium">Nama Aktivitas</label><input type="text" id="aktivitas-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="aktivitas-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-waktu" class="block mb-1 font-medium">Waktu</label><input type="time" id="aktivitas-waktu" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="aktivitas-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label class="block mb-1 font-medium">Siapa yang ikut?</label><div class="flex gap-4"><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-lukman" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2">Lukman</span></label><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-destry" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"><span class="ml-2">Destry</span></label></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="window.closeModal('modal-aktivitas')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Simpan</button></div></form></div></div>
+    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
+    <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
+    <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
+    <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
+    <div id="modal-diary" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-lg mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tulis Diary</h2><form id="form-diary"><div class="space-y-4"><input type="hidden" id="diary-id"><div><label for="diary-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="diary-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-judul" class="block mb-1 font-medium">Judul</label><input type="text" id="diary-judul" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-isi" class="block mb-1 font-medium">Isi Diary</label><textarea id="diary-isi" rows="5" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></textarea></div><div class="flex items-center justify-between"><div><label for="diary-mood" class="block mb-1 font-medium">Mood</label><select id="diary-mood" class="p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-2xl" required><option value="😊">😊 Bahagia</option><option value="😂">😂 Sangat Bahagia</option><option value="🙂">🙂 Biasa Saja</option><option value="😢">😢 Sedih</option><option value="😠">😠 Marah</option><option value="😴">😴 Lelah</option></select></div><div><label for="diary-oleh" class="block mb-1 font-medium">Penulis</label><select id="diary-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div></div><div><label for="diary-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="diary-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900"><img id="diary-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-diary')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Simpan</button></div></form></div></div>
+    <div id="modal-wishlist" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Wishlist</h2><form id="form-wishlist"><div class="space-y-4"><input type="hidden" id="wishlist-id"><div><label for="wishlist-nama" class="block mb-1 font-medium">Nama Barang</label><input type="text" id="wishlist-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="wishlist-kategori" class="block mb-1 font-medium">Kategori</label><select id="wishlist-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Liburan</option><option>Makan Bareng</option><option>Jalan-jalan</option><option>Bioskop Date</option><option>Caffe Date</option><option>Photobox Date</option></select></div><div><label for="wishlist-oleh" class="block mb-1 font-medium">Keinginan</label><select id="wishlist-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option><option>Bersama</option></select></div><div><label for="wishlist-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="wishlist-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="wishlist-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="wishlist-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 dark:file:bg-yellow-900/50 dark:file:text-yellow-300 dark:hover:file:bg-yellow-900"><img id="wishlist-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-wishlist')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Simpan</button></div></form></div></div>
+    <div id="modal-aktivitas" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Aktivitas</h2><form id="form-aktivitas"><input type="hidden" id="aktivitas-id"><div><label for="aktivitas-nama" class="block mb-1 font-medium">Nama Aktivitas</label><input type="text" id="aktivitas-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="aktivitas-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-waktu" class="block mb-1 font-medium">Waktu</label><input type="time" id="aktivitas-waktu" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="aktivitas-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label class="block mb-1 font-medium">Siapa yang ikut?</label><div class="flex gap-4"><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-lukman" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2">Lukman</span></label><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-destry" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"><span class="ml-2">Destry</span></label></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-aktivitas')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Simpan</button></div></form></div></div>
 
     <!-- Firebase SDK and App Logic -->
     <script type="module">
@@ -431,8 +409,8 @@
             authDomain: "coupleflow-3c5d2.firebaseapp.com",
             projectId: "coupleflow-3c5d2",
             storageBucket: "coupleflow-3c5d2.firebaseapp.com", // Pastikan ini benar
-            messagingSenderId: "1087616981568", // PASTIKAN INI COCOK DENGAN KONSOL FIREBASE ANDA
-            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5", // PASTIKAN INI COCOK DENGAN KONSOL FIREBASE ANDA
+            messagingSenderId: "1087616981568",
+            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
             measurementId: "G-Q49D43SNHH"
         };
 
@@ -455,7 +433,6 @@
         const authScreen = document.getElementById('auth-screen');
         const hubScreen = document.getElementById('hub-screen');
         const appContainer = document.getElementById('app-container');
-        const pdfExportStatus = document.getElementById('pdf-export-status'); // New element
 
         // Elemen UI untuk menampilkan status (dipindahkan ke dalam initializeFirebase)
         let authInfoElement;
@@ -524,7 +501,7 @@
                         const userDocSnap = await getDoc(userDocRef);
                         if (userDocSnap.exists() && userDocSnap.data().hubId) {
                             currentHubId = userDocSnap.data().hubId;
-                            window.initializeAppUI(); // Panggil fungsi global
+                            initializeAppUI();
                         } else {
                             // Jika pengguna terautentikasi tetapi belum memiliki hubId, tampilkan layar hub
                             showUI(hubScreen);
@@ -546,7 +523,7 @@
                             isAuthReady = true; // Tetapkan true meskipun ada kesalahan agar tidak memblokir
                             currentUser = null;
                             currentHubId = null;
-                            window.unsubscribeAll(); // Panggil fungsi global
+                            unsubscribeAll();
                             showUI(authScreen); // Tampilkan layar autentikasi jika masuk anonim gagal
                         }
                     }
@@ -593,17 +570,6 @@
                         console.log('FCM Token:', currentToken);
                         // Anda bisa mengirim token ini ke server backend Anda
                         // untuk mengirim notifikasi ke perangkat ini.
-                        // --- Simpan FCM Token ke Firestore ---
-                        if (currentUser && window.db) {
-                            const userRef = doc(window.db, "users", currentUser.uid);
-                            await updateDoc(userRef, {
-                                fcmToken: currentToken,
-                                tokenUpdatedAt: serverTimestamp()
-                            }, { merge: true });
-                            console.log('FCM Token disimpan ke Firestore:', currentToken);
-                        }
-                        // ------------------------------------
-
                         if (messagingInfoElement) {
                             messagingInfoElement.textContent = 'Izin notifikasi diberikan. Token perangkat berhasil didapatkan.';
                         }
@@ -662,7 +628,7 @@
                     `;
                     messageListElement.prepend(messageElement); // Tambahkan pesan terbaru di atas
                 }
-                window.showToastNotification(payload.notification?.title || 'Pesan Baru', payload.notification?.body || 'Tidak ada isi pesan.'); // Panggil fungsi global
+                showToastNotification(payload.notification?.title || 'Pesan Baru', payload.notification?.body || 'Tidak ada isi pesan.');
             });
         }
 
@@ -713,48 +679,50 @@
         }
 
         // --- Logika Aplikasi Utama (fungsi mainApp) ---
-        // Mengubah fungsi-fungsi penting menjadi global agar dapat diakses oleh HTML
-        window.setupAllEventListeners = () => {
+        function mainApp() {
+            setupAllEventListeners(); // Panggil ini setelah semua elemen DOM tersedia
+        }
+
+        function setupAllEventListeners() {
             // Auth View Toggling
             document.getElementById('show-register-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-view').style.display = 'none'; document.getElementById('register-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
             document.getElementById('show-login-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-view').style.display = 'none'; document.getElementById('login-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
             
             // Forms
-            document.getElementById('login-form')?.addEventListener('submit', window.handleLogin);
-            document.getElementById('register-form')?.addEventListener('submit', window.handleRegister);
-            document.getElementById('logout-btn')?.addEventListener('click', window.handleLogout);
-            document.getElementById('create-hub-btn')?.addEventListener('click', window.createHub);
-            document.getElementById('join-hub-form')?.addEventListener('submit', window.joinHub);
-            document.getElementById('form-transaksi')?.addEventListener('submit', window.handleTransaksiSubmit);
-            document.getElementById('form-tabungan')?.addEventListener('submit', window.handleTabunganSubmit);
-            document.getElementById('form-tambah-dana')?.addEventListener('submit', window.handleTambahDanaSubmit);
-            document.getElementById('form-diary')?.addEventListener('submit', window.handleDiarySubmit);
-            document.getElementById('form-habit')?.addEventListener('submit', window.handleHabitSubmit);
-            document.getElementById('form-wishlist')?.addEventListener('submit', window.handleWishlistSubmit);
-            document.getElementById('form-aktivitas')?.addEventListener('submit', window.handleAktivitasSubmit);
-            document.getElementById('form-notifikasi')?.addEventListener('submit', window.handleNotifikasiSubmit);
-            document.getElementById('spin-btn')?.addEventListener('click', window.spinWheel);
-            document.getElementById('save-profile-pic-btn')?.addEventListener('click', window.handleProfilePicUpload);
-            document.getElementById('export-dashboard-pdf-btn')?.addEventListener('click', window.handleExportPdf);
+            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+            document.getElementById('register-form')?.addEventListener('submit', handleRegister);
+            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+            document.getElementById('create-hub-btn')?.addEventListener('click', createHub); // Event listener untuk tombol "Buat Hub Baru"
+            document.getElementById('join-hub-form')?.addEventListener('submit', joinHub);
+            document.getElementById('form-transaksi')?.addEventListener('submit', handleTransaksiSubmit);
+            document.getElementById('form-tabungan')?.addEventListener('submit', handleTabunganSubmit);
+            document.getElementById('form-tambah-dana')?.addEventListener('submit', handleTambahDanaSubmit);
+            document.getElementById('form-diary')?.addEventListener('submit', handleDiarySubmit);
+            document.getElementById('form-habit')?.addEventListener('submit', handleHabitSubmit);
+            document.getElementById('form-wishlist')?.addEventListener('submit', handleWishlistSubmit);
+            document.getElementById('form-aktivitas')?.addEventListener('submit', handleAktivitasSubmit);
+            document.getElementById('form-notifikasi')?.addEventListener('submit', handleNotifikasiSubmit);
+            document.getElementById('spin-btn')?.addEventListener('click', spinWheel);
+            document.getElementById('save-profile-pic-btn')?.addEventListener('click', handleProfilePicUpload);
             
             // UI Elements
             if (document.getElementById('filter-bulan')) {
                 document.getElementById('filter-bulan').value = new Date().toISOString().slice(0, 7);
-                document.getElementById('filter-bulan').addEventListener('change', window.renderKeuangan);
+                document.getElementById('filter-bulan').addEventListener('change', renderKeuangan);
             }
-            document.getElementById('filter-pasangan')?.addEventListener('change', window.renderKeuangan);
-            document.getElementById('habit-prev-month')?.addEventListener('click', () => window.changeHabitMonth(-1));
-            document.getElementById('habit-next-month')?.addEventListener('click', () => window.changeHabitMonth(1));
-            document.getElementById('prev-month')?.addEventListener('click', () => window.changeCalendarMonth(-1));
-            document.getElementById('next-month')?.addEventListener('click', () => window.changeCalendarMonth(1));
-            window.setupImagePreview('diary-foto', 'diary-foto-preview');
-            window.setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
-            window.setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
-            document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) window.closeModal(modal.id); }));
+            document.getElementById('filter-pasangan')?.addEventListener('change', renderKeuangan);
+            document.getElementById('habit-prev-month')?.addEventListener('click', () => changeHabitMonth(-1));
+            document.getElementById('habit-next-month')?.addEventListener('click', () => changeHabitMonth(1));
+            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(-1));
+            document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1));
+            setupImagePreview('diary-foto', 'diary-foto-preview');
+            setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
+            setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
+            document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }));
             document.getElementById('theme-toggle')?.addEventListener('click', () => {
                 const isDark = !document.documentElement.classList.contains('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                window.applyTheme(isDark);
+                applyTheme(isDark);
             });
             
             // Mobile Menu
@@ -770,13 +738,13 @@
                 sidebar?.classList.add('-translate-x-full');
                 overlay?.classList.add('hidden');
             });
-        };
+        }
 
-        window.initializeAppUI = () => {
-            window.setupNavigation();
-            window.setupTheme();
-            window.navigateTo('dashboard', 'Dashboard');
-            window.attachRealtimeListeners();
+        function initializeAppUI() {
+            setupNavigation();
+            setupTheme();
+            navigateTo('dashboard', 'Dashboard');
+            attachRealtimeListeners();
             showUI(appContainer);
             // Periksa keberadaan elemen sebelum mengakses properti
             if (document.getElementById('profile-email')) {
@@ -788,23 +756,23 @@
             if (document.getElementById('profile-hub-id')) {
                 document.getElementById('profile-hub-id').textContent = currentHubId;
             }
-        };
+        }
 
-        window.attachRealtimeListeners = () => {
+        function attachRealtimeListeners() {
             if (!currentHubId) return;
-            window.unsubscribeAll();
+            unsubscribeAll();
             const collectionsToRender = {
-                'transactions': [window.renderKeuangan, window.renderDashboard, window.renderIndividualSummaries],
-                'savings': [window.renderTabungan, window.renderDashboard],
-                'diary': [window.renderDiary, window.renderDashboard, window.renderIndividualSummaries],
-                'habits': [window.renderHabitTable, window.renderDashboard, window.renderIndividualSummaries],
-                'habitEntries': [window.renderHabitTable, window.renderDashboard, window.renderIndividualSummaries],
-                'wishlist': [window.renderWishlist],
-                'events': [window.renderCalendar],
-                'notifications': [window.renderNotifikasi, window.checkUnreadNotifications]
+                'transactions': [renderKeuangan, renderDashboard, renderIndividualSummaries],
+                'savings': [renderTabungan, renderDashboard],
+                'diary': [renderDiary, renderDashboard, renderIndividualSummaries],
+                'habits': [renderHabitTable, renderDashboard, renderIndividualSummaries],
+                'habitEntries': [renderHabitTable, renderDashboard, renderIndividualSummaries],
+                'wishlist': [renderWishlist],
+                'events': [renderCalendar],
+                'notifications': [renderNotifikasi, checkUnreadNotifications]
             };
             const hubDocRef = doc(window.db, "hubs", currentHubId);
-            const hubUnsubscribe = onSnapshot(hubDocRef, window.renderDashboardHeader);
+            const hubUnsubscribe = onSnapshot(hubDocRef, renderDashboardHeader);
             unsubscribeListeners.push(hubUnsubscribe);
 
             Object.keys(collectionsToRender).forEach(col => {
@@ -818,7 +786,7 @@
                                 // Determine recipient name based on current user's email
                                 const recipientName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
                                 if (newNotif.recipient.toLowerCase() === recipientName.toLowerCase() && newNotif.sender.toLowerCase() !== recipientName.toLowerCase()) {
-                                    window.showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
+                                    showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
                                 }
                             }
                         });
@@ -827,10 +795,10 @@
                 }, (error) => { console.error(`Error listening to ${col}:`, error); });
                 unsubscribeListeners.push(unsubscribe);
             });
-        };
-        window.unsubscribeAll = () => { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; };
+        }
+        function unsubscribeAll() { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; }
 
-        window.setupNavigation = () => {
+        function setupNavigation() {
             const navItems = [
                 { id: 'dashboard', icon: 'fa-solid fa-table-columns', text: 'Dashboard' },
                 { id: 'keuangan', icon: 'fa-solid fa-wallet', text: 'Keuangan' },
@@ -843,14 +811,13 @@
                 { id: 'roda-kencan', icon: 'fa-solid fa-dharmachakra', text: 'Roda Kencan' },
                 { id: 'individu', icon: 'fa-solid fa-user-friends', text: 'Ringkasan' },
                 { id: 'profil', icon: 'fa-solid fa-user-gear', text: 'Profil' },
-                { id: 'export-pdf', icon: 'fa-solid fa-file-export', text: 'Ekspor PDF' }, // New navigation item
             ];
             const navList = document.getElementById('nav-list');
             if (navList) {
                 navList.innerHTML = navItems.map(item => `<li><a href="#" class="nav-link relative flex items-center p-2 lg:p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-target="${item.id}" data-title="${item.text}"><i class="${item.icon} w-6 text-center text-lg"></i><span class="ml-4">${item.text}</span></a></li>`).join('');
-                document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); window.navigateTo(link.dataset.target, link.dataset.title); }));
+                document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.target, link.dataset.title); }));
             }
-        };
+        }
         window.navigateTo = (pageId, pageTitle) => {
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             document.getElementById(pageId)?.classList.add('active');
@@ -866,23 +833,20 @@
             document.getElementById('mobile-menu-overlay')?.classList.add('hidden');
             
             if (pageId === 'individu') {
-                window.renderIndividualSummaries();
+                renderIndividualSummaries();
             }
             if (pageId === 'notifikasi') {
-                window.markNotificationsAsRead();
+                markNotificationsAsRead();
             }
             if (pageId === 'roda-kencan') {
-                window.setupWheel();
-            }
-            if (pageId === 'export-pdf') {
-                window.renderExportPdf(); // Call render function for PDF export
+                setupWheel();
             }
             window.scrollTo(0, 0);
-        };
+        }
         window.openModal = (modalId) => { document.getElementById(modalId).style.display = 'flex'; };
         window.closeModal = (modalId) => { document.getElementById(modalId).style.display = 'none'; };
 
-        window.applyTheme = (isDark) => {
+        function applyTheme(isDark) {
             const toggleIcon = document.querySelector('#theme-toggle i');
             const toggleText = document.querySelector('#theme-toggle span');
             if (document.documentElement) {
@@ -894,22 +858,22 @@
             if (toggleText) {
                 toggleText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
             }
-            if(expenseChartInstance || incomeExpenseChartInstance) window.renderDashboard();
+            if(expenseChartInstance || incomeExpenseChartInstance) renderDashboard();
         };
 
-        window.setupTheme = () => {
+        function setupTheme() {
             const currentTheme = localStorage.getItem('theme');
-            window.applyTheme(currentTheme === 'dark');
-        };
+            applyTheme(currentTheme === 'dark');
+        }
         
-        window.handleLogin = async (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } };
-        window.handleRegister = async (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } };
-        window.handleLogout = async () => {
-            window.showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
+        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
+        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
+        async function handleLogout() {
+            showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
                 await signOut(window.auth);
             });
-        };
-        window.createHub = async () => { 
+        }
+        async function createHub() { 
             console.log("Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
             if (!currentUser) { 
                 console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
@@ -925,14 +889,13 @@
                 batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
                 await batch.commit(); 
                 console.log("Hub berhasil dibuat dan pengguna ditambahkan."); // Debug log
-                // Setelah berhasil membuat hub, aplikasi akan otomatis beralih ke UI utama
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
                 console.error(`Gagal membuat hub. Error: ${error.message}`);
                 document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
             } 
-        };
-        window.joinHub = async (e) => { 
+        }
+        async function joinHub(e) { 
             e.preventDefault(); 
             console.log("Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
             const hubId = document.getElementById('join-hub-id').value.trim(); 
@@ -960,7 +923,6 @@
                     } 
                     await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); 
                     console.log("Dokumen pengguna diperbarui dengan hubId.");
-                    // Setelah berhasil bergabung, aplikasi akan otomatis beralih ke UI utama
                 } else { 
                     document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; 
                     console.warn("ID Hub tidak ditemukan:", hubId);
@@ -969,7 +931,7 @@
                 console.error("Join Hub Error:", error); 
                 document.getElementById('hub-error').textContent = `Gagal bergabung dengan hub: ${error.code}`; 
             } 
-        };
+        }
         
         window.copyHubId = () => {
             const hubId = document.getElementById('profile-hub-id').textContent;
@@ -999,11 +961,11 @@
                 console.log('ID Hub disalin (fallback)!');
             }
         };
-        window.changeHabitMonth = (delta) => { habitDate.setMonth(habitDate.getMonth() + delta); window.renderHabitTable(); };
-        window.changeCalendarMonth = (delta) => { calendarDate.setMonth(calendarDate.getMonth() + delta); window.renderCalendar(); };
+        function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
+        function changeCalendarMonth(delta) { calendarDate.setMonth(calendarDate.getMonth() + delta); renderCalendar(); }
         
         // --- ALL FUNCTIONS ARE NOW FULLY IMPLEMENTED ---
-        window.renderKeuangan = async () => {
+        async function renderKeuangan() {
             if (!currentHubId) return;
             const monthFilter = document.getElementById('filter-bulan')?.value;
             const personFilter = document.getElementById('filter-pasangan')?.value;
@@ -1047,21 +1009,21 @@
                         <td class="p-4 font-semibold ${amountColor}">${amountPrefix} ${formatCurrency(t.jumlah)}</td>
                         <td class="p-4">${t.oleh}</td>
                         <td class="p-4">${t.catatan || '-'}</td>
-                        <td class="p-4"><button onclick="window.deleteTransaction('${t.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-4"><button onclick="deleteTransaction('${t.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
                 }).join('');
                 if (transactions.length === 0) {
                     body.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-gray-500">Belum ada transaksi di bulan ini.</td></tr>`;
                 }
             }
-        };
+        }
         window.deleteTransaction = async (id) => {
-            window.showConfirmModal('Hapus Transaksi', 'Yakin hapus transaksi ini?', async () => {
+            showConfirmModal('Hapus Transaksi', 'Yakin hapus transaksi ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id));
             });
         };
         
-        window.handleTransaksiSubmit = async (e) => {
+        async function handleTransaksiSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const dateValue = document.getElementById('transaksi-tanggal')?.value;
@@ -1075,11 +1037,11 @@
                 catatan: document.getElementById('transaksi-catatan')?.value,
                 createdAt: serverTimestamp(), createdBy: currentUser.uid
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); window.closeModal('modal-transaksi'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); }
             catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); }
-        };
+        }
 
-        window.renderTabungan = async () => {
+        async function renderTabungan() {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "savings");
@@ -1108,28 +1070,31 @@
                     list.innerHTML = `<p class="text-gray-500 md:col-span-2 lg:col-span-3 text-center py-8">Belum ada target tabungan.</p>`;
                     return;
                 }
-                list.innerHTML = savings.map(s => `
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col fade-in">
+                list.innerHTML = savings.map(s => {
+                    const progress = s.target > 0 ? Math.min((s.terkumpul / s.target) * 100, 100) : 0;
+                    const progressColor = progress >= 100 ? 'bg-green-500' : 'bg-blue-500';
+                    return `<div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col fade-in">
                         <div class="flex justify-between items-start">
                             <div><h3 class="text-xl font-bold">${s.nama}</h3><p class="text-sm text-gray-500 dark:text-gray-400">Oleh: ${s.oleh}</p></div>
-                            <button onclick="window.deleteTabungan('${s.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="deleteTabungan('${s.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         <div class="my-4 flex-grow">
                             <div class="flex justify-between text-sm font-medium mb-1"><span>${formatCurrency(s.terkumpul)}</span><span class="text-gray-500">${formatCurrency(s.target)}</span></div>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4"><div class="${progressColor} h-4 rounded-full" style="width: ${progress}%"></div></div>
                             <p class="text-right text-sm font-bold mt-1">${progress.toFixed(1)}%</p>
                         </div>
-                        <button onclick="window.openTambahDanaModal('${s.id}')" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Tambah Dana</button>
-                    </div>`).join('');
+                        <button onclick="openTambahDanaModal('${s.id}')" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Tambah Dana</button>
+                    </div>`;
+                }).join('');
             }
-        };
+        }
         window.deleteTabungan = async (id) => {
-            window.showConfirmModal('Hapus Target Tabungan', 'Yakin hapus target tabungan ini?', async () => {
+            showConfirmModal('Hapus Target Tabungan', 'Yakin hapus target tabungan ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id));
             });
         };
-        window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; window.openModal('modal-tambah-dana'); };
-        window.handleTabunganSubmit = async (e) => {
+        window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; openModal('modal-tambah-dana'); };
+        async function handleTabunganSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const newTabungan = {
@@ -1139,10 +1104,10 @@
                 oleh: document.getElementById('tabungan-oleh')?.value,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); window.closeModal('modal-tabungan'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); }
             catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); }
-        };
-        window.handleTambahDanaSubmit = async (e) => {
+        }
+        async function handleTambahDanaSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const id = document.getElementById('tambah-dana-id')?.value;
@@ -1153,11 +1118,11 @@
                 const newTerkumpul = (tabunganSnap.data().terkumpul || 0) + jumlah;
                 await updateDoc(tabunganRef, { terkumpul: newTerkumpul });
             }
-            window.closeModal('modal-tambah-dana');
+            closeModal('modal-tambah-dana');
             form.reset();
-        };
+        }
 
-        window.renderDiary = async () => {
+        async function renderDiary() {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "diary");
@@ -1174,19 +1139,19 @@
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md fade-in">
                         <div class="flex justify-between items-start">
                             <div><h3 class="text-2xl font-bold">${entry.judul} <span class="text-3xl">${entry.mood}</span></h3><p class="text-sm text-gray-500 dark:text-gray-400">${formatDate(entry.tanggal)} - oleh ${entry.oleh}</p></div>
-                            <button onclick="window.deleteDiary('${entry.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="deleteDiary('${entry.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         ${entry.foto ? `<img src="${entry.foto}" alt="Foto diary" class="my-4 rounded-lg max-h-80 w-auto mx-auto">` : ''}
                         <p class="mt-4 whitespace-pre-wrap">${entry.isi}</p>
                     </div>`).join('');
             }
-        };
+        }
         window.deleteDiary = async (id) => {
-            window.showConfirmModal('Hapus Diary', 'Yakin hapus entri diary ini?', async () => {
+            showConfirmModal('Hapus Diary', 'Yakin hapus entri diary ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id));
             });
         };
-        window.handleDiarySubmit = async (e) => {
+        async function handleDiarySubmit(e) {
             e.preventDefault();
             const form = e.target;
             const fotoPreview = document.getElementById('diary-foto-preview');
@@ -1201,11 +1166,11 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); window.closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
             catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); }
-        };
+        }
 
-        window.renderWishlist = async () => {
+        async function renderWishlist() {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "wishlist");
@@ -1226,17 +1191,17 @@
                             <p class="text-sm text-gray-500 dark:text-gray-400">${wish.kategori}</p>
                             <p class="text-sm mt-2">Keinginan: <span class="font-semibold">${wish.oleh}</span></p>
                             <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">${wish.deskripsi || ''}</p>
-                            <button onclick="window.deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
+                            <button onclick="deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
                         </div>
                     </div>`).join('');
             }
-        };
+        }
         window.deleteWishlist = async (id) => {
-            window.showConfirmModal('Hapus Wishlist', 'Yakin hapus wishlist ini?', async () => {
+            showConfirmModal('Hapus Wishlist', 'Yakin hapus wishlist ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id));
             });
         };
-        window.handleWishlistSubmit = async (e) => {
+        async function handleWishlistSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const fotoPreview = document.getElementById('wishlist-foto-preview');
@@ -1248,11 +1213,11 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); window.closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
             catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); }
-        };
+        }
 
-        window.renderCalendar = async () => {
+        async function renderCalendar() {
             if (!currentHubId) return;
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
@@ -1292,12 +1257,12 @@
                     if (hasEvent) dayEl.classList.add('has-event');
                     dayEl.textContent = day;
                     dayEl.dataset.date = dateISO;
-                    dayEl.addEventListener('click', () => window.renderDailyActivities(dateISO, eventsThisMonth));
+                    dayEl.addEventListener('click', () => renderDailyActivities(dateISO, eventsThisMonth));
                     grid.appendChild(dayEl);
                 }
             }
-        };
-        window.renderDailyActivities = (dateISO, eventsThisMonth) => {
+        }
+        function renderDailyActivities(dateISO, eventsThisMonth) {
             document.querySelectorAll('.calendar-day.bg-gray-300').forEach(d => d.classList.remove('bg-gray-300', 'dark:bg-gray-600'));
             const dayEl = document.querySelector(`.calendar-day[data-date="${dateISO}"]`);
             if(dayEl) dayEl.classList.add('bg-gray-300', 'dark:bg-gray-600');
@@ -1320,17 +1285,17 @@
                                     ${event.ikut.destry ? '<span class="bg-pink-200 text-pink-800 px-2 py-0.5 rounded-full">Destry</span>' : ''}
                                 </div>
                             </div>
-                            <button onclick="window.deleteAktivitas('${event.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="deleteAktivitas('${event.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`).join('');
             }
-        };
+        }
         window.deleteAktivitas = async (id) => {
-            window.showConfirmModal('Hapus Aktivitas', 'Yakin hapus aktivitas ini?', async () => {
+            showConfirmModal('Hapus Aktivitas', 'Yakin hapus aktivitas ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id));
             });
         };
-        window.handleAktivitasSubmit = async (e) => {
+        async function handleAktivitasSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const date = new Date(document.getElementById('aktivitas-tanggal')?.value);
@@ -1343,12 +1308,12 @@
                 ikut: { lukman: document.getElementById('aktivitas-ikut-lukman')?.checked, destry: document.getElementById('aktivitas-ikut-destry')?.checked },
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); window.closeModal('modal-aktivitas'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); }
             catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); }
-        };
+        }
 
-        window.handleHabitSubmit = async (e) => { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); window.closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } };
-        window.renderHabitTable = async () => {
+        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } }
+        async function renderHabitTable() {
             if (!currentHubId) return;
             const habitMonthYear = document.getElementById('habit-month-year');
             if (habitMonthYear) {
@@ -1387,18 +1352,18 @@
                             if (status.lukman && status.destry) statusClass = 'status-both';
                             else if (status.lukman) statusClass = 'status-lukman';
                             else if (status.destry) statusClass = 'status-destry';
-                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="window.cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
+                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
                         }
-                        tableHTML += `<td><button onclick="window.deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
+                        tableHTML += `<td><button onclick="deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
                         tableHTML += '</tr>';
                     });
                 }
                 tableHTML += '</tbody></table>';
                 container.innerHTML = tableHTML;
             }
-        };
+        }
         window.deleteHabit = async (id) => {
-            window.showConfirmModal('Hapus Habit', 'Yakin hapus habit ini? Semua data progresnya juga akan hilang.', async () => {
+            showConfirmModal('Hapus Habit', 'Yakin hapus habit ini? Semua data progresnya juga akan hilang.', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id));
             });
         };
@@ -1438,7 +1403,7 @@
             const newStatuses = { ...currentStatuses, [habitId]: nextStatus };
             try { await setDoc(entryRef, { date: Timestamp.fromDate(date), statuses: newStatuses }, { merge: true }); } catch (error) { console.error("Error updating habit status: ", error); }
         };
-        window.setupImagePreview = (inputId, previewId) => { 
+        function setupImagePreview(inputId, previewId) { 
             const input = document.getElementById(inputId); 
             const preview = document.getElementById(previewId); 
             if (input && preview) {
@@ -1457,106 +1422,448 @@
                     } 
                 }); 
             }
-        };
+        }
+        
+        async function renderDashboard() {
+            if (!currentHubId) return;
+            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
+            const savingsQuery = collection(window.db, "hubs", currentHubId, "savings");
+            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
+            const habitsQuery = collection(window.db, "hubs", currentHubId, "habits");
+            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
+            const [txSnap, savingsSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(savingsQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
+            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const savings = savingsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Main cards
+            const saldo = transactions.reduce((acc, t) => t.kategori === 'Pemasukan' ? acc + t.jumlah : acc - t.jumlah, 0);
+            const dashboardSaldo = document.getElementById('dashboard-saldo');
+            if (dashboardSaldo) {
+                dashboardSaldo.textContent = formatCurrency(saldo);
+                dashboardSaldo.className = `text-2xl font-bold mt-1 ${saldo >= 0 ? 'text-green-500' : 'text-red-500'}`;
+            }
+            const totalTabungan = savings.reduce((acc, s) => acc + s.terkumpul, 0);
+            const dashboardTabungan = document.getElementById('dashboard-tabungan');
+            if (dashboardTabungan) {
+                dashboardTabungan.textContent = formatCurrency(totalTabungan);
+            }
+            const todayISO = getTodayISO();
+            const todayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === todayISO);
+            const dashboardMood = document.getElementById('dashboard-mood');
+            if (dashboardMood) {
+                dashboardMood.textContent = todayDiary ? todayDiary.mood : '😶';
+            }
+            const todayHabitEntry = habitEntries.find(e => new Date(e.date.seconds * 1000).toISOString().split('T')[0] === todayISO);
+            let completed = 0;
+            const totalPossible = habits.length * 2; // Each habit has two checkboxes (Lukman, Destry)
+            if(todayHabitEntry && todayHabitEntry.statuses) {
+                Object.values(todayHabitEntry.statuses).forEach(status => {
+                    if (status.lukman) completed++;
+                    if (status.destry) completed++;
+                });
+            }
+            const completionPercent = totalPossible > 0 ? (completed / totalPossible) * 100 : 0;
+            const dashboardHabitCompletion = document.getElementById('dashboard-habit-completion');
+            if (dashboardHabitCompletion) {
+                dashboardHabitCompletion.textContent = `${completionPercent.toFixed(0)}%`;
+            }
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#e5e7eb' : '#374151';
 
-        window.handleProfilePicUpload = async () => {
+            // Expense Chart
+            const expenseData = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((acc, t) => { acc[t.kategori] = (acc[t.kategori] || 0) + t.jumlah; return acc; }, {});
+            const expenseChartEl = document.getElementById('expenseChart');
+            if (expenseChartEl) {
+                if (expenseChartInstance) expenseChartInstance.destroy();
+                expenseChartInstance = new Chart(expenseChartEl, {
+                    type: 'doughnut', data: { labels: Object.keys(expenseData), datasets: [{ data: Object.values(expenseData), backgroundColor: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6'], borderColor: isDark ? '#1f2937' : '#ffffff', borderWidth: 4 }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+                });
+            }
+
+            // Income vs Expense Chart
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const monthTxs = transactions.filter(t => t.tanggal.toDate() >= firstDay && t.tanggal.toDate() <= lastDay);
+            const totalIncome = monthTxs.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const totalExpense = monthTxs.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const incomeExpenseChartEl = document.getElementById('incomeExpenseChart');
+            if (incomeExpenseChartEl) {
+                if(incomeExpenseChartInstance) incomeExpenseChartInstance.destroy();
+                incomeExpenseChartInstance = new Chart(incomeExpenseChartEl, {
+                    type: 'bar',
+                    data: { labels: ['Bulan Ini'], datasets: [
+                        { label: 'Pemasukan', data: [totalIncome], backgroundColor: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 },
+                        { label: 'Pengeluaran', data: [totalExpense], backgroundColor: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 1 }
+                    ]},
+                    options: { scales: { y: { beginAtZero: true, ticks: { color: textColor } } }, plugins: { legend: { labels: { color: textColor } } } }
+                });
+            }
+
+            // Mood Tracker
+            const moodContainer = document.getElementById('dashboard-mood-tracker');
+            if (moodContainer) {
+                moodContainer.innerHTML = '';
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateISO = date.toISOString().split('T')[0];
+                    const dayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === dateISO);
+                    const mood = dayDiary ? dayDiary.mood : '😶';
+                    const dayName = formatDate(date, { weekday: 'short' });
+                    moodContainer.innerHTML += `<div class="text-center"><div class="text-3xl">${mood}</div><div class="text-xs text-gray-500">${dayName}</div></div>`;
+                }
+            }
+        }
+
+        async function renderIndividualSummaries() {
+            if (!currentHubId) return;
+            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
+            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
+            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
+            const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
+            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const renderSummaryFor = (person, containerId) => {
+                const pengeluaran = transactions.filter(t => t.oleh === person && t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+                const pemasukan = transactions.filter(t => t.oleh === person && t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+                const diaryCount = diary.filter(d => d.oleh === person).length;
+                let habitsDone = 0;
+                habitEntries.forEach(entry => {
+                    if (entry.statuses) {
+                        Object.values(entry.statuses).forEach(status => {
+                            if (status[person.toLowerCase()]) habitsDone++;
+                        });
+                    }
+                });
+                const containerEl = document.getElementById(containerId);
+                if (containerEl) {
+                    containerEl.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                            <p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(pemasukan)}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                            <p class="text-xl md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(pengeluaran)}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
+                            <p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${diaryCount}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
+                            <p class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">${habitsDone}</p>
+                        </div>
+                    `;
+                }
+            };
+            renderSummaryFor('Lukman', 'summary-individu-lukman');
+            renderSummaryFor('Destry', 'summary-individu-destry');
+        }
+
+        // --- NOTIFIKASI SAYANG ---
+        async function handleNotifikasiSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const pesan = document.getElementById('notifikasi-pesan')?.value;
+            const untuk = document.getElementById('notifikasi-untuk')?.value;
+            // Determine sender based on current user's email
+            const senderName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
+
+            if (!pesan?.trim()) return;
+
+            try {
+                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), {
+                    message: pesan,
+                    sender: senderName,
+                    recipient: untuk,
+                    isRead: false,
+                    createdAt: serverTimestamp()
+                });
+                form.reset();
+                console.log('Pesan terkirim!');
+            } catch (error) {
+                console.error("Error sending notification:", error);
+                console.error("Gagal mengirim pesan.");
+            }
+        }
+
+        async function renderNotifikasi() {
+            if (!currentHubId) return;
+            // Fetch without orderBy, then sort in JS
+            const q = collection(window.db, "hubs", currentHubId, "notifications");
+            const snapshot = await getDocs(q);
+            const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Sort by createdAt descending in JavaScript
+            notifications.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            const listContainer = document.getElementById('notifikasi-list');
+            
+            if (listContainer) {
+                if (notifications.length === 0) {
+                    listContainer.innerHTML = `<p class="text-gray-500">Belum ada notifikasi.</p>`;
+                    return;
+                }
+
+                listContainer.innerHTML = notifications.map(notif => {
+                    const time = notif.createdAt ? formatDate(notif.createdAt, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
+                    const bgColor = notif.sender === 'Lukman' ? 'bg-blue-50 dark:bg-blue-900/50' : 'bg-pink-50 dark:bg-pink-900/50';
+                    return `
+                        <div class="${bgColor} p-4 rounded-lg shadow">
+                            <p class="font-semibold">${notif.message}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dari: ${notif.sender} - ${time}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        async function checkUnreadNotifications() {
+            if (!currentHubId || !currentUser) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
+            const snapshot = await getDocs(q);
+            const navLink = document.querySelector('.nav-link[data-target="notifikasi"]');
+            if (navLink) {
+                if (snapshot.empty) {
+                    navLink.classList.remove('has-notification');
+                } else {
+                    navLink.classList.add('has-notification');
+                }
+            }
+        }
+
+        async function markNotificationsAsRead() {
+            if (!currentHubId || !currentUser) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
+            const snapshot = await getDocs(q);
+            const batch = writeBatch(window.db);
+            snapshot.docs.forEach(doc => {
+                batch.update(doc.ref, { isRead: true });
+            });
+            await batch.commit();
+        }
+
+        function showToastNotification(title, message) {
+            const toast = document.getElementById('toast-notification');
+            const toastSender = document.getElementById('toast-sender');
+            const toastMessage = document.getElementById('toast-message');
+
+            if (toast && toastSender && toastMessage) {
+                toastSender.textContent = title;
+                toastMessage.textContent = message;
+
+                toast.classList.remove('translate-x-[150%]', 'opacity-0');
+                
+                const closeBtn = document.getElementById('toast-close-btn');
+                const replyBtn = document.getElementById('toast-reply-btn');
+
+                const hideToast = () => {
+                    toast.classList.add('translate-x-[150%]', 'opacity-0');
+                    closeBtn?.removeEventListener('click', closeHandler);
+                    replyBtn?.removeEventListener('click', replyHandler);
+                };
+
+                const closeHandler = () => hideToast();
+                const replyHandler = () => {
+                    navigateTo('notifikasi', 'Notifikasi Sayang');
+                    hideToast();
+                };
+                
+                closeBtn?.addEventListener('click', closeHandler);
+                replyBtn?.addEventListener('click', replyHandler);
+
+                setTimeout(hideToast, 5000); // Auto-hide after 5 seconds
+            }
+        }
+
+        // --- Custom Confirmation Modal ---
+        let confirmResolve;
+        function showConfirmModal(title, message, onConfirm) {
+            const modal = document.getElementById('modal-confirm');
+            const confirmTitle = document.getElementById('confirm-title');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmOkBtn = document.getElementById('confirm-ok-btn');
+            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+            if (modal && confirmTitle && confirmMessage && confirmOkBtn && confirmCancelBtn) {
+                confirmTitle.textContent = title;
+                confirmMessage.textContent = message;
+                modal.style.display = 'flex';
+
+                return new Promise(resolve => {
+                    confirmResolve = resolve;
+
+                    const handleConfirm = () => {
+                        onConfirm();
+                        modal.style.display = 'none';
+                        confirmOkBtn.removeEventListener('click', handleConfirm);
+                        confirmCancelBtn.removeEventListener('click', handleCancel);
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        modal.style.display = 'none';
+                        confirmOkBtn.removeEventListener('click', handleConfirm);
+                        confirmCancelBtn.removeEventListener('click', handleCancel);
+                        resolve(false);
+                    };
+
+                    confirmOkBtn.addEventListener('click', handleConfirm);
+                    confirmCancelBtn.addEventListener('click', handleCancel);
+                });
+            } else {
+                console.error("Confirmation modal elements not found.");
+                return Promise.resolve(false);
+            }
+        }
+
+        // --- RODA KENCAN ---
+        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Cari Kopi", "Karaoke"];
+        const wheelCanvas = document.getElementById('spinner-canvas');
+        const spinBtn = document.getElementById('spin-btn');
+        let isSpinning = false;
+        let currentAngle = 0;
+        const colors = ["#f87171", "#fb923c", "#facc15", "#a3e635", "#4ade80", "#34d399", "#22d3ee", "#60a5fa"];
+
+        function drawWheel() {
+            if (!wheelCanvas) return;
+            const ctx = wheelCanvas.getContext('2d');
+            const centerX = wheelCanvas.width / 2;
+            const centerY = wheelCanvas.height / 2;
+            const radius = centerX - 5;
+            const arcSize = 2 * Math.PI / dateIdeas.length;
+
+            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentAngle);
+            ctx.translate(-centerX, -centerY);
+
+            for (let i = 0; i < dateIdeas.length; i++) {
+                const startAngle = i * arcSize;
+                const endAngle = startAngle + arcSize;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Inter";
+                ctx.fillText(dateIdeas[i], radius - 10, 5);
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+        
+        function setupWheel() {
+            drawWheel();
+        }
+
+        function spinWheel() {
+            if (isSpinning || !wheelCanvas) return;
+            isSpinning = true;
+            const randomSpins = Math.floor(Math.random() * 5) + 8;
+            const randomStopAngle = Math.floor(Math.random() * 360);
+            const totalRotation = (randomSpins * 360) + randomStopAngle;
+            
+            wheelCanvas.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            wheelCanvas.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                const segmentAngle = 360 / dateIdeas.length;
+                // Normalize final angle to be within 0-360
+                const finalAngle = totalRotation % 360;
+                // Adjust for pointer position (top is 270 degrees from positive x-axis)
+                // We want to find which segment is at the pointer.
+                // The wheel rotates clockwise.
+                // If pointer is at 270 deg, and segment starts at 0 deg, it's 270 deg away.
+                // We need to calculate the angle relative to the pointer.
+                // (360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle
+                // Or simply: (pointerAngle - finalAngle + 360) % 360 to get angle from pointer to 0-line
+                // Then divide by segmentAngle and floor.
+                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
+                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
+
+                const result = dateIdeas[winningIndex];
+                
+                const hasilKencanText = document.getElementById('hasil-kencan-text');
+                if (hasilKencanText) {
+                    hasilKencanText.textContent = result;
+                }
+                openModal('modal-kencan-hasil');
+                isSpinning = false;
+                // Reset transform for next spin, without transition
+                wheelCanvas.style.transition = 'none';
+                wheelCanvas.style.transform = `rotate(${finalAngle}deg)`; // Keep it at the final angle visually
+                currentAngle = finalAngle; // Update currentAngle for next spin
+            }, 5000); // Must match the transition duration in CSS
+        }
+
+        // --- PROFIL PICTURE ---
+        function setupProfilePicPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const saveBtn = document.getElementById('save-profile-pic-btn');
+            if (input && preview && saveBtn) {
+                input.addEventListener('change', () => {
+                    const file = input.files[0];
+                    if (file) {
+                        selectedProfilePicFile = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            preview.src = e.target.result;
+                            preview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                        saveBtn.disabled = false;
+                    }
+                });
+            }
+        }
+
+        async function handleProfilePicUpload() {
             if (!selectedProfilePicFile || !currentUser) return;
             const saveBtn = document.getElementById('save-profile-pic-btn');
-            const profilePicPreview = document.getElementById('profile-pic-preview'); 
-            if (!saveBtn || !profilePicPreview) return;
+            if (!saveBtn) return;
 
             saveBtn.disabled = true;
             saveBtn.textContent = 'Mengunggah...';
 
+            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`);
             try {
-                const file = selectedProfilePicFile;
-                if (!file) throw new Error("No file selected.");
-
-                // Step 1: Read the file as a Data URL
-                const reader = new FileReader();
-                const fileReadPromise = new Promise((resolve, reject) => {
-                    reader.onload = (event) => resolve(event.target.result);
-                    reader.onerror = (error) => reject(error);
-                });
-                const dataUrl = await fileReadPromise;
-
-                // Step 2: Create an Image object
-                const img = new Image();
-                const imgLoadPromise = new Promise((resolve, reject) => {
-                    img.onload = () => resolve();
-                    img.onerror = (error) => reject(error);
-                });
-                img.src = dataUrl;
-                await imgLoadPromise;
-
-                // Step 3: Create a canvas for resizing/compression
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-
-                const maxWidth = 800; // Max width for the image
-                const maxHeight = 800; // Max height for the image
-                let width = img.width;
-                let height = img.height;
-
-                // Calculate new dimensions to fit within maxWidth/maxHeight while maintaining aspect ratio
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                    if (height > maxHeight) { // Check height after adjusting width
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
-                    if (width > maxWidth) { // Check width after adjusting height
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-
-                // Draw image to canvas
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Step 4: Get compressed image data as Blob
-                const compressedBlob = await new Promise(resolve => {
-                    canvas.toBlob(blob => {
-                        resolve(blob);
-                    }, 'image/jpeg', 0.7); // Compress to JPEG with 70% quality
-                });
-
-                if (!compressedBlob) throw new Error("Image compression failed.");
-
-                const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}/profile.jpg`); // Use a fixed name like profile.jpg
-
-                await uploadBytes(storageRef, compressedBlob);
+                await uploadBytes(storageRef, selectedProfilePicFile);
                 const downloadURL = await getDownloadURL(storageRef);
-
                 await updateDoc(doc(window.db, "users", currentUser.uid), {
                     photoURL: downloadURL
                 });
-
                 console.log('Foto profil berhasil diperbarui!');
                 saveBtn.textContent = 'Simpan Foto';
-                profilePicPreview.src = downloadURL; // Update preview with the actual uploaded URL
-                window.renderDashboardHeader(); // Refresh dashboard header images
-
+                // Update dashboard profile pics if they are the current user
+                renderDashboardHeader();
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
                 console.error('Gagal mengunggah foto.');
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Simpan Foto';
             }
-        };
+        }
 
-        window.renderDashboardHeader = async () => {
+        async function renderDashboardHeader() {
             if (!currentHubId) return;
             const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId));
             if (!hubDoc.exists()) return;
@@ -1580,100 +1887,12 @@
             } else if (profilePicDestry) {
                 profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
             }
-        };
-
-        // --- PDF Export Functions ---
-        window.renderExportPdf = () => {
-            // This function can be used to render any specific UI for the PDF export page
-            // For now, the static HTML section is sufficient.
-            console.log("Halaman Ekspor PDF dimuat.");
-        };
-
-        window.handleExportPdf = async () => {
-            if (!currentHubId) {
-                window.alert("Tidak ada Hub yang aktif untuk diekspor."); // Menggunakan window.alert
-                return;
-            }
-
-            const exportBtn = document.getElementById('export-dashboard-pdf-btn');
-            const statusEl = document.getElementById('pdf-export-status');
-            if (!exportBtn || !statusEl) return;
-
-            exportBtn.disabled = true;
-            statusEl.classList.remove('hidden');
-
-            try {
-                // Temporarily show dashboard section to capture its content
-                const dashboardSection = document.getElementById('dashboard');
-                if (!dashboardSection) {
-                    throw new Error("Dashboard section not found.");
-                }
-
-                // Make sure the dashboard is rendered with latest data before capturing
-                await window.renderDashboard(); 
-                
-                // Save current display state of sections
-                const originalDisplay = {};
-                document.querySelectorAll('.content-section').forEach(section => {
-                    originalDisplay[section.id] = section.style.display;
-                    section.style.display = 'none'; // Hide all sections
-                });
-                dashboardSection.style.display = 'block'; // Show only dashboard
-
-                // Capture the dashboard content
-                const canvas = await html2canvas(dashboardSection, {
-                    scale: 2, // Increase scale for better resolution
-                    useCORS: true, // Important for images/external resources
-                    logging: true,
-                    backgroundColor: null // Transparent background
-                });
-
-                // Restore original display state
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.style.display = originalDisplay[section.id];
-                });
-                // Re-navigate to the current page to ensure correct active section
-                window.navigateTo(document.querySelector('.nav-link.bg-blue-100')?.dataset.target || 'dashboard', document.getElementById('page-title').textContent);
-
-
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' size
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-
-                pdf.save('Laporan_LifeHub_Dashboard.pdf');
-                statusEl.textContent = 'PDF berhasil dibuat!';
-                statusEl.classList.remove('hidden');
-            } catch (error) {
-                console.error("Error generating PDF:", error);
-                statusEl.textContent = `Gagal membuat PDF: ${error.message}`;
-                statusEl.classList.remove('hidden');
-            } finally {
-                exportBtn.disabled = false;
-                setTimeout(() => {
-                    statusEl.classList.add('hidden');
-                    statusEl.innerHTML = '<div class="loader mx-auto mb-2"></div><p>Mempersiapkan PDF...</p>'; // Reset status
-                }, 3000);
-            }
-        };
+        }
 
         // Panggil inisialisasi Firebase saat DOM dimuat
         window.onload = () => {
             initializeFirebase();
-            // mainApp() dipanggil di dalam initializeFirebase setelah otentikasi
+            mainApp(); // Panggil mainApp setelah inisialisasi Firebase
             // --- Pendaftaran Service Worker ---
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js')
