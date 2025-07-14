@@ -1,79 +1,1669 @@
-// firebase-messaging-sw.js
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Hub PWA | Lukman & Destry</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff"/>
+    
+    <!-- Tailwind CSS untuk styling responsif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js untuk grafik (jika digunakan) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts - Inter untuk font aplikasi -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-// Import script Firebase SDK yang diperlukan untuk Service Worker
-// Menggunakan versi 9.17.1 yang sesuai dengan konfigurasi awal dan index.html Anda
-importScripts('https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js');
+    <style>
+        /* Gaya CSS kustom Anda dari versi sebelumnya */
+        body { font-family: 'Inter', sans-serif; }
+        /* Kelas untuk menyembunyikan/menampilkan bagian konten */
+        .content-section, #auth-screen, #hub-screen, #app-container { display: none; }
+        .content-section.active, #auth-screen.active, #hub-screen.active, #app-container.active { display: block; }
+        
+        /* Gaya tambahan untuk pesan notifikasi agar terlihat lebih baik */
+        .notification-message {
+            background-color: #e0f2fe; /* Warna latar belakang biru muda */
+            border-left: 4px solid #0369a1; /* Garis biru tua di kiri */
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-// Variabel global yang disediakan oleh lingkungan Canvas
-// Jika Anda tidak menggunakan lingkungan Canvas, Anda bisa langsung menggunakan konfigurasi Firebase Anda di sini.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; // Fallback jika tidak di Canvas
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-  apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
-  authDomain: "coupleflow-3c5d2.firebaseapp.com",
-  projectId: "coupleflow-3c5d2",
-  storageBucket: "coupleflow-3c5d2.firebasestorage.app",
-  messagingSenderId: "1087616981568",
-  appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
-  measurementId: "G-Q49D43SNHH"
-};
+        /* Gaya dari kode yang Anda berikan */
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #888; border-radius: 4px; }
+        html.dark ::-webkit-scrollbar-track { background: #2d3748; }
+        html.dark ::-webkit-scrollbar-thumb { background: #718096; }
+        .content-section, #auth-screen, #hub-screen, #app-container { display: none; }
+        .content-section.active, #auth-screen.active, #hub-screen.active, #app-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .calendar-day { position: relative; aspect-ratio: 1/1; }
+        .calendar-day.has-event::after { content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background-color: #ef4444; }
+        html.dark .calendar-day.has-event::after { background-color: #f87171; }
+        .modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 40; display: none; justify-content: center; align-items: center; }
+        .modal-content { z-index: 50; max-height: 90vh; overflow-y: auto; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .habit-table-container { width: 100%; overflow-x: auto; }
+        .habit-table { border-collapse: collapse; width: 100%; min-width: 800px; }
+        .habit-table th, .habit-table td { border: 1px solid #e2e8f0; text-align: center; padding: 0; }
+        html.dark .habit-table th, html.dark .habit-table td { border-color: #4a5568; }
+        .habit-table th { padding: 8px; font-size: 0.875rem; }
+        .habit-table .habit-name { text-align: left; padding: 12px; min-width: 150px; max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .habit-day-cell { width: 40px; height: 40px; cursor: pointer; transition: background-color 0.2s; }
+        .habit-day-cell:hover { background-color: #f7fafc; }
+        html.dark .habit-day-cell:hover { background-color: #2d3748; }
+        .status-none { background-color: transparent; }
+        .status-lukman { background-color: #bee3f8; }
+        .status-destry { background-color: #fed7e2; }
+        .status-both { background: linear-gradient(135deg, #bee3f8 50%, #fed7e2 50%); }
+        html.dark .status-lukman { background-color: #2b6cb0; }
+        html.dark .status-destry { background-color: #97266d; }
+        html.dark .status-both { background: linear-gradient(135deg, #2b6cb0 50%, #97266d 50%); }
 
-// Inisialisasi Firebase di Service Worker
-try {
-    // Menggunakan firebase dari global scope yang dimuat oleh importScripts
-    const app = firebase.initializeApp(firebaseConfig);
-    const messaging = firebase.messaging(app); // Dapatkan instance Firebase Messaging
+        #mobile-menu-overlay { transition: opacity 0.3s ease-in-out; }
+        
+        .nav-link.has-notification::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ef4444; /* red-500 */
+        }
 
-    // Menangani pesan latar belakang (saat aplikasi tidak aktif)
-    messaging.onBackgroundMessage((payload) => {
-        console.log('[firebase-messaging-sw.js] Pesan latar belakang diterima:', payload);
+        #toast-notification {
+            transition: opacity 0.3s, transform 0.3s;
+        }
 
-        const notificationTitle = payload.notification?.title || 'Pesan Baru';
-        const notificationOptions = {
-            body: payload.notification?.body || 'Anda memiliki pesan baru.',
-            icon: '/icon/icon-192.png', // Diperbarui: Menggunakan /icon/icon-192.png
-            data: payload.data // Data kustom yang dapat Anda gunakan saat notifikasi diklik
+        /* Spinner Wheel Styles */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+        }
+        #spinner-canvas {
+            width: 100%;
+            height: 100%;
+            transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        #spinner-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 30px solid #ec4899; /* pink-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-x-hidden p-4 sm:p-6 lg:p-8">
+
+    <!-- Custom Toast Notification -->
+    <div id="toast-notification" class="fixed top-5 right-5 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 z-[100] transform translate-x-[150%] opacity-0">
+        <div class="flex items-start">
+            <div class="flex-shrink-0 pt-0.5">
+                <i class="fa-solid fa-heart text-pink-500 text-xl"></i>
+            </div>
+            <div class="ml-3 w-0 flex-1">
+                <p id="toast-sender" class="text-sm font-medium text-gray-900 dark:text-white"></p>
+                <p id="toast-message" class="mt-1 text-sm text-gray-500 dark:text-gray-300"></p>
+                <div class="mt-3 flex space-x-4">
+                    <button id="toast-reply-btn" class="bg-blue-500 text-white px-3 py-1 text-sm rounded-md hover:bg-blue-600">Balas</button>
+                    <button id="toast-close-btn" class="text-gray-400 hover:text-gray-500">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col justify-center items-center z-[100]">
+        <div class="loader"></div>
+        <p class="mt-4 text-lg font-medium">Memuat Life Hub...</p>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+            <div class="flex justify-center mb-6">
+                <img src="https://placehold.co/100x100/ec4899/ffffff?text=L%26D" alt="Logo" class="rounded-full">
+            </div>
+            <div id="login-view">
+                <h1 class="text-3xl font-bold text-center mb-2">Selamat Datang!</h1>
+                <p class="text-center text-gray-500 mb-6">Masuk untuk melanjutkan</p>
+                <form id="login-form" class="space-y-4">
+                    <input type="email" id="login-email" placeholder="Email" class="w-full p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                    <input type="password" id="login-password" placeholder="Password" class="w-full p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                    <button type="submit" class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600">Masuk</button>
+                </form>
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    Belum punya akun? <a href="#" id="show-register-link" class="font-semibold text-blue-500 hover:underline">Daftar di sini</a>
+                </p>
+            </div>
+            <div id="register-view" style="display: none;">
+                <h1 class="text-3xl font-bold text-center mb-2">Buat Akun Baru</h1>
+                <p class="text-center text-gray-500 mb-6">Isi data untuk mendaftar</p>
+                <form id="register-form" class="space-y-4">
+                    <input type="email" id="register-email" placeholder="Email" class="w-full p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                    <input type="password" id="register-password" placeholder="Password (min. 6 karakter)" class="w-full p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                    <button type="submit" class="w-full bg-green-500 text-white p-3 rounded-lg font-semibold hover:bg-green-600">Daftar Akun Baru</button>
+                </form>
+                <p class="text-center text-sm text-gray-500 mt-6">
+                    Sudah punya akun? <a href="#" id="show-login-link" class="font-semibold text-blue-500 hover:underline">Masuk di sini</a>
+                </p>
+            </div>
+            <p id="auth-error" class="text-red-500 text-center mt-4 font-mono text-sm h-4"></p>
+        </div>
+    </div>
+    
+    <!-- Hub Management Screen -->
+    <div id="hub-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+            <h1 class="text-3xl font-bold mb-4">Hub Keluarga</h1>
+            <p class="text-gray-500 mb-6">Buat hub baru untuk keluarga Anda atau gabung ke hub pasangan Anda menggunakan ID.</p>
+            <button id="create-hub-btn" class="w-full bg-pink-500 text-white p-3 rounded-lg font-semibold hover:bg-pink-600 mb-4">Buat Hub Baru</button>
+            <p class="my-4 font-semibold">ATAU</p>
+            <form id="join-hub-form" class="flex gap-2">
+                <input type="text" id="join-hub-id" placeholder="Masukkan ID Hub" class="flex-grow p-3 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                <button type="submit" class="bg-blue-500 text-white px-6 rounded-lg font-semibold hover:bg-blue-600">Gabung</button>
+            </form>
+            <p id="hub-error" class="text-red-500 mt-4"></p>
+        </div>
+    </div>
+
+
+    <!-- Main App Container -->
+    <div id="app-container" class="relative min-h-screen lg:flex">
+        <!-- Overlay for mobile menu -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-800 shadow-lg flex flex-col z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div class="flex items-center justify-start pl-6 h-16 border-b dark:border-gray-700">
+                <i class="fa-solid fa-heart-pulse text-2xl text-pink-500"></i>
+                <span class="ml-3 text-xl font-bold">Life Hub</span>
+            </div>
+            <nav class="flex-grow mt-4">
+                <ul id="nav-list" class="space-y-2 px-4"></ul>
+            </nav>
+            <div class="p-4 border-t dark:border-gray-700 space-y-2">
+                <button id="theme-toggle" class="w-full flex items-center justify-start p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <i class="fa-solid fa-moon w-6 text-center"></i>
+                    <span class="ml-4">Mode Gelap</span>
+                </button>
+                <button id="logout-btn" class="w-full flex items-center justify-start p-2 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50">
+                    <i class="fa-solid fa-right-from-bracket w-6 text-center"></i>
+                    <span class="ml-4">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 transition-all duration-300">
+            <!-- Header for Mobile -->
+            <header class="lg:hidden sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm p-4 flex items-center shadow-md z-20">
+                <button id="hamburger-btn" class="text-2xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 id="page-title" class="text-xl font-bold ml-4">Dashboard</h1>
+            </header>
+            <div class="p-4 md:p-6 lg:p-8">
+                <section id="dashboard" class="content-section space-y-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <img id="profile-pic-lukman" src="https://placehold.co/64x64/3b82f6/ffffff?text=L" alt="Profil Lukman" class="w-16 h-16 rounded-full border-2 border-blue-400 object-cover">
+                        <img src="https://placehold.co/80x80/ec4899/ffffff?text=L%26D" alt="Logo" class="w-20 h-20 rounded-full">
+                        <img id="profile-pic-destry" src="https://placehold.co/64x64/f472b6/ffffff?text=D" alt="Profil Destry" class="w-16 h-16 rounded-full border-2 border-pink-400 object-cover">
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Saldo</h3><p id="dashboard-saldo" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p></div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Tabungan</h3><p id="dashboard-tabungan" class="text-2xl font-bold text-blue-500 mt-1">Rp 0</p></div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Mood</h3><p id="dashboard-mood" class="text-3xl mt-1">😶</p></div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit</h3><p id="dashboard-habit-completion" class="text-2xl font-bold mt-1">0%</p></div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="font-semibold mb-4">Grafik Pemasukan vs Pengeluaran (Bulan Ini)</h3><canvas id="incomeExpenseChart"></canvas></div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="font-semibold mb-4">Grafik Pengeluaran per Kategori</h3><canvas id="expenseChart"></canvas></div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                            <h3 class="font-semibold mb-4">Mood Tracker (7 Hari Terakhir)</h3>
+                            <div id="dashboard-mood-tracker" class="flex justify-around items-end h-32"></div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="font-semibold mb-4">Progress Habit Harian</h3><div id="dashboard-habits" class="space-y-4"></div></div>
+                    </div>
+                </section>
+                <section id="keuangan" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Keuangan Harian</h1><button onclick="openModal('modal-transaksi')" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div id="keuangan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-center">
+                        <div><label for="filter-bulan" class="text-sm font-medium">Filter Bulan:</label><input type="month" id="filter-bulan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"></div>
+                        <div class="flex-grow"><label for="filter-pasangan" class="text-sm font-medium">Filter Pasangan:</label><select id="filter-pasangan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"><option value="semua">Semua</option><option value="Lukman">Lukman</option><option value="Destry">Destry</option></select></div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-x-auto"><table class="w-full text-left"><thead class="border-b dark:border-gray-700"><tr><th class="p-4">Tanggal</th><th class="p-4">Kategori</th><th class="p-4">Jumlah</th><th class="p-4">Oleh</th><th class="p-4">Catatan</th><th class="p-4">Aksi</th></tr></thead><tbody id="tabel-transaksi-body"></tbody></table></div>
+                </section>
+                <section id="tabungan" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Target Tabungan</h1><button onclick="openModal('modal-tabungan')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div id="tabungan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
+                    <div id="savings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+                <section id="diary" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Diary Harian</h1><button onclick="openModal('modal-diary')" class="bg-purple-500 text-white px-4 py-2 rounded-lg shadow hover:bg-purple-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div id="diary-entries" class="space-y-6"></div>
+                </section>
+                <section id="habit" class="content-section">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"><h1 class="text-3xl font-bold hidden lg:block">Habit Tracker Bulanan</h1><button onclick="openModal('modal-habit')" class="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-600 transition w-full sm:w-auto"><i class="fa-solid fa-plus mr-2"></i>Tambah Habit</button></div>
+                    <div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-xl shadow-md">
+                        <div class="flex justify-between items-center mb-4">
+                            <button id="habit-prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-left"></i></button>
+                            <h2 id="habit-month-year" class="text-xl font-bold"></h2>
+                            <button id="habit-next-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <div id="habit-table-container" class="habit-table-container"></div>
+                    </div>
+                </section>
+                <section id="wishlist" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Wishlist Bersama</h1><button onclick="openModal('modal-wishlist')" class="bg-yellow-500 text-white px-4 py-2 rounded-lg shadow hover:bg-yellow-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div id="wishlist-gallery" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+                </section>
+                <section id="kalender" class="content-section">
+                    <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Kalender Aktivitas</h1><button onclick="openModal('modal-aktivitas')" class="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                            <div class="flex justify-between items-center mb-4"><button id="prev-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-left"></i></button><h2 id="calendar-month-year" class="text-xl font-bold"></h2><button id="next-month" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><i class="fa-solid fa-chevron-right"></i></button></div>
+                            <div class="grid grid-cols-7 text-center font-semibold text-gray-500 dark:text-gray-400 mb-2"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div>
+                            <div id="calendar-grid" class="calendar-grid"></div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="text-xl font-bold mb-4">Aktivitas Terpilih</h3><p id="selected-date-display" class="font-semibold mb-2"></p><div id="daily-activities" class="space-y-4"><p class="text-gray-500">Pilih tanggal di kalender untuk melihat aktivitas.</p></div></div>
+                    </div>
+                </section>
+                <section id="notifikasi" class="content-section space-y-6">
+                    <h1 class="text-3xl font-bold hidden lg:block">Notifikasi Sayang</h1>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-4">Kirim Pesan ke Pasangan</h2>
+                        <form id="form-notifikasi" class="space-y-4">
+                            <div>
+                                <label for="notifikasi-pesan" class="block mb-1 font-medium">Pesan Singkat</label>
+                                <input type="text" id="notifikasi-pesan" placeholder="e.g., Semangat kerjanya ya, sayang!" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                            </div>
+                            <div>
+                                <label for="notifikasi-untuk" class="block mb-1 font-medium">Kirim Untuk</label>
+                                <select id="notifikasi-untuk" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required>
+                                    <option>Lukman</option>
+                                    <option>Destry</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="w-full bg-pink-500 text-white p-3 rounded-lg font-semibold hover:bg-pink-600">Kirim Notifikasi <i class="fa-solid fa-paper-plane ml-2"></i></button>
+                        </form>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-4">Notifikasi yang Kamu Terima</h2>
+                        <div id="notifikasi-list" class="space-y-4">
+                            <p class="text-gray-500">Belum ada notifikasi.</p>
+                        </div>
+                    </div>
+                </section>
+                <section id="roda-kencan" class="content-section text-center">
+                    <h1 class="text-3xl font-bold hidden lg:block mb-6">Roda Keberuntungan Kencan</h1>
+                    <div class="wheel-container">
+                        <div id="spinner-pointer"></div>
+                        <canvas id="spinner-canvas" width="300" height="300"></canvas>
+                    </div>
+                    <button id="spin-btn" class="mt-8 bg-pink-500 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg hover:bg-pink-600 transition transform hover:scale-105">PUTAR!</button>
+                </section>
+                <section id="individu" class="content-section">
+                    <h1 class="text-3xl font-bold hidden lg:block mb-6">Ringkasan Individu</h1>
+                    <div class="space-y-8">
+                        <div>
+                            <h2 class="text-2xl font-bold text-blue-500 mb-4">Lukman</h2>
+                            <div id="summary-individu-lukman" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-pink-500 mb-4">Destry</h2>
+                            <div id="summary-individu-destry" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                        </div>
+                    </div>
+                </section>
+                <section id="profil" class="content-section">
+                    <h1 class="text-3xl font-bold hidden lg:block mb-6">Profil & Pengaturan</h1>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-lg mx-auto space-y-6">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4">Informasi Akun</h2>
+                            <p class="mb-2"><strong>Email:</strong> <span id="profile-email"></span></p>
+                            <p class="mb-4"><strong>User ID:</strong> <span id="profile-uid" class="text-xs text-gray-500 break-all"></span></p>
+                        </div>
+                        <div class="border-t dark:border-gray-700 pt-6">
+                            <h2 class="text-2xl font-bold mb-4">Ubah Foto Profil</h2>
+                            <img id="profile-pic-preview" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover" src="https://placehold.co/128x128/e2e8f0/64748b?text=Pilih" alt="Pratinjau Foto">
+                            <input type="file" id="profile-pic-input" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900">
+                            <button id="save-profile-pic-btn" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50" disabled>Simpan Foto</button>
+                        </div>
+                        <div class="border-t dark:border-gray-700 pt-6">
+                            <h2 class="text-2xl font-bold mb-4">Informasi Hub</h2>
+                            <p class="mb-2">Bagikan ID Hub ini kepada pasangan Anda untuk bergabung.</p>
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex items-center justify-between">
+                                <code id="profile-hub-id" class="font-mono text-lg break-all"></code>
+                                <button onclick="copyHubId()" class="text-gray-500 hover:text-blue-500 ml-4"><i class="fa-solid fa-copy"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-kencan-hasil" class="modal-backdrop">
+        <div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-8 text-center">
+            <h2 class="text-2xl font-bold mb-2">Ide Kencan Malam Ini!</h2>
+            <p id="hasil-kencan-text" class="text-4xl font-bold text-pink-500 my-6"></p>
+            <button onclick="closeModal('modal-kencan-hasil')" class="w-full bg-gray-300 dark:bg-gray-600 p-3 rounded-lg font-semibold hover:bg-gray-400">Tutup</button>
+        </div>
+    </div>
+    <!-- Other Modals (Unchanged) -->
+    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
+    <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
+    <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
+    <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
+    <div id="modal-diary" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-lg mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tulis Diary</h2><form id="form-diary"><div class="space-y-4"><input type="hidden" id="diary-id"><div><label for="diary-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="diary-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-judul" class="block mb-1 font-medium">Judul</label><input type="text" id="diary-judul" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-isi" class="block mb-1 font-medium">Isi Diary</label><textarea id="diary-isi" rows="5" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></textarea></div><div class="flex items-center justify-between"><div><label for="diary-mood" class="block mb-1 font-medium">Mood</label><select id="diary-mood" class="p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-2xl" required><option value="😊">😊 Bahagia</option><option value="😂">😂 Sangat Bahagia</option><option value="🙂">🙂 Biasa Saja</option><option value="😢">😢 Sedih</option><option value="😠">😠 Marah</option><option value="😴">😴 Lelah</option></select></div><div><label for="diary-oleh" class="block mb-1 font-medium">Penulis</label><select id="diary-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div></div><div><label for="diary-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="diary-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900"><img id="diary-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-diary')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Simpan</button></div></form></div></div>
+    <div id="modal-wishlist" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Wishlist</h2><form id="form-wishlist"><div class="space-y-4"><input type="hidden" id="wishlist-id"><div><label for="wishlist-nama" class="block mb-1 font-medium">Nama Barang</label><input type="text" id="wishlist-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="wishlist-kategori" class="block mb-1 font-medium">Kategori</label><select id="wishlist-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Liburan</option><option>Makan Bareng</option><option>Jalan-jalan</option><option>Bioskop Date</option><option>Caffe Date</option><option>Photobox Date</option></select></div><div><label for="wishlist-oleh" class="block mb-1 font-medium">Keinginan</label><select id="wishlist-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option><option>Bersama</option></select></div><div><label for="wishlist-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="wishlist-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="wishlist-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="wishlist-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 dark:file:bg-yellow-900/50 dark:file:text-yellow-300 dark:hover:file:bg-yellow-900"><img id="wishlist-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-wishlist')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Simpan</button></div></form></div></div>
+    <div id="modal-aktivitas" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Aktivitas</h2><form id="form-aktivitas"><input type="hidden" id="aktivitas-id"><div><label for="aktivitas-nama" class="block mb-1 font-medium">Nama Aktivitas</label><input type="text" id="aktivitas-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="aktivitas-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-waktu" class="block mb-1 font-medium">Waktu</label><input type="time" id="aktivitas-waktu" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="aktivitas-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label class="block mb-1 font-medium">Siapa yang ikut?</label><div class="flex gap-4"><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-lukman" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2">Lukman</span></label><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-destry" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"><span class="ml-2">Destry</span></label></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-aktivitas')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Simpan</button></div></form></div></div>
+
+    <!-- Firebase SDK and App Logic -->
+    <script type="module">
+        // Import modul Firebase yang diperlukan
+        // Menggunakan versi 9.17.1 yang sesuai dengan konfigurasi awal Anda
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
+        
+        // Konfigurasi Firebase Anda (dari konsol Firebase)
+        // Gunakan variabel global jika tersedia (dari lingkungan Canvas), jika tidak, gunakan konfigurasi hardcoded Anda
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyA5GRzA83x8DbaxUb5pRH_Yx0ZWMsCVN0w",
+            authDomain: "jalan-cerita-5c989.firebaseapp.com",
+            projectId: "jalan-cerita-5c989",
+            storageBucket: "jalan-cerita-5c989.appspot.com",
+            messagingSenderId: "606590919634",
+            appId: "1:606590919634:web:039ddf6e2b7e13d0675e0b",
+            measurementId: "G-9L0MLVQCNL"
         };
 
-        // Tampilkan notifikasi
-        self.registration.showNotification(notificationTitle, notificationOptions);
-    });
+        // Variabel global yang disediakan oleh lingkungan Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId; // Menggunakan projectId sebagai fallback
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-} catch (error) {
-    console.error('[firebase-messaging-sw.js] Kesalahan inisialisasi Firebase di Service Worker:', error);
-}
+        // Variabel global untuk logika aplikasi utama
+        let currentUser = null;
+        let currentHubId = null;
+        let userId = null; // Deklarasi userId di sini
+        let unsubscribeListeners = [];
+        let expenseChartInstance, incomeExpenseChartInstance;
+        let calendarDate = new Date();
+        let habitDate = new Date();
+        let selectedProfilePicFile = null;
 
+        const loadingScreen = document.getElementById('loading-screen');
+        const authScreen = document.getElementById('auth-screen');
+        const hubScreen = document.getElementById('hub-screen');
+        const appContainer = document.getElementById('app-container');
 
-// Menangani klik notifikasi
-self.addEventListener('notificationclick', (event) => {
-    console.log('[firebase-messaging-sw.js] Notifikasi diklik:', event);
-    event.notification.close(); // Tutup notifikasi setelah diklik
+        // Elemen UI untuk menampilkan status (dipindahkan ke dalam initializeFirebase)
+        let authInfoElement;
+        let messagingInfoElement;
+        let fcmTokenElement;
+        let incomingMessagesContainer;
+        let messageListElement;
+        let requestPermissionBtn;
 
-    // Dapatkan URL yang ingin Anda buka
-    const click_action = event.notification.data?.click_action || '/'; // Default ke root
+        const formatCurrency = (amount) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        const getTodayISO = () => new Date().toISOString().split('T')[0];
+        const formatDate = (isoDate, options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) => {
+            if (!isoDate) return '';
+            const date = (isoDate.seconds) ? new Date(isoDate.seconds * 1000) : new Date(isoDate);
+            return date.toLocaleDateString('id-ID', options);
+        };
+        const showUI = (element) => {
+            loadingScreen.style.display = 'none';
+            authScreen.style.display = 'none';
+            hubScreen.style.display = 'none';
+            appContainer.style.display = 'none';
+            if (element) {
+                element.style.display = 'flex';
+            }
+        };
 
-    event.waitUntil(
-        clients.matchAll({ type: 'window' }).then((clientList) => {
-            for (const client of clientList) {
-                if (client.url.includes(click_action) && 'focus' in client) { // Menggunakan includes untuk fleksibilitas
-                    return client.focus(); // Fokus pada tab yang sudah ada
+        /**
+         * Menginisialisasi Firebase dan menyiapkan listener otentikasi.
+         */
+        async function initializeFirebase() {
+            try {
+                // Inisialisasi elemen UI di sini untuk memastikan DOM sudah siap
+                authInfoElement = document.getElementById('auth-info');
+                messagingInfoElement = document.getElementById('messaging-info');
+                fcmTokenElement = document.getElementById('fcm-token');
+                incomingMessagesContainer = document.getElementById('incoming-messages');
+                messageListElement = document.getElementById('message-list');
+                requestPermissionBtn = document.getElementById('request-permission-btn');
+
+                // Inisialisasi Firebase App dan layanannya
+                window.app = initializeApp(firebaseConfig);
+                window.db = getFirestore(window.app);
+                window.auth = getAuth(window.app);
+                window.messaging = getMessaging(window.app);
+                window.storage = getStorage(window.app);
+
+                if (authInfoElement) { // Periksa keberadaan elemen sebelum mengakses properti
+                    authInfoElement.textContent = 'Mengotentikasi...';
+                }
+
+                // Listener untuk perubahan status otentikasi
+                onAuthStateChanged(window.auth, async (user) => { // Gunakan window.auth
+                    if (user) {
+                        currentUser = user; // Set currentUser
+                        userId = user.uid; 
+                        if (authInfoElement) {
+                            authInfoElement.textContent = `Berhasil masuk sebagai: ${userId}`;
+                        }
+                        isAuthReady = true;
+                        console.log("Pengguna masuk:", userId);
+                        // Lanjutkan dengan penyiapan Messaging setelah otentikasi selesai
+                        setupFirebaseMessaging();
+                        // Anda bisa menambahkan listener Firestore di sini jika diperlukan data pengguna
+                        const userDocRef = doc(window.db, "users", user.uid); // Gunakan window.db
+                        const userDocSnap = await getDoc(userDocRef);
+                        if (userDocSnap.exists() && userDocSnap.data().hubId) {
+                            currentHubId = userDocSnap.data().hubId;
+                            initializeAppUI();
+                        } else {
+                            showUI(hubScreen);
+                        }
+                    } else {
+                        // Jika tidak ada pengguna, coba masuk secara anonim
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(window.auth, initialAuthToken); // Gunakan window.auth
+                            } else {
+                                await signInAnonymously(window.auth); // Gunakan window.auth
+                            }
+                            // onAuthStateChanged akan dipanggil lagi setelah masuk
+                        } catch (error) {
+                            console.error("Kesalahan saat masuk anonim:", error);
+                            if (authInfoElement) {
+                                authInfoElement.textContent = `Kesalahan otentikasi: ${error.message}`;
+                            }
+                            isAuthReady = true; // Tetapkan true meskipun ada kesalahan agar tidak memblokir
+                            currentUser = null;
+                            currentHubId = null;
+                            unsubscribeAll();
+                            showUI(authScreen);
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Kesalahan saat menginisialisasi Firebase:", error);
+                // Menambahkan penanganan jika authInfoElement masih null di sini
+                if (authInfoElement) {
+                    authInfoElement.textContent = `Kesalahan inisialisasi Firebase: ${error.message}`;
+                } else {
+                    console.error("Tidak dapat memperbarui status otentikasi di UI karena elemen tidak ditemukan.");
                 }
             }
-            // Jika tidak ada tab yang cocok, buka tab baru
-            if (clients.openWindow) {
-                return clients.openWindow(click_action);
+        }
+
+        /**
+         * Menyiapkan Firebase Messaging: meminta izin dan mendapatkan token.
+         */
+        async function setupFirebaseMessaging() {
+            if (!isAuthReady) {
+                console.log("Otentikasi belum siap, menunda penyiapan Messaging.");
+                return;
             }
-        })
-    );
-});
 
-// Anda bisa menambahkan logika caching atau strategi offline lainnya di sini
-self.addEventListener('install', (event) => {
-    console.log('[firebase-messaging-sw.js] Service Worker terinstal.');
-    self.skipWaiting(); // Memaksa Service Worker baru untuk segera aktif
-});
+            if (messagingInfoElement) {
+                messagingInfoElement.textContent = 'Meminta izin notifikasi...';
+            }
+            try {
+                // Meminta izin notifikasi dari pengguna
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    if (messagingInfoElement) {
+                        messagingInfoElement.textContent = 'Izin notifikasi diberikan.';
+                    }
+                    console.log('Izin notifikasi diberikan.');
 
-self.addEventListener('activate', (event) => {
-    console.log('[firebase-messaging-sw.js] Service Worker aktif.');
-    event.waitUntil(clients.claim()); // Mengklaim semua klien yang ada
-});
+                    // Mendapatkan token pendaftaran perangkat (FCM Token)
+                    // Ganti dengan VAPID Key Anda dari pengaturan proyek Firebase (Project settings -> Cloud Messaging)
+                    const vapidKey = 'BLgy6qLYxufc6dTD2a36U6NzmUzY1zKHaQUr2Iyx0bDglujQM5hL7y0yHpFQNRKoESjKDg6gMaVvwX4ok2PlpoE'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
+                    const currentToken = await getToken(window.messaging, { vapidKey: vapidKey }); // Gunakan window.messaging
+                    if (currentToken) {
+                        if (fcmTokenElement) {
+                            fcmTokenElement.textContent = currentToken;
+                        }
+                        console.log('FCM Token:', currentToken);
+                        // Anda bisa mengirim token ini ke server backend Anda
+                        // untuk mengirim notifikasi ke perangkat ini.
+                        if (messagingInfoElement) {
+                            messagingInfoElement.textContent = 'Izin notifikasi diberikan. Token perangkat berhasil didapatkan.';
+                        }
+                        if (requestPermissionBtn) {
+                            requestPermissionBtn.style.display = 'none'; // Sembunyikan tombol setelah izin diberikan
+                        }
+                    } else {
+                        console.warn('Tidak ada token pendaftaran yang tersedia. Perlu meminta izin.');
+                        if (fcmTokenElement) {
+                            fcmTokenElement.textContent = 'Tidak ada token (izin mungkin tidak diberikan atau VAPID key salah).';
+                        }
+                        if (messagingInfoElement) {
+                            messagingInfoElement.textContent = 'Izin notifikasi diberikan, tetapi tidak ada token. Pastikan VAPID key benar.';
+                        }
+                    }
+                } else {
+                    console.warn('Izin notifikasi ditolak.');
+                    if (messagingInfoElement) {
+                        messagingInfoElement.textContent = 'Izin notifikasi ditolak.';
+                    }
+                    if (fcmTokenElement) {
+                        fcmTokenElement.textContent = 'Tidak ada token (izin ditolak).';
+                    }
+                }
+            } catch (error) {
+                console.error('Kesalahan saat mendapatkan token:', error);
+                if (messagingInfoElement) {
+                    messagingInfoElement.textContent = `Kesalahan saat mendapatkan token: ${error.message}`;
+                }
+                if (fcmTokenElement) {
+                    fcmTokenElement.textContent = 'Kesalahan saat mendapatkan token.';
+                }
+            }
+
+            // Menangani pesan di latar depan (saat aplikasi sedang aktif)
+            onMessage(window.messaging, (payload) => { // Gunakan window.messaging
+                console.log('Pesan latar depan diterima:', payload);
+                if (incomingMessagesContainer) {
+                    incomingMessagesContainer.classList.remove('hidden');
+                }
+                if (messageListElement) {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'bg-blue-50 dark:bg-blue-900 p-3 rounded-md shadow-sm';
+                    messageElement.innerHTML = `
+                        <p class="font-semibold">${payload.notification?.title || 'Pesan Baru'}</p>
+                        <p class="text-sm">${payload.notification?.body || 'Tidak ada isi pesan.'}</p>
+                        <pre class="text-xs text-gray-600 dark:text-gray-400 mt-1 overflow-auto">${JSON.stringify(payload.data, null, 2)}</pre>
+                    `;
+                    messageListElement.prepend(messageElement); // Tambahkan pesan terbaru di atas
+                }
+            });
+        }
+
+        /**
+         * Menyiapkan listener Firestore (contoh: untuk data publik atau pribadi).
+         * Ini adalah contoh, Anda dapat menyesuaikannya dengan kebutuhan aplikasi Anda.
+         */
+        function setupFirestoreListener() {
+            // userId dijamin sudah terdefinisi karena fungsi ini dipanggil setelah onAuthStateChanged(user)
+            if (!window.db || !userId) { // Gunakan window.db
+                console.log("Firestore atau userId belum siap.");
+                return;
+            }
+
+            // Contoh: Mendengarkan data publik
+            const publicCollectionRef = collection(window.db, `artifacts/${appId}/public/data/messages`); // Gunakan window.db
+            onSnapshot(publicCollectionRef, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        console.log("Pesan publik baru:", change.doc.data());
+                        // Tambahkan logika untuk menampilkan pesan publik di UI
+                    }
+                    if (change.type === "modified") {
+                        console.log("Pesan publik diubah:", change.doc.data());
+                    }
+                    if (change.type === "removed") {
+                        console.log("Pesan publik dihapus:", change.doc.data());
+                    }
+                });
+            }, (error) => {
+                console.error("Kesalahan saat mendengarkan koleksi publik:", error);
+            });
+
+            // Contoh: Mendengarkan data pribadi (jika ada)
+            const privateCollectionRef = collection(window.db, `artifacts/${appId}/users/${userId}/private_messages`); // Gunakan window.db
+            onSnapshot(privateCollectionRef, (snapshot) => {
+                snapshot.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        console.log("Pesan pribadi baru:", change.doc.data());
+                        // Tambahkan logika untuk menampilkan pesan pribadi di UI
+                    }
+                });
+            }, (error) => {
+                console.error("Kesalahan saat mendengarkan koleksi pribadi:", error);
+            });
+        }
+
+        // --- Logika Aplikasi Utama (fungsi mainApp) ---
+        function mainApp() {
+            setupAllEventListeners(); // Panggil ini setelah semua elemen DOM tersedia
+        }
+
+        function setupAllEventListeners() {
+            // Auth View Toggling
+            document.getElementById('show-register-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-view').style.display = 'none'; document.getElementById('register-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+            document.getElementById('show-login-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-view').style.display = 'none'; document.getElementById('login-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+            
+            // Forms
+            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+            document.getElementById('register-form')?.addEventListener('submit', handleRegister);
+            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
+            document.getElementById('create-hub-btn')?.addEventListener('click', createHub);
+            document.getElementById('join-hub-form')?.addEventListener('submit', joinHub);
+            document.getElementById('form-transaksi')?.addEventListener('submit', handleTransaksiSubmit);
+            document.getElementById('form-tabungan')?.addEventListener('submit', handleTabunganSubmit);
+            document.getElementById('form-tambah-dana')?.addEventListener('submit', handleTambahDanaSubmit);
+            document.getElementById('form-diary')?.addEventListener('submit', handleDiarySubmit);
+            document.getElementById('form-habit')?.addEventListener('submit', handleHabitSubmit);
+            document.getElementById('form-wishlist')?.addEventListener('submit', handleWishlistSubmit);
+            document.getElementById('form-aktivitas')?.addEventListener('submit', handleAktivitasSubmit);
+            document.getElementById('form-notifikasi')?.addEventListener('submit', handleNotifikasiSubmit);
+            document.getElementById('spin-btn')?.addEventListener('click', spinWheel);
+            document.getElementById('save-profile-pic-btn')?.addEventListener('click', handleProfilePicUpload);
+            
+            // UI Elements
+            // Periksa keberadaan elemen sebelum mengakses properti value
+            if (document.getElementById('filter-bulan')) {
+                document.getElementById('filter-bulan').value = new Date().toISOString().slice(0, 7);
+                document.getElementById('filter-bulan').addEventListener('change', renderKeuangan);
+            }
+            document.getElementById('filter-pasangan')?.addEventListener('change', renderKeuangan);
+            document.getElementById('habit-prev-month')?.addEventListener('click', () => changeHabitMonth(-1));
+            document.getElementById('habit-next-month')?.addEventListener('click', () => changeHabitMonth(1));
+            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(-1));
+            document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1));
+            setupImagePreview('diary-foto', 'diary-foto-preview');
+            setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
+            setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
+            document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }));
+            document.getElementById('theme-toggle')?.addEventListener('click', () => {
+                const isDark = !document.documentElement.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                applyTheme(isDark);
+            });
+            
+            // Mobile Menu
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-menu-overlay');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            
+            hamburgerBtn?.addEventListener('click', () => {
+                sidebar?.classList.remove('-translate-x-full');
+                overlay?.classList.remove('hidden');
+            });
+            overlay?.addEventListener('click', () => {
+                sidebar?.classList.add('-translate-x-full');
+                overlay?.classList.add('hidden');
+            });
+        }
+
+        function initializeAppUI() {
+            setupNavigation();
+            setupTheme();
+            navigateTo('dashboard', 'Dashboard');
+            attachRealtimeListeners();
+            showUI(appContainer);
+            // Periksa keberadaan elemen sebelum mengakses properti
+            if (document.getElementById('profile-email')) {
+                document.getElementById('profile-email').textContent = currentUser.email;
+            }
+            if (document.getElementById('profile-uid')) {
+                document.getElementById('profile-uid').textContent = currentUser.uid;
+            }
+            if (document.getElementById('profile-hub-id')) {
+                document.getElementById('profile-hub-id').textContent = currentHubId;
+            }
+        }
+
+        function attachRealtimeListeners() {
+            if (!currentHubId) return;
+            unsubscribeAll();
+            const collectionsToRender = {
+                'transactions': [renderKeuangan, renderDashboard, renderIndividualSummaries],
+                'savings': [renderTabungan, renderDashboard],
+                'diary': [renderDiary, renderDashboard, renderIndividualSummaries],
+                'habits': [renderHabitTable, renderDashboard, renderIndividualSummaries],
+                'habitEntries': [renderHabitTable, renderDashboard, renderIndividualSummaries],
+                'wishlist': [renderWishlist],
+                'events': [renderCalendar],
+                'notifications': [renderNotifikasi, checkUnreadNotifications]
+            };
+            const hubDocRef = doc(window.db, "hubs", currentHubId); // Gunakan window.db
+            const hubUnsubscribe = onSnapshot(hubDocRef, renderDashboardHeader);
+            unsubscribeListeners.push(hubUnsubscribe);
+
+            Object.keys(collectionsToRender).forEach(col => {
+                const q = query(collection(window.db, "hubs", currentHubId, col)); // Gunakan window.db
+                const unsubscribe = onSnapshot(q, (snapshot) => {
+                    // In-app notification logic
+                    if (col === 'notifications') {
+                        snapshot.docChanges().forEach((change) => {
+                            if (change.type === "added") {
+                                const newNotif = change.doc.data();
+                                const recipientName = currentUser.email.split('@')[0].toLowerCase() === 'lukman' ? 'Lukman' : 'Destry';
+                                if (newNotif.recipient.toLowerCase() === recipientName.toLowerCase() && newNotif.sender !== recipientName) {
+                                    showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
+                                }
+                            }
+                        });
+                    }
+                    collectionsToRender[col].forEach(fn => fn());
+                }, (error) => { console.error(`Error listening to ${col}:`, error); });
+                unsubscribeListeners.push(unsubscribe);
+            });
+        }
+        function unsubscribeAll() { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; }
+
+        function setupNavigation() {
+            const navItems = [
+                { id: 'dashboard', icon: 'fa-solid fa-table-columns', text: 'Dashboard' },
+                { id: 'keuangan', icon: 'fa-solid fa-wallet', text: 'Keuangan' },
+                { id: 'tabungan', icon: 'fa-solid fa-piggy-bank', text: 'Tabungan' },
+                { id: 'diary', icon: 'fa-solid fa-book-open', text: 'Diary' },
+                { id: 'habit', icon: 'fa-solid fa-check-double', text: 'Habit Tracker' },
+                { id: 'wishlist', icon: 'fa-solid fa-star', text: 'Wishlist' },
+                { id: 'kalender', icon: 'fa-solid fa-calendar-days', text: 'Kalender' },
+                { id: 'notifikasi', icon: 'fa-solid fa-heart', text: 'Notifikasi Sayang' },
+                { id: 'roda-kencan', icon: 'fa-solid fa-dharmachakra', text: 'Roda Kencan' },
+                { id: 'individu', icon: 'fa-solid fa-user-friends', text: 'Ringkasan' },
+                { id: 'profil', icon: 'fa-solid fa-user-gear', text: 'Profil' },
+            ];
+            const navList = document.getElementById('nav-list');
+            if (navList) {
+                navList.innerHTML = navItems.map(item => `<li><a href="#" class="nav-link relative flex items-center p-2 lg:p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-target="${item.id}" data-title="${item.text}"><i class="${item.icon} w-6 text-center text-lg"></i><span class="ml-4">${item.text}</span></a></li>`).join('');
+                document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.target, link.dataset.title); }));
+            }
+        }
+        window.navigateTo = (pageId, pageTitle) => {
+            document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(pageId)?.classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-blue-100', 'dark:bg-blue-900/50', 'text-blue-600', 'dark:text-blue-300');
+                if (link.dataset.target === pageId) {
+                    link.classList.add('bg-blue-100', 'dark:bg-blue-900/50', 'text-blue-600', 'dark:text-blue-300');
+                }
+            });
+            document.getElementById('page-title').textContent = pageTitle;
+            // Close mobile menu on navigation
+            document.getElementById('sidebar')?.classList.add('-translate-x-full');
+            document.getElementById('mobile-menu-overlay')?.classList.add('hidden');
+            
+            if (pageId === 'individu') {
+                renderIndividualSummaries();
+            }
+            if (pageId === 'notifikasi') {
+                markNotificationsAsRead();
+            }
+            if (pageId === 'roda-kencan') {
+                setupWheel();
+            }
+            window.scrollTo(0, 0);
+        }
+        window.openModal = (modalId) => { document.getElementById(modalId).style.display = 'flex'; };
+        window.closeModal = (modalId) => { document.getElementById(modalId).style.display = 'none'; };
+
+        function applyTheme(isDark) {
+            const toggleIcon = document.querySelector('#theme-toggle i');
+            const toggleText = document.querySelector('#theme-toggle span');
+            if (document.documentElement) {
+                document.documentElement.classList.toggle('dark', isDark);
+            }
+            if (toggleIcon) {
+                toggleIcon.className = isDark ? 'fa-solid fa-sun w-6 text-center' : 'fa-solid fa-moon w-6 text-center';
+            }
+            if (toggleText) {
+                toggleText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
+            }
+            if(expenseChartInstance || incomeExpenseChartInstance) renderDashboard();
+        };
+
+        function setupTheme() {
+            const currentTheme = localStorage.getItem('theme');
+            applyTheme(currentTheme === 'dark');
+        }
+        
+        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
+        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
+        async function handleLogout() { if(window.confirm('Anda yakin ingin logout?')) await signOut(window.auth); } // Menggunakan window.confirm dan window.auth
+        async function createHub() { 
+            if (!currentUser) { console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); return; } // Menggunakan console.error
+            const hubId = doc(collection(window.db, 'hubs')).id; // Gunakan window.db
+            try { 
+                const batch = writeBatch(window.db); // Gunakan window.db
+                batch.set(doc(window.db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() }); // Gunakan window.db
+                batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); // Gunakan window.db
+                await batch.commit(); 
+            } catch (error) { 
+                console.error("Create Hub Error:", error); 
+                // Menggunakan console.error daripada alert
+                console.error(`Gagal membuat hub. Error: ${error.message}`);
+                document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
+            } 
+        }
+        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(window.db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } } // Gunakan window.db
+        
+        window.copyHubId = () => { const hubId = document.getElementById('profile-hub-id').textContent; document.execCommand('copy'); console.log('ID Hub disalin!'); }; // Menggunakan execCommand dan console.log
+        function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
+        function changeCalendarMonth(delta) { calendarDate.setMonth(calendarDate.getMonth() + delta); renderCalendar(); }
+        
+        // --- ALL FUNCTIONS ARE NOW FULLY IMPLEMENTED ---
+        async function renderKeuangan() {
+            if (!currentHubId) return;
+            const monthFilter = document.getElementById('filter-bulan')?.value;
+            const personFilter = document.getElementById('filter-pasangan')?.value;
+            // Pastikan monthFilter memiliki nilai sebelum split
+            const [year, month] = monthFilter ? monthFilter.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1];
+            const startDate = Timestamp.fromDate(new Date(year, month - 1, 1));
+            const endDate = Timestamp.fromDate(new Date(year, month, 1));
+            let q = query(collection(window.db, "hubs", currentHubId, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate), orderBy("tanggal", "desc")); // Gunakan window.db
+            const querySnapshot = await getDocs(q);
+            let transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Calculate and render score cards for Keuangan page
+            const totalPemasukan = transactions.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const totalPengeluaran = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const sisa = totalPemasukan - totalPengeluaran;
+            const keuanganScoreCards = document.getElementById('keuangan-score-cards');
+            if (keuanganScoreCards) {
+                keuanganScoreCards.innerHTML = `
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Pemasukan</h3><p class="text-lg md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(totalPemasukan)}</p></div>
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Pengeluaran</h3><p class="text-lg md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(totalPengeluaran)}</p></div>
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Sisa/Defisit</h3><p class="text-lg md:text-2xl font-bold ${sisa >= 0 ? 'text-blue-500' : 'text-yellow-500'} mt-1">${formatCurrency(sisa)}</p></div>
+                `;
+            }
+
+            if (personFilter && personFilter !== 'semua') {
+                transactions = transactions.filter(t => t.oleh === personFilter);
+            }
+            const body = document.getElementById('tabel-transaksi-body');
+            if (body) {
+                body.innerHTML = transactions.map(t => {
+                    const isPemasukan = t.kategori === 'Pemasukan';
+                    const amountColor = isPemasukan ? 'text-green-500' : 'text-red-500';
+                    const amountPrefix = isPemasukan ? '+' : '-';
+                    return `<tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="p-4">${formatDate(t.tanggal)}</td>
+                        <td class="p-4">${t.kategori}</td>
+                        <td class="p-4 font-semibold ${amountColor}">${amountPrefix} ${formatCurrency(t.jumlah)}</td>
+                        <td class="p-4">${t.oleh}</td>
+                        <td class="p-4">${t.catatan || '-'}</td>
+                        <td class="p-4"><button onclick="deleteTransaction('${t.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>`;
+                }).join('');
+                if (transactions.length === 0) {
+                    body.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-gray-500">Belum ada transaksi di bulan ini.</td></tr>`;
+                }
+            }
+        }
+        window.deleteTransaction = async (id) => { if (window.confirm('Yakin hapus transaksi ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id)); } }; // Menggunakan window.confirm dan window.db
+        
+        async function handleTransaksiSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const dateValue = document.getElementById('transaksi-tanggal')?.value;
+            const date = new Date(dateValue);
+            date.setUTCHours(12);
+            const newTransaksi = {
+                tanggal: Timestamp.fromDate(date),
+                kategori: document.getElementById('transaksi-kategori')?.value,
+                jumlah: parseFloat(document.getElementById('transaksi-jumlah')?.value),
+                oleh: document.getElementById('transaksi-oleh')?.value,
+                catatan: document.getElementById('transaksi-catatan')?.value,
+                createdAt: serverTimestamp(), createdBy: currentUser.uid
+            };
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); } // Gunakan window.db
+            catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); } // Menggunakan console.error
+        }
+
+        async function renderTabungan() {
+            if (!currentHubId) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "savings"), orderBy("createdAt", "desc")); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const savings = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Calculate and render score cards for Tabungan page
+            const totalTarget = savings.reduce((sum, s) => sum + s.target, 0);
+            const totalTerkumpul = savings.reduce((sum, s) => sum + s.terkumpul, 0);
+            const sisaMengejar = totalTarget - totalTerkumpul;
+            const tabunganScoreCards = document.getElementById('tabungan-score-cards');
+            if (tabunganScoreCards) {
+                tabunganScoreCards.innerHTML = `
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Total Target</h3><p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${formatCurrency(totalTarget)}</p></div>
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Terkumpul</h3><p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(totalTerkumpul)}</p></div>
+                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Sisa</h3><p class="text-xl md:text-2xl font-bold text-yellow-500 mt-1">${formatCurrency(sisaMengejar)}</p></div>
+                `;
+            }
+
+            const list = document.getElementById('savings-list');
+            if (list) {
+                if (savings.length === 0) {
+                    list.innerHTML = `<p class="text-gray-500 md:col-span-2 lg:col-span-3 text-center py-8">Belum ada target tabungan.</p>`;
+                    return;
+                }
+                list.innerHTML = savings.map(s => {
+                    const progress = s.target > 0 ? Math.min((s.terkumpul / s.target) * 100, 100) : 0;
+                    const progressColor = progress >= 100 ? 'bg-green-500' : 'bg-blue-500';
+                    return `<div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col fade-in">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-xl font-bold">${s.nama}</h3><p class="text-sm text-gray-500 dark:text-gray-400">Oleh: ${s.oleh}</p></div>
+                            <button onclick="deleteTabungan('${s.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        <div class="my-4 flex-grow">
+                            <div class="flex justify-between text-sm font-medium mb-1"><span>${formatCurrency(s.terkumpul)}</span><span class="text-gray-500">${formatCurrency(s.target)}</span></div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4"><div class="${progressColor} h-4 rounded-full" style="width: ${progress}%"></div></div>
+                            <p class="text-right text-sm font-bold mt-1">${progress.toFixed(1)}%</p>
+                        </div>
+                        <button onclick="openTambahDanaModal('${s.id}')" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Tambah Dana</button>
+                    </div>`;
+                }).join('');
+            }
+        }
+        window.deleteTabungan = async (id) => { if (window.confirm('Yakin hapus target tabungan ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id)); } }; // Menggunakan window.confirm dan window.db
+        window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; openModal('modal-tambah-dana'); };
+        async function handleTabunganSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const newTabungan = {
+                nama: document.getElementById('tabungan-nama')?.value,
+                target: parseFloat(document.getElementById('tabungan-target')?.value) || 0,
+                terkumpul: parseFloat(document.getElementById('tabungan-awal')?.value) || 0,
+                oleh: document.getElementById('tabungan-oleh')?.value,
+                createdAt: serverTimestamp()
+            };
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); } // Gunakan window.db
+            catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); } // Menggunakan console.error
+        }
+        async function handleTambahDanaSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const id = document.getElementById('tambah-dana-id')?.value;
+            const jumlah = parseFloat(document.getElementById('tambah-dana-jumlah')?.value);
+            const tabunganRef = doc(window.db, "hubs", currentHubId, "savings", id); // Gunakan window.db
+            const tabunganSnap = await getDoc(tabunganRef);
+            if (tabunganSnap.exists()) {
+                const newTerkumpul = (tabunganSnap.data().terkumpul || 0) + jumlah;
+                await updateDoc(tabunganRef, { terkumpul: newTerkumpul });
+            }
+            closeModal('modal-tambah-dana');
+            form.reset();
+        }
+
+        async function renderDiary() {
+            if (!currentHubId) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "diary"), orderBy("tanggal", "desc")); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const diary = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            const container = document.getElementById('diary-entries');
+            if (container) {
+                if (diary.length === 0) { container.innerHTML = `<p class="text-gray-500 text-center py-8">Belum ada tulisan diary.</p>`; return; }
+                container.innerHTML = diary.map(entry => `
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md fade-in">
+                        <div class="flex justify-between items-start">
+                            <div><h3 class="text-2xl font-bold">${entry.judul} <span class="text-3xl">${entry.mood}</span></h3><p class="text-sm text-gray-500 dark:text-gray-400">${formatDate(entry.tanggal)} - oleh ${entry.oleh}</p></div>
+                            <button onclick="deleteDiary('${entry.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                        ${entry.foto ? `<img src="${entry.foto}" alt="Foto diary" class="my-4 rounded-lg max-h-80 w-auto mx-auto">` : ''}
+                        <p class="mt-4 whitespace-pre-wrap">${entry.isi}</p>
+                    </div>`).join('');
+            }
+        }
+        window.deleteDiary = async (id) => { if (window.confirm('Yakin hapus entri diary ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id)); } }; // Menggunakan window.confirm dan window.db
+        async function handleDiarySubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fotoPreview = document.getElementById('diary-foto-preview');
+            const date = new Date(document.getElementById('diary-tanggal')?.value);
+            date.setUTCHours(12);
+            const newEntry = {
+                tanggal: Timestamp.fromDate(date),
+                judul: document.getElementById('diary-judul')?.value,
+                isi: document.getElementById('diary-isi')?.value,
+                mood: document.getElementById('diary-mood')?.value,
+                oleh: document.getElementById('diary-oleh')?.value,
+                foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
+                createdAt: serverTimestamp()
+            };
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
+            catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); } // Menggunakan console.error
+        }
+
+        async function renderWishlist() {
+            if (!currentHubId) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "wishlist"), orderBy("createdAt", "desc")); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const wishlist = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            const gallery = document.getElementById('wishlist-gallery');
+            if (gallery) {
+                if (wishlist.length === 0) { gallery.innerHTML = `<p class="text-gray-500 text-center py-8 sm:col-span-2 md:col-span-3 lg:col-span-4">Belum ada wishlist.</p>`; return; }
+                gallery.innerHTML = wishlist.map(wish => `
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden fade-in">
+                        <img src="${wish.foto || 'https://placehold.co/400x300/e2e8f0/64748b?text=Gambar'}" alt="${wish.nama}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="font-bold text-lg">${wish.nama}</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">${wish.kategori}</p>
+                            <p class="text-sm mt-2">Keinginan: <span class="font-semibold">${wish.oleh}</span></p>
+                            <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">${wish.deskripsi}</p>
+                            <button onclick="deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
+                        </div>
+                    </div>`).join('');
+            }
+        }
+        window.deleteWishlist = async (id) => { if (window.confirm('Yakin hapus wishlist ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id)); } }; // Menggunakan window.confirm dan window.db
+        async function handleWishlistSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const fotoPreview = document.getElementById('wishlist-foto-preview');
+            const newWish = {
+                nama: document.getElementById('wishlist-nama')?.value,
+                kategori: document.getElementById('wishlist-kategori')?.value,
+                oleh: document.getElementById('wishlist-oleh')?.value,
+                deskripsi: document.getElementById('wishlist-deskripsi')?.value,
+                foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
+                createdAt: serverTimestamp()
+            };
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
+            catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); } // Menggunakan console.error
+        }
+
+        async function renderCalendar() {
+            if (!currentHubId) return;
+            const year = calendarDate.getFullYear();
+            const month = calendarDate.getMonth(); // Perbaikan: seharusnya getMonth()
+            const calendarMonthYear = document.getElementById('calendar-month-year');
+            if (calendarMonthYear) {
+                calendarMonthYear.textContent = new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            }
+            const grid = document.getElementById('calendar-grid');
+            if (grid) {
+                grid.innerHTML = '';
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                const startDate = Timestamp.fromDate(new Date(year, month, 1));
+                const endDate = Timestamp.fromDate(new Date(year, month + 1, 1));
+                const q = query(collection(window.db, "hubs", currentHubId, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate)); // Gunakan window.db
+                const snapshot = await getDocs(q);
+                const eventsThisMonth = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+
+                for (let i = 0; i < firstDay; i++) { grid.innerHTML += '<div></div>'; }
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(year, month, day);
+                    const dateISO = date.toISOString().split('T')[0];
+                    const hasEvent = eventsThisMonth.some(e => new Date(e.tanggal.seconds * 1000).toISOString().split('T')[0] === dateISO);
+                    const isToday = dateISO === getTodayISO();
+                    const dayEl = document.createElement('div');
+                    dayEl.className = `calendar-day flex items-center justify-center cursor-pointer rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/50 transition`;
+                    if (isToday) dayEl.classList.add('bg-blue-500', 'text-white', 'font-bold');
+                    if (hasEvent) dayEl.classList.add('has-event');
+                    dayEl.textContent = day;
+                    dayEl.dataset.date = dateISO;
+                    dayEl.addEventListener('click', () => renderDailyActivities(dateISO, eventsThisMonth));
+                    grid.appendChild(dayEl);
+                }
+            }
+        }
+        function renderDailyActivities(dateISO, eventsThisMonth) {
+            document.querySelectorAll('.calendar-day.bg-gray-300').forEach(d => d.classList.remove('bg-gray-300', 'dark:bg-gray-600'));
+            const dayEl = document.querySelector(`.calendar-day[data-date="${dateISO}"]`);
+            if(dayEl) dayEl.classList.add('bg-gray-300', 'dark:bg-gray-600');
+            const selectedDateDisplay = document.getElementById('selected-date-display');
+            if (selectedDateDisplay) {
+                selectedDateDisplay.textContent = formatDate(dateISO);
+            }
+            const activitiesContainer = document.getElementById('daily-activities');
+            if (activitiesContainer) {
+                const dailyEvents = eventsThisMonth.filter(e => new Date(e.tanggal.seconds * 1000).toISOString().split('T')[0] === dateISO).sort((a,b) => a.waktu.localeCompare(b.waktu));
+                if (dailyEvents.length === 0) { activitiesContainer.innerHTML = `<p class="text-gray-500">Tidak ada aktivitas terjadwal.</p>`; return; }
+                activitiesContainer.innerHTML = dailyEvents.map(event => `
+                    <div class="bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-bold">${event.nama} <span class="text-sm font-normal text-gray-500">(${event.waktu})</span></p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">${event.deskripsi || ''}</p>
+                                <div class="text-xs mt-1">
+                                    ${event.ikut.lukman ? '<span class="bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">Lukman</span>' : ''}
+                                    ${event.ikut.destry ? '<span class="bg-pink-200 text-pink-800 px-2 py-0.5 rounded-full">Destry</span>' : ''}
+                                </div>
+                            </div>
+                            <button onclick="deleteAktivitas('${event.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>`).join('');
+            }
+        }
+        window.deleteAktivitas = async (id) => { if (window.confirm('Yakin hapus aktivitas ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id)); } }; // Menggunakan window.confirm dan window.db
+        async function handleAktivitasSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const date = new Date(document.getElementById('aktivitas-tanggal')?.value);
+            date.setUTCHours(12);
+            const newEvent = {
+                nama: document.getElementById('aktivitas-nama')?.value,
+                tanggal: Timestamp.fromDate(date),
+                waktu: document.getElementById('aktivitas-waktu')?.value,
+                deskripsi: document.getElementById('aktivitas-deskripsi')?.value,
+                ikut: { lukman: document.getElementById('aktivitas-ikut-lukman')?.checked, destry: document.getElementById('aktivitas-ikut-destry')?.checked },
+                createdAt: serverTimestamp()
+            };
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); } // Gunakan window.db
+            catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); } // Menggunakan console.error
+        }
+
+        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } } // Gunakan window.db
+        async function renderHabitTable() {
+            if (!currentHubId) return;
+            const habitMonthYear = document.getElementById('habit-month-year');
+            if (habitMonthYear) {
+                habitMonthYear.textContent = habitDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            }
+            const container = document.getElementById('habit-table-container');
+            if (container) {
+                container.innerHTML = '<div class="loader mx-auto"></div>';
+                const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits"), orderBy("name")); // Gunakan window.db
+                const habitsSnapshot = await getDocs(habitsQuery);
+                const habits = habitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                const year = habitDate.getFullYear();
+                const month = habitDate.getMonth();
+                const startDate = new Date(year, month, 1);
+                const endDate = new Date(year, month + 1, 0, 23, 59, 59);
+                const entriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries"), where("date", ">=", startDate), where("date", "<=", endDate)); // Gunakan window.db
+                const entriesSnapshot = await getDocs(entriesQuery);
+                const entriesMap = new Map();
+                entriesSnapshot.docs.forEach(doc => { const data = doc.data(); const dateKey = new Date(data.date.seconds * 1000).toISOString().split('T')[0]; entriesMap.set(dateKey, { id: doc.id, ...data }); });
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                let tableHTML = '<table class="habit-table"><thead><tr><th class="habit-name">Habit</th>';
+                for (let i = 1; i <= daysInMonth; i++) { tableHTML += `<th>${i}</th>`; }
+                tableHTML += '<th>Aksi</th></tr></thead><tbody>';
+                if (habits.length === 0) { tableHTML += `<tr><td colspan="${daysInMonth + 2}" class="text-center p-8 text-gray-500">Belum ada habit. Tambahkan satu!</td></tr>`; } 
+                else {
+                    habits.forEach(habit => {
+                        tableHTML += `<tr><td class="habit-name" title="${habit.name}">${habit.name}</td>`;
+                        for (let day = 1; day <= daysInMonth; day++) {
+                            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                            const entry = entriesMap.get(dateKey);
+                            const status = entry?.statuses?.[habit.id] || { lukman: false, destry: false };
+                            let statusClass = 'status-none';
+                            if (status.lukman && status.destry) statusClass = 'status-both';
+                            else if (status.lukman) statusClass = 'status-lukman';
+                            else if (status.destry) statusClass = 'status-destry';
+                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
+                        }
+                        tableHTML += `<td><button onclick="deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
+                        tableHTML += '</tr>';
+                    });
+                }
+                tableHTML += '</tbody></table>';
+                container.innerHTML = tableHTML;
+            }
+        }
+        window.deleteHabit = async (id) => { if (window.confirm('Yakin hapus habit ini? Semua data progresnya juga akan hilang.')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id)); } }; // Menggunakan window.confirm dan window.db
+        window.cycleHabitStatus = async (habitId, dateKey) => {
+            const date = new Date(dateKey);
+            date.setUTCHours(12);
+            const entryDocId = dateKey;
+            const entryRef = doc(window.db, "hubs", currentHubId, "habitEntries", entryDocId); // Gunakan window.db
+            const entrySnap = await getDoc(entryRef);
+            const currentStatuses = entrySnap.exists() ? entrySnap.data().statuses : {};
+            const currentStatus = currentStatuses[habitId] || { lukman: false, destry: false };
+            let nextStatus = { lukman: false, destry: false };
+            if (!currentStatus.lukman && !currentStatus.destry) { nextStatus = { lukman: true, destry: false }; } 
+            else if (currentStatus.lukman && !currentStatus.destry) { nextStatus = { lukman: false, destry: true }; } 
+            else if (!currentStatus.lukman && currentStatus.destry) { nextStatus = { lukman: true, destry: true }; }
+            const newStatuses = { ...currentStatuses, [habitId]: nextStatus };
+            try { await setDoc(entryRef, { date: Timestamp.fromDate(date), statuses: newStatuses }, { merge: true }); } catch (error) { console.error("Error updating habit status: ", error); }
+        };
+        function setupImagePreview(inputId, previewId) { 
+            const input = document.getElementById(inputId); 
+            const preview = document.getElementById(previewId); 
+            if (input && preview) {
+                input.addEventListener('change', () => { 
+                    const file = input.files[0]; 
+                    if (file) { 
+                        const reader = new FileReader(); 
+                        reader.onload = (e) => { 
+                            preview.src = e.target.result; 
+                            preview.classList.remove('hidden'); 
+                        }; 
+                        reader.readAsDataURL(file); 
+                    } else { 
+                        preview.src = ''; 
+                        preview.classList.add('hidden'); 
+                    } 
+                }); 
+            }
+        }
+        
+        async function renderDashboard() {
+            if (!currentHubId) return;
+            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
+            const savingsQuery = query(collection(window.db, "hubs", currentHubId, "savings")); // Gunakan window.db
+            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
+            const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits")); // Gunakan window.db
+            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
+            const [txSnap, savingsSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(savingsQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
+            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const savings = savingsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Main cards
+            const saldo = transactions.reduce((acc, t) => t.kategori === 'Pemasukan' ? acc + t.jumlah : acc - t.jumlah, 0);
+            const dashboardSaldo = document.getElementById('dashboard-saldo');
+            if (dashboardSaldo) {
+                dashboardSaldo.textContent = formatCurrency(saldo);
+                dashboardSaldo.className = `text-2xl font-bold mt-1 ${saldo >= 0 ? 'text-green-500' : 'text-red-500'}`;
+            }
+            const totalTabungan = savings.reduce((acc, s) => acc + s.terkumpul, 0);
+            const dashboardTabungan = document.getElementById('dashboard-tabungan');
+            if (dashboardTabungan) {
+                dashboardTabungan.textContent = formatCurrency(totalTabungan);
+            }
+            const todayISO = getTodayISO();
+            const todayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === todayISO);
+            const dashboardMood = document.getElementById('dashboard-mood');
+            if (dashboardMood) {
+                dashboardMood.textContent = todayDiary ? todayDiary.mood : '😶';
+            }
+            const todayHabitEntry = habitEntries.find(e => new Date(e.date.seconds * 1000).toISOString().split('T')[0] === todayISO);
+            let completed = 0;
+            const totalPossible = habits.length * 2;
+            if(todayHabitEntry && todayHabitEntry.statuses) {
+                Object.values(todayHabitEntry.statuses).forEach(status => {
+                    if (status.lukman) completed++;
+                    if (status.destry) completed++;
+                });
+            }
+            const completionPercent = totalPossible > 0 ? (completed / totalPossible) * 100 : 0;
+            const dashboardHabitCompletion = document.getElementById('dashboard-habit-completion');
+            if (dashboardHabitCompletion) {
+                dashboardHabitCompletion.textContent = `${completionPercent.toFixed(0)}%`;
+            }
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#e5e7eb' : '#374151';
+
+            // Expense Chart
+            const expenseData = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((acc, t) => { acc[t.kategori] = (acc[t.kategori] || 0) + t.jumlah; return acc; }, {});
+            const expenseChartEl = document.getElementById('expenseChart');
+            if (expenseChartEl) {
+                if (expenseChartInstance) expenseChartInstance.destroy();
+                expenseChartInstance = new Chart(expenseChartEl, {
+                    type: 'doughnut', data: { labels: Object.keys(expenseData), datasets: [{ data: Object.values(expenseData), backgroundColor: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6'], borderColor: isDark ? '#1f2937' : '#ffffff', borderWidth: 4 }] },
+                    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
+                });
+            }
+
+            // Income vs Expense Chart
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const monthTxs = transactions.filter(t => t.tanggal.toDate() >= firstDay && t.tanggal.toDate() <= lastDay);
+            const totalIncome = monthTxs.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const totalExpense = monthTxs.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+            const incomeExpenseChartEl = document.getElementById('incomeExpenseChart');
+            if (incomeExpenseChartEl) {
+                if(incomeExpenseChartInstance) incomeExpenseChartInstance.destroy();
+                incomeExpenseChartInstance = new Chart(incomeExpenseChartEl, {
+                    type: 'bar',
+                    data: { labels: ['Bulan Ini'], datasets: [
+                        { label: 'Pemasukan', data: [totalIncome], backgroundColor: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 },
+                        { label: 'Pengeluaran', data: [totalExpense], backgroundColor: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 1 }
+                    ]},
+                    options: { scales: { y: { beginAtZero: true, ticks: { color: textColor } } }, plugins: { legend: { labels: { color: textColor } } } }
+                });
+            }
+
+            // Mood Tracker
+            const moodContainer = document.getElementById('dashboard-mood-tracker');
+            if (moodContainer) {
+                moodContainer.innerHTML = '';
+                for (let i = 6; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateISO = date.toISOString().split('T')[0];
+                    const dayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === dateISO);
+                    const mood = dayDiary ? dayDiary.mood : '😶';
+                    const dayName = formatDate(date, { weekday: 'short' });
+                    moodContainer.innerHTML += `<div class="text-center"><div class="text-3xl">${mood}</div><div class="text-xs text-gray-500">${dayName}</div></div>`;
+                }
+            }
+        }
+
+        async function renderIndividualSummaries() {
+            if (!currentHubId) return;
+            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
+            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
+            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
+            const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
+            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const renderSummaryFor = (person, containerId) => {
+                const pengeluaran = transactions.filter(t => t.oleh === person && t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+                const pemasukan = transactions.filter(t => t.oleh === person && t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
+                const diaryCount = diary.filter(d => d.oleh === person).length;
+                let habitsDone = 0;
+                habitEntries.forEach(entry => {
+                    if (entry.statuses) {
+                        Object.values(entry.statuses).forEach(status => {
+                            if (status[person.toLowerCase()]) habitsDone++;
+                        });
+                    }
+                });
+                const containerEl = document.getElementById(containerId);
+                if (containerEl) {
+                    containerEl.innerHTML = `
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                            <p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(pemasukan)}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                            <p class="text-xl md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(pengeluaran)}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
+                            <p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${diaryCount}</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
+                            <p class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">${habitsDone}</p>
+                        </div>
+                    `;
+                }
+            };
+            renderSummaryFor('Lukman', 'summary-individu-lukman');
+            renderSummaryFor('Destry', 'summary-individu-destry');
+        }
+
+        // --- NOTIFIKASI SAYANG ---
+        async function handleNotifikasiSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const pesan = document.getElementById('notifikasi-pesan')?.value;
+            const untuk = document.getElementById('notifikasi-untuk')?.value;
+            const oleh = untuk === 'Lukman' ? 'Destry' : 'Lukman';
+
+            if (!pesan?.trim()) return;
+
+            try {
+                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), { // Gunakan window.db
+                    message: pesan,
+                    sender: oleh,
+                    recipient: untuk,
+                    isRead: false,
+                    createdAt: serverTimestamp()
+                });
+                form.reset();
+                console.log('Pesan terkirim!'); // Menggunakan console.log
+            } catch (error) {
+                console.error("Error sending notification:", error);
+                console.error("Gagal mengirim pesan."); // Menggunakan console.error
+            }
+        }
+
+        async function renderNotifikasi() {
+            if (!currentHubId) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), orderBy("createdAt", "desc")); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            const listContainer = document.getElementById('notifikasi-list');
+            
+            if (listContainer) {
+                if (notifications.length === 0) {
+                    listContainer.innerHTML = `<p class="text-gray-500">Belum ada notifikasi.</p>`;
+                    return;
+                }
+
+                listContainer.innerHTML = notifications.map(notif => {
+                    const time = notif.createdAt ? formatDate(notif.createdAt, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
+                    const bgColor = notif.sender === 'Lukman' ? 'bg-blue-50 dark:bg-blue-900/50' : 'bg-pink-50 dark:bg-pink-900/50';
+                    return `
+                        <div class="${bgColor} p-4 rounded-lg shadow">
+                            <p class="font-semibold">${notif.message}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dari: ${notif.sender} - ${time}</p>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        async function checkUnreadNotifications() {
+            if (!currentHubId || !currentUser) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const navLink = document.querySelector('.nav-link[data-target="notifikasi"]');
+            if (navLink) {
+                if (snapshot.empty) {
+                    navLink.classList.remove('has-notification');
+                } else {
+                    navLink.classList.add('has-notification');
+                }
+            }
+        }
+
+        async function markNotificationsAsRead() {
+            if (!currentHubId || !currentUser) return;
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
+            const snapshot = await getDocs(q);
+            const batch = writeBatch(window.db); // Gunakan window.db
+            snapshot.docs.forEach(doc => {
+                batch.update(doc.ref, { isRead: true });
+            });
+            await batch.commit();
+        }
+
+        function showToastNotification(title, message) {
+            const toast = document.getElementById('toast-notification');
+            const toastSender = document.getElementById('toast-sender');
+            const toastMessage = document.getElementById('toast-message');
+
+            if (toast && toastSender && toastMessage) {
+                toastSender.textContent = title;
+                toastMessage.textContent = message;
+
+                toast.classList.remove('translate-x-[150%]', 'opacity-0');
+                
+                const closeBtn = document.getElementById('toast-close-btn');
+                const replyBtn = document.getElementById('toast-reply-btn');
+
+                const hideToast = () => {
+                    toast.classList.add('translate-x-[150%]', 'opacity-0');
+                };
+                
+                closeBtn?.addEventListener('click', closeHandler); // Menggunakan addEventListener
+                replyBtn?.addEventListener('click', replyHandler); // Menggunakan addEventListener
+
+                setTimeout(hideToast, 5000); // Auto-hide after 5 seconds
+            }
+        }
+
+        // --- RODA KENCAN ---
+        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Cari Kopi", "Karaoke"];
+        const wheelCanvas = document.getElementById('spinner-canvas');
+        const spinBtn = document.getElementById('spin-btn');
+        let isSpinning = false;
+        let currentAngle = 0;
+        const colors = ["#f87171", "#fb923c", "#facc15", "#a3e635", "#4ade80", "#34d399", "#22d3ee", "#60a5fa"];
+
+        function drawWheel() {
+            if (!wheelCanvas) return;
+            const ctx = wheelCanvas.getContext('2d');
+            const centerX = wheelCanvas.width / 2;
+            const centerY = wheelCanvas.height / 2;
+            const radius = centerX - 5;
+            const arcSize = 2 * Math.PI / dateIdeas.length;
+
+            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentAngle);
+            ctx.translate(-centerX, -centerY);
+
+            for (let i = 0; i < dateIdeas.length; i++) {
+                const startAngle = i * arcSize;
+                const endAngle = startAngle + arcSize;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Inter";
+                ctx.fillText(dateIdeas[i], radius - 10, 5);
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+        
+        function setupWheel() {
+            drawWheel();
+        }
+
+        function spinWheel() {
+            if (isSpinning || !wheelCanvas) return;
+            isSpinning = true;
+            const randomSpins = Math.floor(Math.random() * 5) + 8;
+            const randomStopAngle = Math.floor(Math.random() * 360);
+            const totalRotation = (randomSpins * 360) + randomStopAngle;
+            
+            wheelCanvas.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            wheelCanvas.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                const segmentAngle = 360 / dateIdeas.length;
+                const finalAngle = totalRotation % 360;
+                const pointerAngle = 270; // Pointer is at the top
+                const winningIndex = Math.floor((360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle);
+                const result = dateIdeas[winningIndex];
+                
+                const hasilKencanText = document.getElementById('hasil-kencan-text');
+                if (hasilKencanText) {
+                    hasilKencanText.textContent = result;
+                }
+                openModal('modal-kencan-hasil');
+                isSpinning = false;
+            }, 5000); // Must match the transition duration in CSS
+        }
+
+        // --- PROFIL PICTURE ---
+        function setupProfilePicPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const saveBtn = document.getElementById('save-profile-pic-btn');
+            if (input && preview && saveBtn) {
+                input.addEventListener('change', () => {
+                    const file = input.files[0];
+                    if (file) {
+                        selectedProfilePicFile = file;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            preview.src = e.target.result;
+                            preview.classList.remove('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                        saveBtn.disabled = false;
+                    }
+                });
+            }
+        }
+
+        async function handleProfilePicUpload() {
+            if (!selectedProfilePicFile || !currentUser) return;
+            const saveBtn = document.getElementById('save-profile-pic-btn');
+            if (!saveBtn) return;
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Mengunggah...';
+
+            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`); // Gunakan window.storage
+            try {
+                await uploadBytes(storageRef, selectedProfilePicFile);
+                const downloadURL = await getDownloadURL(storageRef);
+                await updateDoc(doc(window.db, "users", currentUser.uid), { // Gunakan window.db
+                    photoURL: downloadURL
+                });
+                console.log('Foto profil berhasil diperbarui!'); // Menggunakan console.log
+                saveBtn.textContent = 'Simpan Foto';
+            } catch (error) {
+                console.error("Error uploading profile picture:", error);
+                console.error('Gagal mengunggah foto.'); // Menggunakan console.error
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Simpan Foto';
+            }
+        }
+
+        async function renderDashboardHeader() {
+            if (!currentHubId) return;
+            const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId)); // Gunakan window.db
+            if (!hubDoc.exists()) return;
+            
+            const members = hubDoc.data().members || [];
+            const userDocs = await Promise.all(members.map(uid => getDoc(doc(window.db, "users", uid)))); // Gunakan window.db
+            
+            const lukmanUser = userDocs.find(d => d.data()?.email.includes('lukman'));
+            const destryUser = userDocs.find(d => d.data()?.email.includes('destry'));
+
+            const profilePicLukman = document.getElementById('profile-pic-lukman');
+            const profilePicDestry = document.getElementById('profile-pic-destry');
+
+            if (lukmanUser && lukmanUser.data()?.photoURL && profilePicLukman) {
+                profilePicLukman.src = lukmanUser.data().photoURL;
+            }
+            if (destryUser && destryUser.data()?.photoURL && profilePicDestry) {
+                profilePicDestry.src = destryUser.data().photoURL;
+            }
+        }
+
+        // Panggil inisialisasi Firebase saat DOM dimuat
+        window.onload = () => {
+            initializeFirebase();
+            mainApp(); // Panggil mainApp setelah inisialisasi Firebase
+            // --- Pendaftaran Service Worker ---
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker berhasil didaftarkan:', registration);
+                    })
+                    .catch((error) => {
+                        console.error('Pendaftaran Service Worker gagal:', error);
+                    });
+            }
+            // ----------------------------------
+        };
+
+    </script>
+</body>
+</html>
