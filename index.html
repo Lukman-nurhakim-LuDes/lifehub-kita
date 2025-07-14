@@ -380,31 +380,31 @@
     <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
     <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
     <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
-    <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div class="space-y-4"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
+    <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
     <div id="modal-diary" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-lg mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tulis Diary</h2><form id="form-diary"><div class="space-y-4"><input type="hidden" id="diary-id"><div><label for="diary-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="diary-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-judul" class="block mb-1 font-medium">Judul</label><input type="text" id="diary-judul" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-isi" class="block mb-1 font-medium">Isi Diary</label><textarea id="diary-isi" rows="5" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></textarea></div><div class="flex items-center justify-between"><div><label for="diary-mood" class="block mb-1 font-medium">Mood</label><select id="diary-mood" class="p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-2xl" required><option value="😊">😊 Bahagia</option><option value="😂">😂 Sangat Bahagia</option><option value="🙂">🙂 Biasa Saja</option><option value="😢">😢 Sedih</option><option value="😠">😠 Marah</option><option value="😴">😴 Lelah</option></select></div><div><label for="diary-oleh" class="block mb-1 font-medium">Penulis</label><select id="diary-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div></div><div><label for="diary-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="diary-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900"><img id="diary-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-diary')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Simpan</button></div></form></div></div>
     <div id="modal-wishlist" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Wishlist</h2><form id="form-wishlist"><div class="space-y-4"><input type="hidden" id="wishlist-id"><div><label for="wishlist-nama" class="block mb-1 font-medium">Nama Barang</label><input type="text" id="wishlist-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="wishlist-kategori" class="block mb-1 font-medium">Kategori</label><select id="wishlist-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Liburan</option><option>Makan Bareng</option><option>Jalan-jalan</option><option>Bioskop Date</option><option>Caffe Date</option><option>Photobox Date</option></select></div><div><label for="wishlist-oleh" class="block mb-1 font-medium">Keinginan</label><select id="wishlist-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option><option>Bersama</option></select></div><div><label for="wishlist-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="wishlist-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label for="wishlist-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="wishlist-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100 dark:file:bg-yellow-900/50 dark:file:text-yellow-300 dark:hover:file:bg-yellow-900"><img id="wishlist-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-wishlist')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600">Simpan</button></div></form></div></div>
-    <div id="modal-aktivitas" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Aktivitas</h2><form id="form-aktivitas"><input type="hidden" id="aktivitas-id"><div class="space-y-4"><div><label for="aktivitas-nama" class="block mb-1 font-medium">Nama Aktivitas</label><input type="text" id="aktivitas-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="aktivitas-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-waktu" class="block mb-1 font-medium">Waktu</label><input type="time" id="aktivitas-waktu" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="aktivitas-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label class="block mb-1 font-medium">Siapa yang ikut?</label><div class="flex gap-4"><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-lukman" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2">Lukman</span></label><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-destry" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"><span class="ml-2">Destry</span></label></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-aktivitas')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Simpan</button></div></form></div></div>
+    <div id="modal-aktivitas" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Aktivitas</h2><form id="form-aktivitas"><input type="hidden" id="aktivitas-id"><div><label for="aktivitas-nama" class="block mb-1 font-medium">Nama Aktivitas</label><input type="text" id="aktivitas-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="aktivitas-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-waktu" class="block mb-1 font-medium">Waktu</label><input type="time" id="aktivitas-waktu" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="aktivitas-deskripsi" class="block mb-1 font-medium">Deskripsi</label><textarea id="aktivitas-deskripsi" rows="3" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div><div><label class="block mb-1 font-medium">Siapa yang ikut?</label><div class="flex gap-4"><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-lukman" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2">Lukman</span></label><label class="flex items-center"><input type="checkbox" id="aktivitas-ikut-destry" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500"><span class="ml-2">Destry</span></label></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-aktivitas')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">Simpan</button></div></form></div></div>
 
     <!-- Firebase SDK and App Logic -->
     <script type="module">
         // Import modul Firebase yang diperlukan
-        // Menggunakan versi 11.6.1 yang kompatibel dengan modul import
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+        // Menggunakan versi 9.17.1 yang sesuai dengan konfigurasi awal Anda
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         
         // Konfigurasi Firebase Anda (dari konsol Firebase)
         // Gunakan variabel global jika tersedia (dari lingkungan Canvas), jika tidak, gunakan konfigurasi hardcoded Anda
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
-            authDomain: "coupleflow-3c5d2.firebaseapp.com",
-            projectId: "coupleflow-3c5d2",
-            storageBucket: "coupleflow-3c5d2.firebasestorage.app",
-            messagingSenderId: "1087616981568",
-            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
-            measurementId: "G-Q49D43SNHH"
+            apiKey: "AIzaSyA5GRzA83x8DbaxUb5pRH_Yx0ZWMsCVN0w",
+            authDomain: "jalan-cerita-5c989.firebaseapp.com",
+            projectId: "jalan-cerita-5c989",
+            storageBucket: "jalan-cerita-5c989.appspot.com",
+            messagingSenderId: "606590919634",
+            appId: "1:606590919634:web:039ddf6e2b7e13d0675e0b",
+            measurementId: "G-9L0MLVQCNL"
         };
 
         // Variabel global yang disediakan oleh lingkungan Canvas
@@ -414,6 +414,7 @@
         // Variabel global untuk logika aplikasi utama
         let currentUser = null;
         let currentHubId = null;
+        let userId = null; // Deklarasi userId di sini
         let unsubscribeListeners = [];
         let expenseChartInstance, incomeExpenseChartInstance;
         let calendarDate = new Date();
@@ -463,21 +464,22 @@
                 messageListElement = document.getElementById('message-list');
                 requestPermissionBtn = document.getElementById('request-permission-btn');
 
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                messaging = getMessaging(app); // Inisialisasi Messaging
-                storage = getStorage(app); // Inisialisasi Storage
+                // Inisialisasi Firebase App dan layanannya
+                window.app = initializeApp(firebaseConfig);
+                window.db = getFirestore(window.app);
+                window.auth = getAuth(window.app);
+                window.messaging = getMessaging(window.app);
+                window.storage = getStorage(window.app);
 
                 if (authInfoElement) { // Periksa keberadaan elemen sebelum mengakses properti
                     authInfoElement.textContent = 'Mengotentikasi...';
                 }
 
                 // Listener untuk perubahan status otentikasi
-                onAuthStateChanged(auth, async (user) => {
+                onAuthStateChanged(window.auth, async (user) => { // Gunakan window.auth
                     if (user) {
                         currentUser = user; // Set currentUser
-                        userId = user.uid;
+                        userId = user.uid; 
                         if (authInfoElement) {
                             authInfoElement.textContent = `Berhasil masuk sebagai: ${userId}`;
                         }
@@ -486,7 +488,7 @@
                         // Lanjutkan dengan penyiapan Messaging setelah otentikasi selesai
                         setupFirebaseMessaging();
                         // Anda bisa menambahkan listener Firestore di sini jika diperlukan data pengguna
-                        const userDocRef = doc(db, "users", user.uid);
+                        const userDocRef = doc(window.db, "users", user.uid); // Gunakan window.db
                         const userDocSnap = await getDoc(userDocRef);
                         if (userDocSnap.exists() && userDocSnap.data().hubId) {
                             currentHubId = userDocSnap.data().hubId;
@@ -498,9 +500,9 @@
                         // Jika tidak ada pengguna, coba masuk secara anonim
                         try {
                             if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
+                                await signInWithCustomToken(window.auth, initialAuthToken); // Gunakan window.auth
                             } else {
-                                await signInAnonymously(auth);
+                                await signInAnonymously(window.auth); // Gunakan window.auth
                             }
                             // onAuthStateChanged akan dipanggil lagi setelah masuk
                         } catch (error) {
@@ -551,8 +553,8 @@
 
                     // Mendapatkan token pendaftaran perangkat (FCM Token)
                     // Ganti dengan VAPID Key Anda dari pengaturan proyek Firebase (Project settings -> Cloud Messaging)
-                    const vapidKey = 'BJ-LJBU-09cwNok7guCYQk3diDgcdvgS7grU2-nwagIuYqhrNm5p050W7CwDmvMLztB0zCvJKPebLQC4yw5ijaA'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
-                    const currentToken = await getToken(messaging, { vapidKey: vapidKey }); 
+                    const vapidKey = 'BLgy6qLYxufc6dTD2a36U6NzmUzY1zKHaQUr2Iyx0bDglujQM5hL7y0yHpFQNRKoESjKDg6gMaVvwX4ok2PlpoE'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
+                    const currentToken = await getToken(window.messaging, { vapidKey: vapidKey }); // Gunakan window.messaging
                     if (currentToken) {
                         if (fcmTokenElement) {
                             fcmTokenElement.textContent = currentToken;
@@ -595,7 +597,7 @@
             }
 
             // Menangani pesan di latar depan (saat aplikasi sedang aktif)
-            onMessage(messaging, (payload) => {
+            onMessage(window.messaging, (payload) => { // Gunakan window.messaging
                 console.log('Pesan latar depan diterima:', payload);
                 if (incomingMessagesContainer) {
                     incomingMessagesContainer.classList.remove('hidden');
@@ -618,13 +620,14 @@
          * Ini adalah contoh, Anda dapat menyesuaikannya dengan kebutuhan aplikasi Anda.
          */
         function setupFirestoreListener() {
-            if (!db || !userId) {
+            // userId dijamin sudah terdefinisi karena fungsi ini dipanggil setelah onAuthStateChanged(user)
+            if (!window.db || !userId) { // Gunakan window.db
                 console.log("Firestore atau userId belum siap.");
                 return;
             }
 
             // Contoh: Mendengarkan data publik
-            const publicCollectionRef = collection(db, `artifacts/${appId}/public/data/messages`);
+            const publicCollectionRef = collection(window.db, `artifacts/${appId}/public/data/messages`); // Gunakan window.db
             onSnapshot(publicCollectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -643,7 +646,7 @@
             });
 
             // Contoh: Mendengarkan data pribadi (jika ada)
-            const privateCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/private_messages`);
+            const privateCollectionRef = collection(window.db, `artifacts/${appId}/users/${userId}/private_messages`); // Gunakan window.db
             onSnapshot(privateCollectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -750,12 +753,12 @@
                 'events': [renderCalendar],
                 'notifications': [renderNotifikasi, checkUnreadNotifications]
             };
-            const hubDocRef = doc(db, "hubs", currentHubId);
+            const hubDocRef = doc(window.db, "hubs", currentHubId); // Gunakan window.db
             const hubUnsubscribe = onSnapshot(hubDocRef, renderDashboardHeader);
             unsubscribeListeners.push(hubUnsubscribe);
 
             Object.keys(collectionsToRender).forEach(col => {
-                const q = query(collection(db, "hubs", currentHubId, col));
+                const q = query(collection(window.db, "hubs", currentHubId, col)); // Gunakan window.db
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     // In-app notification logic
                     if (col === 'notifications') {
@@ -844,25 +847,25 @@
             applyTheme(currentTheme === 'dark');
         }
         
-        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
-        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
-        async function handleLogout() { if(window.confirm('Anda yakin ingin logout?')) await signOut(auth); } // Menggunakan window.confirm
+        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
+        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
+        async function handleLogout() { if(window.confirm('Anda yakin ingin logout?')) await signOut(window.auth); } // Menggunakan window.confirm dan window.auth
         async function createHub() { 
             if (!currentUser) { console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); return; } // Menggunakan console.error
-            const hubId = doc(collection(db, 'hubs')).id; 
+            const hubId = doc(collection(window.db, 'hubs')).id; // Gunakan window.db
             try { 
-                const batch = writeBatch(db); 
-                batch.set(doc(db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() }); 
-                batch.set(doc(db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); 
+                const batch = writeBatch(window.db); // Gunakan window.db
+                batch.set(doc(window.db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() }); // Gunakan window.db
+                batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); // Gunakan window.db
                 await batch.commit(); 
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
                 // Menggunakan console.error daripada alert
-                console.error(`Gagal membuat hub. Error: ${error.message}`);
+                console.error(`Gagal membuat hub. Error: ${error.code}`);
                 document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
             } 
         }
-        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } }
+        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(window.db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } } // Gunakan window.db
         
         window.copyHubId = () => { const hubId = document.getElementById('profile-hub-id').textContent; document.execCommand('copy'); console.log('ID Hub disalin!'); }; // Menggunakan execCommand dan console.log
         function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
@@ -877,7 +880,7 @@
             const [year, month] = monthFilter ? monthFilter.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1];
             const startDate = Timestamp.fromDate(new Date(year, month - 1, 1));
             const endDate = Timestamp.fromDate(new Date(year, month, 1));
-            let q = query(collection(db, "hubs", currentHubId, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate), orderBy("tanggal", "desc"));
+            let q = query(collection(window.db, "hubs", currentHubId, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate), orderBy("tanggal", "desc")); // Gunakan window.db
             const querySnapshot = await getDocs(q);
             let transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
@@ -917,7 +920,7 @@
                 }
             }
         }
-        window.deleteTransaction = async (id) => { if (window.confirm('Yakin hapus transaksi ini?')) { await deleteDoc(doc(db, "hubs", currentHubId, "transactions", id)); } }; // Menggunakan window.confirm
+        window.deleteTransaction = async (id) => { if (window.confirm('Yakin hapus transaksi ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id)); } }; // Menggunakan window.confirm dan window.db
         
         async function handleTransaksiSubmit(e) {
             e.preventDefault();
@@ -933,13 +936,13 @@
                 catatan: document.getElementById('transaksi-catatan')?.value,
                 createdAt: serverTimestamp(), createdBy: currentUser.uid
             };
-            try { await addDoc(collection(db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); } 
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); } // Gunakan window.db
             catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); } // Menggunakan console.error
         }
 
         async function renderTabungan() {
             if (!currentHubId) return;
-            const q = query(collection(db, "hubs", currentHubId, "savings"), orderBy("createdAt", "desc"));
+            const q = query(collection(window.db, "hubs", currentHubId, "savings"), orderBy("createdAt", "desc")); // Gunakan window.db
             const snapshot = await getDocs(q);
             const savings = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
@@ -980,7 +983,7 @@
                 }).join('');
             }
         }
-        window.deleteTabungan = async (id) => { if (window.confirm('Yakin hapus target tabungan ini?')) { await deleteDoc(doc(db, "hubs", currentHubId, "savings", id)); } }; // Menggunakan window.confirm
+        window.deleteTabungan = async (id) => { if (window.confirm('Yakin hapus target tabungan ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id)); } }; // Menggunakan window.confirm dan window.db
         window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; openModal('modal-tambah-dana'); };
         async function handleTabunganSubmit(e) {
             e.preventDefault();
@@ -992,7 +995,7 @@
                 oleh: document.getElementById('tabungan-oleh')?.value,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); } // Gunakan window.db
             catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); } // Menggunakan console.error
         }
         async function handleTambahDanaSubmit(e) {
@@ -1000,7 +1003,7 @@
             const form = e.target;
             const id = document.getElementById('tambah-dana-id')?.value;
             const jumlah = parseFloat(document.getElementById('tambah-dana-jumlah')?.value);
-            const tabunganRef = doc(db, "hubs", currentHubId, "savings", id);
+            const tabunganRef = doc(window.db, "hubs", currentHubId, "savings", id); // Gunakan window.db
             const tabunganSnap = await getDoc(tabunganRef);
             if (tabunganSnap.exists()) {
                 const newTerkumpul = (tabunganSnap.data().terkumpul || 0) + jumlah;
@@ -1012,7 +1015,7 @@
 
         async function renderDiary() {
             if (!currentHubId) return;
-            const q = query(collection(db, "hubs", currentHubId, "diary"), orderBy("tanggal", "desc"));
+            const q = query(collection(window.db, "hubs", currentHubId, "diary"), orderBy("tanggal", "desc")); // Gunakan window.db
             const snapshot = await getDocs(q);
             const diary = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             const container = document.getElementById('diary-entries');
@@ -1029,7 +1032,7 @@
                     </div>`).join('');
             }
         }
-        window.deleteDiary = async (id) => { if (window.confirm('Yakin hapus entri diary ini?')) { await deleteDoc(doc(db, "hubs", currentHubId, "diary", id)); } }; // Menggunakan window.confirm
+        window.deleteDiary = async (id) => { if (window.confirm('Yakin hapus entri diary ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id)); } }; // Menggunakan window.confirm dan window.db
         async function handleDiarySubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1045,13 +1048,13 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
             catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); } // Menggunakan console.error
         }
 
         async function renderWishlist() {
             if (!currentHubId) return;
-            const q = query(collection(db, "hubs", currentHubId, "wishlist"), orderBy("createdAt", "desc"));
+            const q = query(collection(window.db, "hubs", currentHubId, "wishlist"), orderBy("createdAt", "desc")); // Gunakan window.db
             const snapshot = await getDocs(q);
             const wishlist = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             const gallery = document.getElementById('wishlist-gallery');
@@ -1070,7 +1073,7 @@
                     </div>`).join('');
             }
         }
-        window.deleteWishlist = async (id) => { if (window.confirm('Yakin hapus wishlist ini?')) { await deleteDoc(doc(db, "hubs", currentHubId, "wishlist", id)); } }; // Menggunakan window.confirm
+        window.deleteWishlist = async (id) => { if (window.confirm('Yakin hapus wishlist ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id)); } }; // Menggunakan window.confirm dan window.db
         async function handleWishlistSubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1083,14 +1086,14 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
             catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); } // Menggunakan console.error
         }
 
         async function renderCalendar() {
             if (!currentHubId) return;
             const year = calendarDate.getFullYear();
-            const month = calendarDate.getMonth();
+            const month = calendarDate.getMonth(); // Perbaikan: seharusnya getMonth()
             const calendarMonthYear = document.getElementById('calendar-month-year');
             if (calendarMonthYear) {
                 calendarMonthYear.textContent = new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
@@ -1103,7 +1106,7 @@
                 
                 const startDate = Timestamp.fromDate(new Date(year, month, 1));
                 const endDate = Timestamp.fromDate(new Date(year, month + 1, 1));
-                const q = query(collection(db, "hubs", currentHubId, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate));
+                const q = query(collection(window.db, "hubs", currentHubId, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate)); // Gunakan window.db
                 const snapshot = await getDocs(q);
                 const eventsThisMonth = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
 
@@ -1152,7 +1155,7 @@
                     </div>`).join('');
             }
         }
-        window.deleteAktivitas = async (id) => { if (window.confirm('Yakin hapus aktivitas ini?')) { await deleteDoc(doc(db, "hubs", currentHubId, "events", id)); } }; // Menggunakan window.confirm
+        window.deleteAktivitas = async (id) => { if (window.confirm('Yakin hapus aktivitas ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id)); } }; // Menggunakan window.confirm dan window.db
         async function handleAktivitasSubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1166,11 +1169,11 @@
                 ikut: { lukman: document.getElementById('aktivitas-ikut-lukman')?.checked, destry: document.getElementById('aktivitas-ikut-destry')?.checked },
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); } // Gunakan window.db
             catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); } // Menggunakan console.error
         }
 
-        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } }
+        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } } // Gunakan window.db
         async function renderHabitTable() {
             if (!currentHubId) return;
             const habitMonthYear = document.getElementById('habit-month-year');
@@ -1180,14 +1183,14 @@
             const container = document.getElementById('habit-table-container');
             if (container) {
                 container.innerHTML = '<div class="loader mx-auto"></div>';
-                const habitsQuery = query(collection(db, "hubs", currentHubId, "habits"), orderBy("name"));
+                const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits"), orderBy("name")); // Gunakan window.db
                 const habitsSnapshot = await getDocs(habitsQuery);
                 const habits = habitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 const year = habitDate.getFullYear();
                 const month = habitDate.getMonth();
                 const startDate = new Date(year, month, 1);
                 const endDate = new Date(year, month + 1, 0, 23, 59, 59);
-                const entriesQuery = query(collection(db, "hubs", currentHubId, "habitEntries"), where("date", ">=", startDate), where("date", "<=", endDate));
+                const entriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries"), where("date", ">=", startDate), where("date", "<=", endDate)); // Gunakan window.db
                 const entriesSnapshot = await getDocs(entriesQuery);
                 const entriesMap = new Map();
                 entriesSnapshot.docs.forEach(doc => { const data = doc.data(); const dateKey = new Date(data.date.seconds * 1000).toISOString().split('T')[0]; entriesMap.set(dateKey, { id: doc.id, ...data }); });
@@ -1217,12 +1220,12 @@
                 container.innerHTML = tableHTML;
             }
         }
-        window.deleteHabit = async (id) => { if (window.confirm('Yakin hapus habit ini? Semua data progresnya juga akan hilang.')) { await deleteDoc(doc(db, "hubs", currentHubId, "habits", id)); } }; // Menggunakan window.confirm
+        window.deleteHabit = async (id) => { if (window.confirm('Yakin hapus habit ini? Semua data progresnya juga akan hilang.')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id)); } }; // Menggunakan window.confirm dan window.db
         window.cycleHabitStatus = async (habitId, dateKey) => {
             const date = new Date(dateKey);
             date.setUTCHours(12);
             const entryDocId = dateKey;
-            const entryRef = doc(db, "hubs", currentHubId, "habitEntries", entryDocId);
+            const entryRef = doc(window.db, "hubs", currentHubId, "habitEntries", entryDocId); // Gunakan window.db
             const entrySnap = await getDoc(entryRef);
             const currentStatuses = entrySnap.exists() ? entrySnap.data().statuses : {};
             const currentStatus = currentStatuses[habitId] || { lukman: false, destry: false };
@@ -1256,11 +1259,11 @@
         
         async function renderDashboard() {
             if (!currentHubId) return;
-            const txQuery = query(collection(db, "hubs", currentHubId, "transactions"));
-            const savingsQuery = query(collection(db, "hubs", currentHubId, "savings"));
-            const diaryQuery = query(collection(db, "hubs", currentHubId, "diary"));
-            const habitsQuery = query(collection(db, "hubs", currentHubId, "habits"));
-            const habitEntriesQuery = query(collection(db, "hubs", currentHubId, "habitEntries"));
+            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
+            const savingsQuery = query(collection(window.db, "hubs", currentHubId, "savings")); // Gunakan window.db
+            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
+            const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits")); // Gunakan window.db
+            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
             const [txSnap, savingsSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(savingsQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const savings = savingsSnap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -1353,9 +1356,9 @@
 
         async function renderIndividualSummaries() {
             if (!currentHubId) return;
-            const txQuery = query(collection(db, "hubs", currentHubId, "transactions"));
-            const diaryQuery = query(collection(db, "hubs", currentHubId, "diary"));
-            const habitEntriesQuery = query(collection(db, "hubs", currentHubId, "habitEntries"));
+            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
+            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
+            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
             const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -1410,7 +1413,7 @@
             if (!pesan?.trim()) return;
 
             try {
-                await addDoc(collection(db, "hubs", currentHubId, "notifications"), {
+                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), { // Gunakan window.db
                     message: pesan,
                     sender: oleh,
                     recipient: untuk,
@@ -1427,7 +1430,7 @@
 
         async function renderNotifikasi() {
             if (!currentHubId) return;
-            const q = query(collection(db, "hubs", currentHubId, "notifications"), orderBy("createdAt", "desc"));
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), orderBy("createdAt", "desc")); // Gunakan window.db
             const snapshot = await getDocs(q);
             const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             const listContainer = document.getElementById('notifikasi-list');
@@ -1453,7 +1456,7 @@
         
         async function checkUnreadNotifications() {
             if (!currentHubId || !currentUser) return;
-            const q = query(collection(db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
             const snapshot = await getDocs(q);
             const navLink = document.querySelector('.nav-link[data-target="notifikasi"]');
             if (navLink) {
@@ -1467,9 +1470,9 @@
 
         async function markNotificationsAsRead() {
             if (!currentHubId || !currentUser) return;
-            const q = query(collection(db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
             const snapshot = await getDocs(q);
-            const batch = writeBatch(db);
+            const batch = writeBatch(window.db); // Gunakan window.db
             snapshot.docs.forEach(doc => {
                 batch.update(doc.ref, { isRead: true });
             });
@@ -1492,13 +1495,6 @@
 
                 const hideToast = () => {
                     toast.classList.add('translate-x-[150%]', 'opacity-0');
-                };
-                
-                const closeHandler = () => hideToast();
-                const replyHandler = () => {
-                    hideToast();
-                    navigateTo('notifikasi', 'Notifikasi Sayang');
-                    document.getElementById('notifikasi-pesan')?.focus();
                 };
                 
                 closeBtn?.addEventListener('click', closeHandler); // Menggunakan addEventListener
@@ -1612,11 +1608,11 @@
             saveBtn.disabled = true;
             saveBtn.textContent = 'Mengunggah...';
 
-            const storageRef = ref(storage, `profile_pictures/${currentUser.uid}`);
+            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`); // Gunakan window.storage
             try {
                 await uploadBytes(storageRef, selectedProfilePicFile);
                 const downloadURL = await getDownloadURL(storageRef);
-                await updateDoc(doc(db, "users", currentUser.uid), {
+                await updateDoc(doc(window.db, "users", currentUser.uid), { // Gunakan window.db
                     photoURL: downloadURL
                 });
                 console.log('Foto profil berhasil diperbarui!'); // Menggunakan console.log
@@ -1631,11 +1627,11 @@
 
         async function renderDashboardHeader() {
             if (!currentHubId) return;
-            const hubDoc = await getDoc(doc(db, "hubs", currentHubId));
+            const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId)); // Gunakan window.db
             if (!hubDoc.exists()) return;
             
             const members = hubDoc.data().members || [];
-            const userDocs = await Promise.all(members.map(uid => getDoc(doc(db, "users", uid))));
+            const userDocs = await Promise.all(members.map(uid => getDoc(doc(window.db, "users", uid)))); // Gunakan window.db
             
             const lukmanUser = userDocs.find(d => d.data()?.email.includes('lukman'));
             const destryUser = userDocs.find(d => d.data()?.email.includes('destry'));
