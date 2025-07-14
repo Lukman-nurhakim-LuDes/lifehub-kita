@@ -9,7 +9,7 @@
     
     <!-- Tailwind CSS untuk styling responsif -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js untuk grafik (jika digunakan) -->
+    <!-- Chart.js untuk grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -19,23 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Gaya CSS kustom Anda dari versi sebelumnya */
-        body { font-family: 'Inter', sans-serif; }
-        /* Kelas untuk menyembunyikan/menampilkan bagian konten */
-        .content-section, #auth-screen, #hub-screen, #app-container { display: none; }
-        .content-section.active, #auth-screen.active, #hub-screen.active, #app-container.active { display: block; }
-        
-        /* Gaya tambahan untuk pesan notifikasi agar terlihat lebih baik */
-        .notification-message {
-            background-color: #e0f2fe; /* Warna latar belakang biru muda */
-            border-left: 4px solid #0369a1; /* Garis biru tua di kiri */
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Gaya dari kode yang Anda berikan */
+        /* Gaya CSS kustom Anda */
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
@@ -133,10 +117,33 @@
         </div>
     </div>
 
+    <!-- Custom Confirmation Modal -->
+    <div id="modal-confirm" class="modal-backdrop">
+        <div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-sm mx-auto rounded-xl shadow-lg p-6 text-center">
+            <h2 id="confirm-title" class="text-xl font-bold mb-4">Konfirmasi</h2>
+            <p id="confirm-message" class="mb-6">Apakah Anda yakin?</p>
+            <div class="flex justify-center gap-4">
+                <button id="confirm-cancel-btn" class="px-6 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg font-semibold hover:bg-gray-400">Batal</button>
+                <button id="confirm-ok-btn" class="px-6 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600">Ya</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col justify-center items-center z-[100]">
         <div class="loader"></div>
         <p class="mt-4 text-lg font-medium">Memuat Life Hub...</p>
+        <!-- Tambahkan elemen untuk debugging inisialisasi Firebase -->
+        <div class="mt-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md text-sm text-center">
+            <p id="auth-info" class="text-gray-600 dark:text-gray-400 mb-2">Status Otentikasi: Menunggu...</p>
+            <p id="messaging-info" class="text-gray-600 dark:text-gray-400 mb-2">Status Notifikasi: Menunggu...</p>
+            <p class="text-gray-600 dark:text-gray-400">FCM Token: <span id="fcm-token" class="break-all text-xs">N/A</span></p>
+            <button id="request-permission-btn" class="mt-4 bg-blue-500 text-white px-3 py-1 rounded-md text-sm hidden">Minta Izin Notifikasi</button>
+            <div id="incoming-messages" class="mt-4 p-2 bg-gray-50 dark:bg-gray-700 rounded-md max-h-40 overflow-y-auto hidden">
+                <h4 class="font-semibold text-gray-700 dark:text-gray-200 mb-2">Pesan Masuk:</h4>
+                <div id="message-list" class="space-y-2"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Auth Screen -->
@@ -392,7 +399,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         
         // Konfigurasi Firebase Anda (dari konsol Firebase)
@@ -420,6 +427,7 @@
         let calendarDate = new Date();
         let habitDate = new Date();
         let selectedProfilePicFile = null;
+        let isAuthReady = false; // Flag untuk melacak status otentikasi
 
         const loadingScreen = document.getElementById('loading-screen');
         const authScreen = document.getElementById('auth-screen');
@@ -471,24 +479,25 @@
                 window.messaging = getMessaging(window.app);
                 window.storage = getStorage(window.app);
 
-                if (authInfoElement) { // Periksa keberadaan elemen sebelum mengakses properti
+                if (authInfoElement) {
                     authInfoElement.textContent = 'Mengotentikasi...';
                 }
 
                 // Listener untuk perubahan status otentikasi
-                onAuthStateChanged(window.auth, async (user) => { // Gunakan window.auth
+                onAuthStateChanged(window.auth, async (user) => {
                     if (user) {
-                        currentUser = user; // Set currentUser
-                        userId = user.uid; 
+                        currentUser = user;
+                        userId = user.uid;
                         if (authInfoElement) {
                             authInfoElement.textContent = `Berhasil masuk sebagai: ${userId}`;
                         }
                         isAuthReady = true;
                         console.log("Pengguna masuk:", userId);
+                        
                         // Lanjutkan dengan penyiapan Messaging setelah otentikasi selesai
                         setupFirebaseMessaging();
-                        // Anda bisa menambahkan listener Firestore di sini jika diperlukan data pengguna
-                        const userDocRef = doc(window.db, "users", user.uid); // Gunakan window.db
+                        
+                        const userDocRef = doc(window.db, "users", user.uid);
                         const userDocSnap = await getDoc(userDocRef);
                         if (userDocSnap.exists() && userDocSnap.data().hubId) {
                             currentHubId = userDocSnap.data().hubId;
@@ -500,9 +509,9 @@
                         // Jika tidak ada pengguna, coba masuk secara anonim
                         try {
                             if (initialAuthToken) {
-                                await signInWithCustomToken(window.auth, initialAuthToken); // Gunakan window.auth
+                                await signInWithCustomToken(window.auth, initialAuthToken);
                             } else {
-                                await signInAnonymously(window.auth); // Gunakan window.auth
+                                await signInAnonymously(window.auth);
                             }
                             // onAuthStateChanged akan dipanggil lagi setelah masuk
                         } catch (error) {
@@ -521,7 +530,6 @@
 
             } catch (error) {
                 console.error("Kesalahan saat menginisialisasi Firebase:", error);
-                // Menambahkan penanganan jika authInfoElement masih null di sini
                 if (authInfoElement) {
                     authInfoElement.textContent = `Kesalahan inisialisasi Firebase: ${error.message}`;
                 } else {
@@ -552,9 +560,8 @@
                     console.log('Izin notifikasi diberikan.');
 
                     // Mendapatkan token pendaftaran perangkat (FCM Token)
-                    // Ganti dengan VAPID Key Anda dari pengaturan proyek Firebase (Project settings -> Cloud Messaging)
                     const vapidKey = 'BJ-LJBU-09cwNok7guCYQk3diDgcdvgS7grU2-nwagIuYqhrNm5p050W7CwDmvMLztB0zCvJKPebLQC4yw5ijaA'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
-                    const currentToken = await getToken(window.messaging, { vapidKey: vapidKey }); // Gunakan window.messaging
+                    const currentToken = await getToken(window.messaging, { vapidKey: vapidKey });
                     if (currentToken) {
                         if (fcmTokenElement) {
                             fcmTokenElement.textContent = currentToken;
@@ -585,6 +592,10 @@
                     if (fcmTokenElement) {
                         fcmTokenElement.textContent = 'Tidak ada token (izin ditolak).';
                     }
+                    if (requestPermissionBtn) {
+                        requestPermissionBtn.style.display = 'block'; // Tampilkan tombol jika izin ditolak
+                        requestPermissionBtn.onclick = setupFirebaseMessaging; // Tambahkan event listener untuk tombol
+                    }
                 }
             } catch (error) {
                 console.error('Kesalahan saat mendapatkan token:', error);
@@ -597,7 +608,7 @@
             }
 
             // Menangani pesan di latar depan (saat aplikasi sedang aktif)
-            onMessage(window.messaging, (payload) => { // Gunakan window.messaging
+            onMessage(window.messaging, (payload) => {
                 console.log('Pesan latar depan diterima:', payload);
                 if (incomingMessagesContainer) {
                     incomingMessagesContainer.classList.remove('hidden');
@@ -612,6 +623,7 @@
                     `;
                     messageListElement.prepend(messageElement); // Tambahkan pesan terbaru di atas
                 }
+                showToastNotification(payload.notification?.title || 'Pesan Baru', payload.notification?.body || 'Tidak ada isi pesan.');
             });
         }
 
@@ -621,14 +633,14 @@
          */
         function setupFirestoreListener() {
             // userId dijamin sudah terdefinisi karena fungsi ini dipanggil setelah onAuthStateChanged(user)
-            if (!window.db || !userId) { // Gunakan window.db
+            if (!window.db || !userId) {
                 console.log("Firestore atau userId belum siap.");
                 return;
             }
 
             // Contoh: Mendengarkan data publik
-            const publicCollectionRef = collection(window.db, `artifacts/${appId}/public/data/messages`); // Gunakan window.db
-            onSnapshot(publicCollectionRef, (snapshot) => {
+            const publicCollectionRef = collection(window.db, `artifacts/${appId}/public/data/messages`);
+            const unsubPublic = onSnapshot(publicCollectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         console.log("Pesan publik baru:", change.doc.data());
@@ -644,10 +656,11 @@
             }, (error) => {
                 console.error("Kesalahan saat mendengarkan koleksi publik:", error);
             });
+            unsubscribeListeners.push(unsubPublic);
 
             // Contoh: Mendengarkan data pribadi (jika ada)
-            const privateCollectionRef = collection(window.db, `artifacts/${appId}/users/${userId}/private_messages`); // Gunakan window.db
-            onSnapshot(privateCollectionRef, (snapshot) => {
+            const privateCollectionRef = collection(window.db, `artifacts/${appId}/users/${userId}/private_messages`);
+            const unsubPrivate = onSnapshot(privateCollectionRef, (snapshot) => {
                 snapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
                         console.log("Pesan pribadi baru:", change.doc.data());
@@ -657,6 +670,7 @@
             }, (error) => {
                 console.error("Kesalahan saat mendengarkan koleksi pribadi:", error);
             });
+            unsubscribeListeners.push(unsubPrivate);
         }
 
         // --- Logika Aplikasi Utama (fungsi mainApp) ---
@@ -687,7 +701,6 @@
             document.getElementById('save-profile-pic-btn')?.addEventListener('click', handleProfilePicUpload);
             
             // UI Elements
-            // Periksa keberadaan elemen sebelum mengakses properti value
             if (document.getElementById('filter-bulan')) {
                 document.getElementById('filter-bulan').value = new Date().toISOString().slice(0, 7);
                 document.getElementById('filter-bulan').addEventListener('change', renderKeuangan);
@@ -753,20 +766,21 @@
                 'events': [renderCalendar],
                 'notifications': [renderNotifikasi, checkUnreadNotifications]
             };
-            const hubDocRef = doc(window.db, "hubs", currentHubId); // Gunakan window.db
+            const hubDocRef = doc(window.db, "hubs", currentHubId);
             const hubUnsubscribe = onSnapshot(hubDocRef, renderDashboardHeader);
             unsubscribeListeners.push(hubUnsubscribe);
 
             Object.keys(collectionsToRender).forEach(col => {
-                const q = query(collection(window.db, "hubs", currentHubId, col)); // Gunakan window.db
+                const q = collection(window.db, "hubs", currentHubId, col); // Removed orderBy here
                 const unsubscribe = onSnapshot(q, (snapshot) => {
                     // In-app notification logic
                     if (col === 'notifications') {
                         snapshot.docChanges().forEach((change) => {
                             if (change.type === "added") {
                                 const newNotif = change.doc.data();
-                                const recipientName = currentUser.email.split('@')[0].toLowerCase() === 'lukman' ? 'Lukman' : 'Destry';
-                                if (newNotif.recipient.toLowerCase() === recipientName.toLowerCase() && newNotif.sender !== recipientName) {
+                                // Determine recipient name based on current user's email
+                                const recipientName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
+                                if (newNotif.recipient.toLowerCase() === recipientName.toLowerCase() && newNotif.sender.toLowerCase() !== recipientName.toLowerCase()) {
                                     showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
                                 }
                             }
@@ -847,27 +861,57 @@
             applyTheme(currentTheme === 'dark');
         }
         
-        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
-        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } } // Gunakan window.auth
-        async function handleLogout() { if(window.confirm('Anda yakin ingin logout?')) await signOut(window.auth); } // Menggunakan window.confirm dan window.auth
+        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
+        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
+        async function handleLogout() {
+            showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
+                await signOut(window.auth);
+            });
+        }
         async function createHub() { 
-            if (!currentUser) { console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); return; } // Menggunakan console.error
-            const hubId = doc(collection(window.db, 'hubs')).id; // Gunakan window.db
+            if (!currentUser) { console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); return; }
+            const hubId = doc(collection(window.db, 'hubs')).id;
             try { 
-                const batch = writeBatch(window.db); // Gunakan window.db
-                batch.set(doc(window.db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() }); // Gunakan window.db
-                batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); // Gunakan window.db
+                const batch = writeBatch(window.db);
+                batch.set(doc(window.db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() });
+                batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
                 await batch.commit(); 
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
-                // Menggunakan console.error daripada alert
                 console.error(`Gagal membuat hub. Error: ${error.message}`);
                 document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
             } 
         }
-        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(window.db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } } // Gunakan window.db
+        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(window.db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } }
         
-        window.copyHubId = () => { const hubId = document.getElementById('profile-hub-id').textContent; document.execCommand('copy'); console.log('ID Hub disalin!'); }; // Menggunakan execCommand dan console.log
+        window.copyHubId = () => {
+            const hubId = document.getElementById('profile-hub-id').textContent;
+            // Use modern clipboard API if available, fallback to execCommand
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(hubId).then(() => {
+                    console.log('ID Hub disalin!');
+                }).catch(err => {
+                    console.error('Gagal menyalin ID Hub:', err);
+                    // Fallback for older browsers or restricted environments
+                    const textarea = document.createElement('textarea');
+                    textarea.value = hubId;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    console.log('ID Hub disalin (fallback)!');
+                });
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = hubId;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                console.log('ID Hub disalin (fallback)!');
+            }
+        };
         function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
         function changeCalendarMonth(delta) { calendarDate.setMonth(calendarDate.getMonth() + delta); renderCalendar(); }
         
@@ -876,14 +920,18 @@
             if (!currentHubId) return;
             const monthFilter = document.getElementById('filter-bulan')?.value;
             const personFilter = document.getElementById('filter-pasangan')?.value;
-            // Pastikan monthFilter memiliki nilai sebelum split
             const [year, month] = monthFilter ? monthFilter.split('-').map(Number) : [new Date().getFullYear(), new Date().getMonth() + 1];
             const startDate = Timestamp.fromDate(new Date(year, month - 1, 1));
             const endDate = Timestamp.fromDate(new Date(year, month, 1));
-            let q = query(collection(window.db, "hubs", currentHubId, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate), orderBy("tanggal", "desc")); // Gunakan window.db
+            
+            // Fetch without orderBy, then sort in JS
+            let q = query(collection(window.db, "hubs", currentHubId, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate));
             const querySnapshot = await getDocs(q);
             let transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
+            // Sort by date descending in JavaScript
+            transactions.sort((a, b) => b.tanggal.seconds - a.tanggal.seconds);
+
             // Calculate and render score cards for Keuangan page
             const totalPemasukan = transactions.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const totalPengeluaran = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
@@ -920,7 +968,11 @@
                 }
             }
         }
-        window.deleteTransaction = async (id) => { if (window.confirm('Yakin hapus transaksi ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteTransaction = async (id) => {
+            showConfirmModal('Hapus Transaksi', 'Yakin hapus transaksi ini?', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id));
+            });
+        };
         
         async function handleTransaksiSubmit(e) {
             e.preventDefault();
@@ -936,16 +988,20 @@
                 catatan: document.getElementById('transaksi-catatan')?.value,
                 createdAt: serverTimestamp(), createdBy: currentUser.uid
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); } // Gunakan window.db
-            catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); } // Menggunakan console.error
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); }
+            catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); }
         }
 
         async function renderTabungan() {
             if (!currentHubId) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "savings"), orderBy("createdAt", "desc")); // Gunakan window.db
+            // Fetch without orderBy, then sort in JS
+            const q = collection(window.db, "hubs", currentHubId, "savings");
             const snapshot = await getDocs(q);
             const savings = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
+            // Sort by createdAt descending in JavaScript
+            savings.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
             // Calculate and render score cards for Tabungan page
             const totalTarget = savings.reduce((sum, s) => sum + s.target, 0);
             const totalTerkumpul = savings.reduce((sum, s) => sum + s.terkumpul, 0);
@@ -983,7 +1039,11 @@
                 }).join('');
             }
         }
-        window.deleteTabungan = async (id) => { if (window.confirm('Yakin hapus target tabungan ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteTabungan = async (id) => {
+            showConfirmModal('Hapus Target Tabungan', 'Yakin hapus target tabungan ini?', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id));
+            });
+        };
         window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; openModal('modal-tambah-dana'); };
         async function handleTabunganSubmit(e) {
             e.preventDefault();
@@ -995,15 +1055,15 @@
                 oleh: document.getElementById('tabungan-oleh')?.value,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); } // Gunakan window.db
-            catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); } // Menggunakan console.error
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); }
+            catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); }
         }
         async function handleTambahDanaSubmit(e) {
             e.preventDefault();
             const form = e.target;
             const id = document.getElementById('tambah-dana-id')?.value;
             const jumlah = parseFloat(document.getElementById('tambah-dana-jumlah')?.value);
-            const tabunganRef = doc(window.db, "hubs", currentHubId, "savings", id); // Gunakan window.db
+            const tabunganRef = doc(window.db, "hubs", currentHubId, "savings", id);
             const tabunganSnap = await getDoc(tabunganRef);
             if (tabunganSnap.exists()) {
                 const newTerkumpul = (tabunganSnap.data().terkumpul || 0) + jumlah;
@@ -1015,9 +1075,14 @@
 
         async function renderDiary() {
             if (!currentHubId) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "diary"), orderBy("tanggal", "desc")); // Gunakan window.db
+            // Fetch without orderBy, then sort in JS
+            const q = collection(window.db, "hubs", currentHubId, "diary");
             const snapshot = await getDocs(q);
             const diary = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Sort by tanggal descending in JavaScript
+            diary.sort((a, b) => (b.tanggal?.seconds || 0) - (a.tanggal?.seconds || 0));
+
             const container = document.getElementById('diary-entries');
             if (container) {
                 if (diary.length === 0) { container.innerHTML = `<p class="text-gray-500 text-center py-8">Belum ada tulisan diary.</p>`; return; }
@@ -1032,7 +1097,11 @@
                     </div>`).join('');
             }
         }
-        window.deleteDiary = async (id) => { if (window.confirm('Yakin hapus entri diary ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteDiary = async (id) => {
+            showConfirmModal('Hapus Diary', 'Yakin hapus entri diary ini?', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id));
+            });
+        };
         async function handleDiarySubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1048,15 +1117,20 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
-            catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); } // Menggunakan console.error
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); }
         }
 
         async function renderWishlist() {
             if (!currentHubId) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "wishlist"), orderBy("createdAt", "desc")); // Gunakan window.db
+            // Fetch without orderBy, then sort in JS
+            const q = collection(window.db, "hubs", currentHubId, "wishlist");
             const snapshot = await getDocs(q);
             const wishlist = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Sort by createdAt descending in JavaScript
+            wishlist.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
             const gallery = document.getElementById('wishlist-gallery');
             if (gallery) {
                 if (wishlist.length === 0) { gallery.innerHTML = `<p class="text-gray-500 text-center py-8 sm:col-span-2 md:col-span-3 lg:col-span-4">Belum ada wishlist.</p>`; return; }
@@ -1067,13 +1141,17 @@
                             <h3 class="font-bold text-lg">${wish.nama}</h3>
                             <p class="text-sm text-gray-500 dark:text-gray-400">${wish.kategori}</p>
                             <p class="text-sm mt-2">Keinginan: <span class="font-semibold">${wish.oleh}</span></p>
-                            <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">${wish.deskripsi}</p>
+                            <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">${wish.deskripsi || ''}</p>
                             <button onclick="deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
                         </div>
                     </div>`).join('');
             }
         }
-        window.deleteWishlist = async (id) => { if (window.confirm('Yakin hapus wishlist ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteWishlist = async (id) => {
+            showConfirmModal('Hapus Wishlist', 'Yakin hapus wishlist ini?', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id));
+            });
+        };
         async function handleWishlistSubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1086,14 +1164,14 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } } // Gunakan window.db
-            catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); } // Menggunakan console.error
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); }
         }
 
         async function renderCalendar() {
             if (!currentHubId) return;
             const year = calendarDate.getFullYear();
-            const month = calendarDate.getMonth(); // Perbaikan: seharusnya getMonth()
+            const month = calendarDate.getMonth();
             const calendarMonthYear = document.getElementById('calendar-month-year');
             if (calendarMonthYear) {
                 calendarMonthYear.textContent = new Date(year, month).toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
@@ -1106,9 +1184,17 @@
                 
                 const startDate = Timestamp.fromDate(new Date(year, month, 1));
                 const endDate = Timestamp.fromDate(new Date(year, month + 1, 1));
-                const q = query(collection(window.db, "hubs", currentHubId, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate)); // Gunakan window.db
+                // Fetch without orderBy, then sort in JS
+                const q = query(collection(window.db, "hubs", currentHubId, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate));
                 const snapshot = await getDocs(q);
                 const eventsThisMonth = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                // Sort by tanggal then waktu in JavaScript
+                eventsThisMonth.sort((a, b) => {
+                    const dateA = a.tanggal.seconds;
+                    const dateB = b.tanggal.seconds;
+                    if (dateA !== dateB) return dateA - dateB;
+                    return a.waktu.localeCompare(b.waktu);
+                });
 
                 for (let i = 0; i < firstDay; i++) { grid.innerHTML += '<div></div>'; }
                 for (let day = 1; day <= daysInMonth; day++) {
@@ -1155,7 +1241,11 @@
                     </div>`).join('');
             }
         }
-        window.deleteAktivitas = async (id) => { if (window.confirm('Yakin hapus aktivitas ini?')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteAktivitas = async (id) => {
+            showConfirmModal('Hapus Aktivitas', 'Yakin hapus aktivitas ini?', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id));
+            });
+        };
         async function handleAktivitasSubmit(e) {
             e.preventDefault();
             const form = e.target;
@@ -1169,11 +1259,11 @@
                 ikut: { lukman: document.getElementById('aktivitas-ikut-lukman')?.checked, destry: document.getElementById('aktivitas-ikut-destry')?.checked },
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); } // Gunakan window.db
-            catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); } // Menggunakan console.error
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); }
+            catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); }
         }
 
-        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } } // Gunakan window.db
+        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } }
         async function renderHabitTable() {
             if (!currentHubId) return;
             const habitMonthYear = document.getElementById('habit-month-year');
@@ -1183,14 +1273,17 @@
             const container = document.getElementById('habit-table-container');
             if (container) {
                 container.innerHTML = '<div class="loader mx-auto"></div>';
-                const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits"), orderBy("name")); // Gunakan window.db
+                // Fetch habits without orderBy, then sort in JS
+                const habitsQuery = collection(window.db, "hubs", currentHubId, "habits");
                 const habitsSnapshot = await getDocs(habitsQuery);
                 const habits = habitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                habits.sort((a, b) => a.name.localeCompare(b.name)); // Sort by name
+
                 const year = habitDate.getFullYear();
                 const month = habitDate.getMonth();
                 const startDate = new Date(year, month, 1);
                 const endDate = new Date(year, month + 1, 0, 23, 59, 59);
-                const entriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries"), where("date", ">=", startDate), where("date", "<=", endDate)); // Gunakan window.db
+                const entriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries"), where("date", ">=", startDate), where("date", "<=", endDate));
                 const entriesSnapshot = await getDocs(entriesQuery);
                 const entriesMap = new Map();
                 entriesSnapshot.docs.forEach(doc => { const data = doc.data(); const dateKey = new Date(data.date.seconds * 1000).toISOString().split('T')[0]; entriesMap.set(dateKey, { id: doc.id, ...data }); });
@@ -1220,19 +1313,44 @@
                 container.innerHTML = tableHTML;
             }
         }
-        window.deleteHabit = async (id) => { if (window.confirm('Yakin hapus habit ini? Semua data progresnya juga akan hilang.')) { await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id)); } }; // Menggunakan window.confirm dan window.db
+        window.deleteHabit = async (id) => {
+            showConfirmModal('Hapus Habit', 'Yakin hapus habit ini? Semua data progresnya juga akan hilang.', async () => {
+                await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id));
+            });
+        };
         window.cycleHabitStatus = async (habitId, dateKey) => {
             const date = new Date(dateKey);
             date.setUTCHours(12);
             const entryDocId = dateKey;
-            const entryRef = doc(window.db, "hubs", currentHubId, "habitEntries", entryDocId); // Gunakan window.db
+            const entryRef = doc(window.db, "hubs", currentHubId, "habitEntries", entryDocId);
             const entrySnap = await getDoc(entryRef);
             const currentStatuses = entrySnap.exists() ? entrySnap.data().statuses : {};
             const currentStatus = currentStatuses[habitId] || { lukman: false, destry: false };
             let nextStatus = { lukman: false, destry: false };
-            if (!currentStatus.lukman && !currentStatus.destry) { nextStatus = { lukman: true, destry: false }; } 
-            else if (currentStatus.lukman && !currentStatus.destry) { nextStatus = { lukman: false, destry: true }; } 
-            else if (!currentStatus.lukman && currentStatus.destry) { nextStatus = { lukman: true, destry: true }; }
+            
+            const currentUserEmail = currentUser.email.toLowerCase();
+            const isLukman = currentUserEmail.includes('lukman');
+            const isDestry = currentUserEmail.includes('destry');
+
+            if (isLukman && isDestry) { // If both users are logged in (unlikely for single user app, but for completeness)
+                // Cycle through None -> Lukman -> Destry -> Both -> None
+                if (!currentStatus.lukman && !currentStatus.destry) { // None -> Lukman
+                    nextStatus = { lukman: true, destry: false };
+                } else if (currentStatus.lukman && !currentStatus.destry) { // Lukman -> Destry
+                    nextStatus = { lukman: false, destry: true };
+                } else if (!currentStatus.lukman && currentStatus.destry) { // Destry -> Both
+                    nextStatus = { lukman: true, destry: true };
+                } else { // Both -> None
+                    nextStatus = { lukman: false, destry: false };
+                }
+            } else if (isLukman) { // Only Lukman is logged in
+                nextStatus.lukman = !currentStatus.lukman;
+                nextStatus.destry = currentStatus.destry; // Preserve Destry's status
+            } else if (isDestry) { // Only Destry is logged in
+                nextStatus.destry = !currentStatus.destry;
+                nextStatus.lukman = currentStatus.lukman; // Preserve Lukman's status
+            }
+
             const newStatuses = { ...currentStatuses, [habitId]: nextStatus };
             try { await setDoc(entryRef, { date: Timestamp.fromDate(date), statuses: newStatuses }, { merge: true }); } catch (error) { console.error("Error updating habit status: ", error); }
         };
@@ -1259,11 +1377,11 @@
         
         async function renderDashboard() {
             if (!currentHubId) return;
-            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
-            const savingsQuery = query(collection(window.db, "hubs", currentHubId, "savings")); // Gunakan window.db
-            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
-            const habitsQuery = query(collection(window.db, "hubs", currentHubId, "habits")); // Gunakan window.db
-            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
+            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
+            const savingsQuery = collection(window.db, "hubs", currentHubId, "savings");
+            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
+            const habitsQuery = collection(window.db, "hubs", currentHubId, "habits");
+            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
             const [txSnap, savingsSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(savingsQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const savings = savingsSnap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -1291,7 +1409,7 @@
             }
             const todayHabitEntry = habitEntries.find(e => new Date(e.date.seconds * 1000).toISOString().split('T')[0] === todayISO);
             let completed = 0;
-            const totalPossible = habits.length * 2;
+            const totalPossible = habits.length * 2; // Each habit has two checkboxes (Lukman, Destry)
             if(todayHabitEntry && todayHabitEntry.statuses) {
                 Object.values(todayHabitEntry.statuses).forEach(status => {
                     if (status.lukman) completed++;
@@ -1356,9 +1474,9 @@
 
         async function renderIndividualSummaries() {
             if (!currentHubId) return;
-            const txQuery = query(collection(window.db, "hubs", currentHubId, "transactions")); // Gunakan window.db
-            const diaryQuery = query(collection(window.db, "hubs", currentHubId, "diary")); // Gunakan window.db
-            const habitEntriesQuery = query(collection(window.db, "hubs", currentHubId, "habitEntries")); // Gunakan window.db
+            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
+            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
+            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
             const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -1408,31 +1526,37 @@
             const form = e.target;
             const pesan = document.getElementById('notifikasi-pesan')?.value;
             const untuk = document.getElementById('notifikasi-untuk')?.value;
-            const oleh = untuk === 'Lukman' ? 'Destry' : 'Lukman';
+            // Determine sender based on current user's email
+            const senderName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
 
             if (!pesan?.trim()) return;
 
             try {
-                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), { // Gunakan window.db
+                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), {
                     message: pesan,
-                    sender: oleh,
+                    sender: senderName,
                     recipient: untuk,
                     isRead: false,
                     createdAt: serverTimestamp()
                 });
                 form.reset();
-                console.log('Pesan terkirim!'); // Menggunakan console.log
+                console.log('Pesan terkirim!');
             } catch (error) {
                 console.error("Error sending notification:", error);
-                console.error("Gagal mengirim pesan."); // Menggunakan console.error
+                console.error("Gagal mengirim pesan.");
             }
         }
 
         async function renderNotifikasi() {
             if (!currentHubId) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), orderBy("createdAt", "desc")); // Gunakan window.db
+            // Fetch without orderBy, then sort in JS
+            const q = collection(window.db, "hubs", currentHubId, "notifications");
             const snapshot = await getDocs(q);
             const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Sort by createdAt descending in JavaScript
+            notifications.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
             const listContainer = document.getElementById('notifikasi-list');
             
             if (listContainer) {
@@ -1456,7 +1580,7 @@
         
         async function checkUnreadNotifications() {
             if (!currentHubId || !currentUser) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
             const snapshot = await getDocs(q);
             const navLink = document.querySelector('.nav-link[data-target="notifikasi"]');
             if (navLink) {
@@ -1470,9 +1594,9 @@
 
         async function markNotificationsAsRead() {
             if (!currentHubId || !currentUser) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false)); // Gunakan window.db
+            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
             const snapshot = await getDocs(q);
-            const batch = writeBatch(window.db); // Gunakan window.db
+            const batch = writeBatch(window.db);
             snapshot.docs.forEach(doc => {
                 batch.update(doc.ref, { isRead: true });
             });
@@ -1495,12 +1619,61 @@
 
                 const hideToast = () => {
                     toast.classList.add('translate-x-[150%]', 'opacity-0');
+                    closeBtn?.removeEventListener('click', closeHandler);
+                    replyBtn?.removeEventListener('click', replyHandler);
+                };
+
+                const closeHandler = () => hideToast();
+                const replyHandler = () => {
+                    navigateTo('notifikasi', 'Notifikasi Sayang');
+                    hideToast();
                 };
                 
-                closeBtn?.addEventListener('click', closeHandler); // Menggunakan addEventListener
-                replyBtn?.addEventListener('click', replyHandler); // Menggunakan addEventListener
+                closeBtn?.addEventListener('click', closeHandler);
+                replyBtn?.addEventListener('click', replyHandler);
 
                 setTimeout(hideToast, 5000); // Auto-hide after 5 seconds
+            }
+        }
+
+        // --- Custom Confirmation Modal ---
+        let confirmResolve;
+        function showConfirmModal(title, message, onConfirm) {
+            const modal = document.getElementById('modal-confirm');
+            const confirmTitle = document.getElementById('confirm-title');
+            const confirmMessage = document.getElementById('confirm-message');
+            const confirmOkBtn = document.getElementById('confirm-ok-btn');
+            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+            if (modal && confirmTitle && confirmMessage && confirmOkBtn && confirmCancelBtn) {
+                confirmTitle.textContent = title;
+                confirmMessage.textContent = message;
+                modal.style.display = 'flex';
+
+                return new Promise(resolve => {
+                    confirmResolve = resolve;
+
+                    const handleConfirm = () => {
+                        onConfirm();
+                        modal.style.display = 'none';
+                        confirmOkBtn.removeEventListener('click', handleConfirm);
+                        confirmCancelBtn.removeEventListener('click', handleCancel);
+                        resolve(true);
+                    };
+
+                    const handleCancel = () => {
+                        modal.style.display = 'none';
+                        confirmOkBtn.removeEventListener('click', handleConfirm);
+                        confirmCancelBtn.removeEventListener('click', handleCancel);
+                        resolve(false);
+                    };
+
+                    confirmOkBtn.addEventListener('click', handleConfirm);
+                    confirmCancelBtn.addEventListener('click', handleCancel);
+                });
+            } else {
+                console.error("Confirmation modal elements not found.");
+                return Promise.resolve(false);
             }
         }
 
@@ -1564,9 +1737,19 @@
 
             setTimeout(() => {
                 const segmentAngle = 360 / dateIdeas.length;
+                // Normalize final angle to be within 0-360
                 const finalAngle = totalRotation % 360;
-                const pointerAngle = 270; // Pointer is at the top
-                const winningIndex = Math.floor((360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle);
+                // Adjust for pointer position (top is 270 degrees from positive x-axis)
+                // We want to find which segment is at the pointer.
+                // The wheel rotates clockwise.
+                // If pointer is at 270 deg, and segment starts at 0 deg, it's 270 deg away.
+                // We need to calculate the angle relative to the pointer.
+                // (360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle
+                // Or simply: (pointerAngle - finalAngle + 360) % 360 to get angle from pointer to 0-line
+                // Then divide by segmentAngle and floor.
+                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
+                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
+
                 const result = dateIdeas[winningIndex];
                 
                 const hasilKencanText = document.getElementById('hasil-kencan-text');
@@ -1575,6 +1758,10 @@
                 }
                 openModal('modal-kencan-hasil');
                 isSpinning = false;
+                // Reset transform for next spin, without transition
+                wheelCanvas.style.transition = 'none';
+                wheelCanvas.style.transform = `rotate(${finalAngle}deg)`; // Keep it at the final angle visually
+                currentAngle = finalAngle; // Update currentAngle for next spin
             }, 5000); // Must match the transition duration in CSS
         }
 
@@ -1608,18 +1795,20 @@
             saveBtn.disabled = true;
             saveBtn.textContent = 'Mengunggah...';
 
-            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`); // Gunakan window.storage
+            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`);
             try {
                 await uploadBytes(storageRef, selectedProfilePicFile);
                 const downloadURL = await getDownloadURL(storageRef);
-                await updateDoc(doc(window.db, "users", currentUser.uid), { // Gunakan window.db
+                await updateDoc(doc(window.db, "users", currentUser.uid), {
                     photoURL: downloadURL
                 });
-                console.log('Foto profil berhasil diperbarui!'); // Menggunakan console.log
+                console.log('Foto profil berhasil diperbarui!');
                 saveBtn.textContent = 'Simpan Foto';
+                // Update dashboard profile pics if they are the current user
+                renderDashboardHeader();
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
-                console.error('Gagal mengunggah foto.'); // Menggunakan console.error
+                console.error('Gagal mengunggah foto.');
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Simpan Foto';
             }
@@ -1627,23 +1816,27 @@
 
         async function renderDashboardHeader() {
             if (!currentHubId) return;
-            const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId)); // Gunakan window.db
+            const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId));
             if (!hubDoc.exists()) return;
             
             const members = hubDoc.data().members || [];
-            const userDocs = await Promise.all(members.map(uid => getDoc(doc(window.db, "users", uid)))); // Gunakan window.db
+            const userDocs = await Promise.all(members.map(uid => getDoc(doc(window.db, "users", uid))));
             
-            const lukmanUser = userDocs.find(d => d.data()?.email.includes('lukman'));
-            const destryUser = userDocs.find(d => d.data()?.email.includes('destry'));
+            const lukmanUser = userDocs.find(d => d.exists() && d.data()?.email?.includes('lukman'));
+            const destryUser = userDocs.find(d => d.exists() && d.data()?.email?.includes('destry'));
 
             const profilePicLukman = document.getElementById('profile-pic-lukman');
             const profilePicDestry = document.getElementById('profile-pic-destry');
 
             if (lukmanUser && lukmanUser.data()?.photoURL && profilePicLukman) {
                 profilePicLukman.src = lukmanUser.data().photoURL;
+            } else if (profilePicLukman) {
+                profilePicLukman.src = "https://placehold.co/64x64/3b82f6/ffffff?text=L"; // Default if no photo
             }
             if (destryUser && destryUser.data()?.photoURL && profilePicDestry) {
                 profilePicDestry.src = destryUser.data().photoURL;
+            } else if (profilePicDestry) {
+                profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
             }
         }
 
