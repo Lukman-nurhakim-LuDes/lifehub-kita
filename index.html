@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- html2canvas for capturing HTML elements -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         /* Gaya CSS kustom Anda */
@@ -371,6 +375,24 @@
                         </div>
                     </div>
                 </section>
+                <!-- New Section for Export PDF -->
+                <section id="export-pdf" class="content-section">
+                    <h1 class="text-3xl font-bold hidden lg:block mb-6">Ekspor Laporan</h1>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-lg mx-auto space-y-6">
+                        <h2 class="text-2xl font-bold mb-4">Ekspor Dashboard ke PDF</h2>
+                        <p class="text-gray-500 dark:text-gray-400 mb-4">
+                            Klik tombol di bawah ini untuk menghasilkan laporan dashboard Anda dalam format PDF.
+                            Laporan akan mencakup ringkasan keuangan, habit, dan mood.
+                        </p>
+                        <button id="export-dashboard-pdf-btn" class="w-full bg-purple-500 text-white p-3 rounded-lg font-semibold hover:bg-purple-600">
+                            <i class="fa-solid fa-file-pdf mr-2"></i> Ekspor Dashboard ke PDF
+                        </button>
+                        <div id="pdf-export-status" class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400 hidden">
+                            <div class="loader mx-auto mb-2"></div>
+                            <p>Mempersiapkan PDF...</p>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
@@ -384,7 +406,7 @@
         </div>
     </div>
     <!-- Other Modals (Unchanged) -->
-    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
+    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></div></form></div></div>
     <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
     <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
     <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
@@ -433,6 +455,7 @@
         const authScreen = document.getElementById('auth-screen');
         const hubScreen = document.getElementById('hub-screen');
         const appContainer = document.getElementById('app-container');
+        const pdfExportStatus = document.getElementById('pdf-export-status'); // New element
 
         // Elemen UI untuk menampilkan status (dipindahkan ke dalam initializeFirebase)
         let authInfoElement;
@@ -570,6 +593,17 @@
                         console.log('FCM Token:', currentToken);
                         // Anda bisa mengirim token ini ke server backend Anda
                         // untuk mengirim notifikasi ke perangkat ini.
+                        // --- Simpan FCM Token ke Firestore ---
+                        if (currentUser && window.db) {
+                            const userRef = doc(window.db, "users", currentUser.uid);
+                            await updateDoc(userRef, {
+                                fcmToken: currentToken,
+                                tokenUpdatedAt: serverTimestamp()
+                            }, { merge: true });
+                            console.log('FCM Token disimpan ke Firestore:', currentToken);
+                        }
+                        // ------------------------------------
+
                         if (messagingInfoElement) {
                             messagingInfoElement.textContent = 'Izin notifikasi diberikan. Token perangkat berhasil didapatkan.';
                         }
@@ -704,6 +738,7 @@
             document.getElementById('form-notifikasi')?.addEventListener('submit', handleNotifikasiSubmit);
             document.getElementById('spin-btn')?.addEventListener('click', spinWheel);
             document.getElementById('save-profile-pic-btn')?.addEventListener('click', handleProfilePicUpload);
+            document.getElementById('export-dashboard-pdf-btn')?.addEventListener('click', handleExportPdf); // New event listener for PDF export
             
             // UI Elements
             if (document.getElementById('filter-bulan')) {
@@ -811,6 +846,7 @@
                 { id: 'roda-kencan', icon: 'fa-solid fa-dharmachakra', text: 'Roda Kencan' },
                 { id: 'individu', icon: 'fa-solid fa-user-friends', text: 'Ringkasan' },
                 { id: 'profil', icon: 'fa-solid fa-user-gear', text: 'Profil' },
+                { id: 'export-pdf', icon: 'fa-solid fa-file-export', text: 'Ekspor PDF' }, // New navigation item
             ];
             const navList = document.getElementById('nav-list');
             if (navList) {
@@ -840,6 +876,9 @@
             }
             if (pageId === 'roda-kencan') {
                 setupWheel();
+            }
+            if (pageId === 'export-pdf') {
+                renderExportPdf(); // Call render function for PDF export
             }
             window.scrollTo(0, 0);
         }
@@ -889,6 +928,7 @@
                 batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
                 await batch.commit(); 
                 console.log("Hub berhasil dibuat dan pengguna ditambahkan."); // Debug log
+                // Setelah berhasil membuat hub, aplikasi akan otomatis beralih ke UI utama
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
                 console.error(`Gagal membuat hub. Error: ${error.message}`);
@@ -923,6 +963,7 @@
                     } 
                     await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); 
                     console.log("Dokumen pengguna diperbarui dengan hubId.");
+                    // Setelah berhasil bergabung, aplikasi akan otomatis beralih ke UI utama
                 } else { 
                     document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; 
                     console.warn("ID Hub tidak ditemukan:", hubId);
@@ -1423,438 +1464,88 @@
                 }); 
             }
         }
-        
-        async function renderDashboard() {
-            if (!currentHubId) return;
-            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
-            const savingsQuery = collection(window.db, "hubs", currentHubId, "savings");
-            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
-            const habitsQuery = collection(window.db, "hubs", currentHubId, "habits");
-            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
-            const [txSnap, savingsSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(savingsQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
-            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const savings = savingsSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            // Main cards
-            const saldo = transactions.reduce((acc, t) => t.kategori === 'Pemasukan' ? acc + t.jumlah : acc - t.jumlah, 0);
-            const dashboardSaldo = document.getElementById('dashboard-saldo');
-            if (dashboardSaldo) {
-                dashboardSaldo.textContent = formatCurrency(saldo);
-                dashboardSaldo.className = `text-2xl font-bold mt-1 ${saldo >= 0 ? 'text-green-500' : 'text-red-500'}`;
-            }
-            const totalTabungan = savings.reduce((acc, s) => acc + s.terkumpul, 0);
-            const dashboardTabungan = document.getElementById('dashboard-tabungan');
-            if (dashboardTabungan) {
-                dashboardTabungan.textContent = formatCurrency(totalTabungan);
-            }
-            const todayISO = getTodayISO();
-            const todayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === todayISO);
-            const dashboardMood = document.getElementById('dashboard-mood');
-            if (dashboardMood) {
-                dashboardMood.textContent = todayDiary ? todayDiary.mood : '😶';
-            }
-            const todayHabitEntry = habitEntries.find(e => new Date(e.date.seconds * 1000).toISOString().split('T')[0] === todayISO);
-            let completed = 0;
-            const totalPossible = habits.length * 2; // Each habit has two checkboxes (Lukman, Destry)
-            if(todayHabitEntry && todayHabitEntry.statuses) {
-                Object.values(todayHabitEntry.statuses).forEach(status => {
-                    if (status.lukman) completed++;
-                    if (status.destry) completed++;
-                });
-            }
-            const completionPercent = totalPossible > 0 ? (completed / totalPossible) * 100 : 0;
-            const dashboardHabitCompletion = document.getElementById('dashboard-habit-completion');
-            if (dashboardHabitCompletion) {
-                dashboardHabitCompletion.textContent = `${completionPercent.toFixed(0)}%`;
-            }
-            
-            const isDark = document.documentElement.classList.contains('dark');
-            const textColor = isDark ? '#e5e7eb' : '#374151';
-
-            // Expense Chart
-            const expenseData = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((acc, t) => { acc[t.kategori] = (acc[t.kategori] || 0) + t.jumlah; return acc; }, {});
-            const expenseChartEl = document.getElementById('expenseChart');
-            if (expenseChartEl) {
-                if (expenseChartInstance) expenseChartInstance.destroy();
-                expenseChartInstance = new Chart(expenseChartEl, {
-                    type: 'doughnut', data: { labels: Object.keys(expenseData), datasets: [{ data: Object.values(expenseData), backgroundColor: ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#3b82f6'], borderColor: isDark ? '#1f2937' : '#ffffff', borderWidth: 4 }] },
-                    options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: textColor } } } }
-                });
-            }
-
-            // Income vs Expense Chart
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-            const monthTxs = transactions.filter(t => t.tanggal.toDate() >= firstDay && t.tanggal.toDate() <= lastDay);
-            const totalIncome = monthTxs.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
-            const totalExpense = monthTxs.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
-            const incomeExpenseChartEl = document.getElementById('incomeExpenseChart');
-            if (incomeExpenseChartEl) {
-                if(incomeExpenseChartInstance) incomeExpenseChartInstance.destroy();
-                incomeExpenseChartInstance = new Chart(incomeExpenseChartEl, {
-                    type: 'bar',
-                    data: { labels: ['Bulan Ini'], datasets: [
-                        { label: 'Pemasukan', data: [totalIncome], backgroundColor: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 },
-                        { label: 'Pengeluaran', data: [totalExpense], backgroundColor: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 1 }
-                    ]},
-                    options: { scales: { y: { beginAtZero: true, ticks: { color: textColor } } }, plugins: { legend: { labels: { color: textColor } } } }
-                });
-            }
-
-            // Mood Tracker
-            const moodContainer = document.getElementById('dashboard-mood-tracker');
-            if (moodContainer) {
-                moodContainer.innerHTML = '';
-                for (let i = 6; i >= 0; i--) {
-                    const date = new Date();
-                    date.setDate(date.getDate() - i);
-                    const dateISO = date.toISOString().split('T')[0];
-                    const dayDiary = diary.find(d => new Date(d.tanggal.seconds * 1000).toISOString().split('T')[0] === dateISO);
-                    const mood = dayDiary ? dayDiary.mood : '😶';
-                    const dayName = formatDate(date, { weekday: 'short' });
-                    moodContainer.innerHTML += `<div class="text-center"><div class="text-3xl">${mood}</div><div class="text-xs text-gray-500">${dayName}</div></div>`;
-                }
-            }
-        }
-
-        async function renderIndividualSummaries() {
-            if (!currentHubId) return;
-            const txQuery = collection(window.db, "hubs", currentHubId, "transactions");
-            const diaryQuery = collection(window.db, "hubs", currentHubId, "diary");
-            const habitEntriesQuery = collection(window.db, "hubs", currentHubId, "habitEntries");
-            const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
-            const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            const renderSummaryFor = (person, containerId) => {
-                const pengeluaran = transactions.filter(t => t.oleh === person && t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
-                const pemasukan = transactions.filter(t => t.oleh === person && t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
-                const diaryCount = diary.filter(d => d.oleh === person).length;
-                let habitsDone = 0;
-                habitEntries.forEach(entry => {
-                    if (entry.statuses) {
-                        Object.values(entry.statuses).forEach(status => {
-                            if (status[person.toLowerCase()]) habitsDone++;
-                        });
-                    }
-                });
-                const containerEl = document.getElementById(containerId);
-                if (containerEl) {
-                    containerEl.innerHTML = `
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
-                            <p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(pemasukan)}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
-                            <p class="text-xl md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(pengeluaran)}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
-                            <p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${diaryCount}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
-                            <p class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">${habitsDone}</p>
-                        </div>
-                    `;
-                }
-            };
-            renderSummaryFor('Lukman', 'summary-individu-lukman');
-            renderSummaryFor('Destry', 'summary-individu-destry');
-        }
-
-        // --- NOTIFIKASI SAYANG ---
-        async function handleNotifikasiSubmit(e) {
-            e.preventDefault();
-            const form = e.target;
-            const pesan = document.getElementById('notifikasi-pesan')?.value;
-            const untuk = document.getElementById('notifikasi-untuk')?.value;
-            // Determine sender based on current user's email
-            const senderName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
-
-            if (!pesan?.trim()) return;
-
-            try {
-                await addDoc(collection(window.db, "hubs", currentHubId, "notifications"), {
-                    message: pesan,
-                    sender: senderName,
-                    recipient: untuk,
-                    isRead: false,
-                    createdAt: serverTimestamp()
-                });
-                form.reset();
-                console.log('Pesan terkirim!');
-            } catch (error) {
-                console.error("Error sending notification:", error);
-                console.error("Gagal mengirim pesan.");
-            }
-        }
-
-        async function renderNotifikasi() {
-            if (!currentHubId) return;
-            // Fetch without orderBy, then sort in JS
-            const q = collection(window.db, "hubs", currentHubId, "notifications");
-            const snapshot = await getDocs(q);
-            const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            // Sort by createdAt descending in JavaScript
-            notifications.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-            const listContainer = document.getElementById('notifikasi-list');
-            
-            if (listContainer) {
-                if (notifications.length === 0) {
-                    listContainer.innerHTML = `<p class="text-gray-500">Belum ada notifikasi.</p>`;
-                    return;
-                }
-
-                listContainer.innerHTML = notifications.map(notif => {
-                    const time = notif.createdAt ? formatDate(notif.createdAt, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
-                    const bgColor = notif.sender === 'Lukman' ? 'bg-blue-50 dark:bg-blue-900/50' : 'bg-pink-50 dark:bg-pink-900/50';
-                    return `
-                        <div class="${bgColor} p-4 rounded-lg shadow">
-                            <p class="font-semibold">${notif.message}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Dari: ${notif.sender} - ${time}</p>
-                        </div>
-                    `;
-                }).join('');
-            }
-        }
-        
-        async function checkUnreadNotifications() {
-            if (!currentHubId || !currentUser) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
-            const snapshot = await getDocs(q);
-            const navLink = document.querySelector('.nav-link[data-target="notifikasi"]');
-            if (navLink) {
-                if (snapshot.empty) {
-                    navLink.classList.remove('has-notification');
-                } else {
-                    navLink.classList.add('has-notification');
-                }
-            }
-        }
-
-        async function markNotificationsAsRead() {
-            if (!currentHubId || !currentUser) return;
-            const q = query(collection(window.db, "hubs", currentHubId, "notifications"), where("isRead", "==", false));
-            const snapshot = await getDocs(q);
-            const batch = writeBatch(window.db);
-            snapshot.docs.forEach(doc => {
-                batch.update(doc.ref, { isRead: true });
-            });
-            await batch.commit();
-        }
-
-        function showToastNotification(title, message) {
-            const toast = document.getElementById('toast-notification');
-            const toastSender = document.getElementById('toast-sender');
-            const toastMessage = document.getElementById('toast-message');
-
-            if (toast && toastSender && toastMessage) {
-                toastSender.textContent = title;
-                toastMessage.textContent = message;
-
-                toast.classList.remove('translate-x-[150%]', 'opacity-0');
-                
-                const closeBtn = document.getElementById('toast-close-btn');
-                const replyBtn = document.getElementById('toast-reply-btn');
-
-                const hideToast = () => {
-                    toast.classList.add('translate-x-[150%]', 'opacity-0');
-                    closeBtn?.removeEventListener('click', closeHandler);
-                    replyBtn?.removeEventListener('click', replyHandler);
-                };
-
-                const closeHandler = () => hideToast();
-                const replyHandler = () => {
-                    navigateTo('notifikasi', 'Notifikasi Sayang');
-                    hideToast();
-                };
-                
-                closeBtn?.addEventListener('click', closeHandler);
-                replyBtn?.addEventListener('click', replyHandler);
-
-                setTimeout(hideToast, 5000); // Auto-hide after 5 seconds
-            }
-        }
-
-        // --- Custom Confirmation Modal ---
-        let confirmResolve;
-        function showConfirmModal(title, message, onConfirm) {
-            const modal = document.getElementById('modal-confirm');
-            const confirmTitle = document.getElementById('confirm-title');
-            const confirmMessage = document.getElementById('confirm-message');
-            const confirmOkBtn = document.getElementById('confirm-ok-btn');
-            const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
-
-            if (modal && confirmTitle && confirmMessage && confirmOkBtn && confirmCancelBtn) {
-                confirmTitle.textContent = title;
-                confirmMessage.textContent = message;
-                modal.style.display = 'flex';
-
-                return new Promise(resolve => {
-                    confirmResolve = resolve;
-
-                    const handleConfirm = () => {
-                        onConfirm();
-                        modal.style.display = 'none';
-                        confirmOkBtn.removeEventListener('click', handleConfirm);
-                        confirmCancelBtn.removeEventListener('click', handleCancel);
-                        resolve(true);
-                    };
-
-                    const handleCancel = () => {
-                        modal.style.display = 'none';
-                        confirmOkBtn.removeEventListener('click', handleConfirm);
-                        confirmCancelBtn.removeEventListener('click', handleCancel);
-                        resolve(false);
-                    };
-
-                    confirmOkBtn.addEventListener('click', handleConfirm);
-                    confirmCancelBtn.addEventListener('click', handleCancel);
-                });
-            } else {
-                console.error("Confirmation modal elements not found.");
-                return Promise.resolve(false);
-            }
-        }
-
-        // --- RODA KENCAN ---
-        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Cari Kopi", "Karaoke"];
-        const wheelCanvas = document.getElementById('spinner-canvas');
-        const spinBtn = document.getElementById('spin-btn');
-        let isSpinning = false;
-        let currentAngle = 0;
-        const colors = ["#f87171", "#fb923c", "#facc15", "#a3e635", "#4ade80", "#34d399", "#22d3ee", "#60a5fa"];
-
-        function drawWheel() {
-            if (!wheelCanvas) return;
-            const ctx = wheelCanvas.getContext('2d');
-            const centerX = wheelCanvas.width / 2;
-            const centerY = wheelCanvas.height / 2;
-            const radius = centerX - 5;
-            const arcSize = 2 * Math.PI / dateIdeas.length;
-
-            ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(currentAngle);
-            ctx.translate(-centerX, -centerY);
-
-            for (let i = 0; i < dateIdeas.length; i++) {
-                const startAngle = i * arcSize;
-                const endAngle = startAngle + arcSize;
-                ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-                ctx.closePath();
-                ctx.fillStyle = colors[i % colors.length];
-                ctx.fill();
-
-                ctx.save();
-                ctx.translate(centerX, centerY);
-                ctx.rotate(startAngle + arcSize / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = "#fff";
-                ctx.font = "bold 14px Inter";
-                ctx.fillText(dateIdeas[i], radius - 10, 5);
-                ctx.restore();
-            }
-            ctx.restore();
-        }
-        
-        function setupWheel() {
-            drawWheel();
-        }
-
-        function spinWheel() {
-            if (isSpinning || !wheelCanvas) return;
-            isSpinning = true;
-            const randomSpins = Math.floor(Math.random() * 5) + 8;
-            const randomStopAngle = Math.floor(Math.random() * 360);
-            const totalRotation = (randomSpins * 360) + randomStopAngle;
-            
-            wheelCanvas.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
-            wheelCanvas.style.transform = `rotate(${totalRotation}deg)`;
-
-            setTimeout(() => {
-                const segmentAngle = 360 / dateIdeas.length;
-                // Normalize final angle to be within 0-360
-                const finalAngle = totalRotation % 360;
-                // Adjust for pointer position (top is 270 degrees from positive x-axis)
-                // We want to find which segment is at the pointer.
-                // The wheel rotates clockwise.
-                // If pointer is at 270 deg, and segment starts at 0 deg, it's 270 deg away.
-                // We need to calculate the angle relative to the pointer.
-                // (360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle
-                // Or simply: (pointerAngle - finalAngle + 360) % 360 to get angle from pointer to 0-line
-                // Then divide by segmentAngle and floor.
-                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
-                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
-
-                const result = dateIdeas[winningIndex];
-                
-                const hasilKencanText = document.getElementById('hasil-kencan-text');
-                if (hasilKencanText) {
-                    hasilKencanText.textContent = result;
-                }
-                openModal('modal-kencan-hasil');
-                isSpinning = false;
-                // Reset transform for next spin, without transition
-                wheelCanvas.style.transition = 'none';
-                wheelCanvas.style.transform = `rotate(${finalAngle}deg)`; // Keep it at the final angle visually
-                currentAngle = finalAngle; // Update currentAngle for next spin
-            }, 5000); // Must match the transition duration in CSS
-        }
-
-        // --- PROFIL PICTURE ---
-        function setupProfilePicPreview(inputId, previewId) {
-            const input = document.getElementById(inputId);
-            const preview = document.getElementById(previewId);
-            const saveBtn = document.getElementById('save-profile-pic-btn');
-            if (input && preview && saveBtn) {
-                input.addEventListener('change', () => {
-                    const file = input.files[0];
-                    if (file) {
-                        selectedProfilePicFile = file;
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            preview.src = e.target.result;
-                            preview.classList.remove('hidden');
-                        };
-                        reader.readAsDataURL(file);
-                        saveBtn.disabled = false;
-                    }
-                });
-            }
-        }
 
         async function handleProfilePicUpload() {
             if (!selectedProfilePicFile || !currentUser) return;
             const saveBtn = document.getElementById('save-profile-pic-btn');
-            if (!saveBtn) return;
+            const profilePicPreview = document.getElementById('profile-pic-preview'); 
+            if (!saveBtn || !profilePicPreview) return;
 
             saveBtn.disabled = true;
             saveBtn.textContent = 'Mengunggah...';
 
-            const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`);
             try {
-                await uploadBytes(storageRef, selectedProfilePicFile);
+                const file = selectedProfilePicFile;
+                if (!file) throw new Error("No file selected.");
+
+                // Step 1: Read the file as a Data URL
+                const reader = new FileReader();
+                const fileReadPromise = new Promise((resolve, reject) => {
+                    reader.onload = (event) => resolve(event.target.result);
+                    reader.onerror = (error) => reject(error);
+                });
+                const dataUrl = await fileReadPromise;
+
+                // Step 2: Create an Image object
+                const img = new Image();
+                const imgLoadPromise = new Promise((resolve, reject) => {
+                    img.onload = () => resolve();
+                    img.onerror = (error) => reject(error);
+                });
+                img.src = dataUrl;
+                await imgLoadPromise;
+
+                // Step 3: Create a canvas for resizing/compression
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                const maxWidth = 800; // Max width for the image
+                const maxHeight = 800; // Max height for the image
+                let width = img.width;
+                let height = img.height;
+
+                // Calculate new dimensions to fit within maxWidth/maxHeight while maintaining aspect ratio
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                // Draw image to canvas
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Step 4: Get compressed image data as Blob
+                const compressedBlob = await new Promise(resolve => {
+                    canvas.toBlob(blob => {
+                        resolve(blob);
+                    }, 'image/jpeg', 0.7); // Compress to JPEG with 70% quality
+                });
+
+                if (!compressedBlob) throw new Error("Image compression failed.");
+
+                const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}/profile.jpg`); // Use a fixed name like profile.jpg
+
+                await uploadBytes(storageRef, compressedBlob);
                 const downloadURL = await getDownloadURL(storageRef);
+
                 await updateDoc(doc(window.db, "users", currentUser.uid), {
                     photoURL: downloadURL
                 });
+
                 console.log('Foto profil berhasil diperbarui!');
                 saveBtn.textContent = 'Simpan Foto';
-                // Update dashboard profile pics if they are the current user
-                renderDashboardHeader();
+                profilePicPreview.src = downloadURL; // Update preview with the actual uploaded URL
+                renderDashboardHeader(); // Refresh dashboard header images
+
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
                 console.error('Gagal mengunggah foto.');
@@ -1888,6 +1579,95 @@
                 profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
             }
         }
+
+        // --- PDF Export Functions ---
+        function renderExportPdf() {
+            // This function can be used to render any specific UI for the PDF export page
+            // For now, the static HTML section is sufficient.
+            console.log("Halaman Ekspor PDF dimuat.");
+        }
+
+        async function handleExportPdf() {
+            if (!currentHubId) {
+                alert("Tidak ada Hub yang aktif untuk diekspor.");
+                return;
+            }
+
+            const exportBtn = document.getElementById('export-dashboard-pdf-btn');
+            const statusEl = document.getElementById('pdf-export-status');
+            if (!exportBtn || !statusEl) return;
+
+            exportBtn.disabled = true;
+            statusEl.classList.remove('hidden');
+
+            try {
+                // Temporarily show dashboard section to capture its content
+                const dashboardSection = document.getElementById('dashboard');
+                if (!dashboardSection) {
+                    throw new Error("Dashboard section not found.");
+                }
+
+                // Make sure the dashboard is rendered with latest data before capturing
+                await renderDashboard(); 
+                
+                // Save current display state of sections
+                const originalDisplay = {};
+                document.querySelectorAll('.content-section').forEach(section => {
+                    originalDisplay[section.id] = section.style.display;
+                    section.style.display = 'none'; // Hide all sections
+                });
+                dashboardSection.style.display = 'block'; // Show only dashboard
+
+                // Capture the dashboard content
+                const canvas = await html2canvas(dashboardSection, {
+                    scale: 2, // Increase scale for better resolution
+                    useCORS: true, // Important for images/external resources
+                    logging: true,
+                    backgroundColor: null // Transparent background
+                });
+
+                // Restore original display state
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.style.display = originalDisplay[section.id];
+                });
+                // Re-navigate to the current page to ensure correct active section
+                navigateTo(document.querySelector('.nav-link.bg-blue-100')?.dataset.target || 'dashboard', document.getElementById('page-title').textContent);
+
+
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF('p', 'mm', 'a4'); // 'p' for portrait, 'mm' for millimeters, 'a4' size
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save('Laporan_LifeHub_Dashboard.pdf');
+                statusEl.textContent = 'PDF berhasil dibuat!';
+                statusEl.classList.remove('hidden');
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+                statusEl.textContent = `Gagal membuat PDF: ${error.message}`;
+                statusEl.classList.remove('hidden');
+            } finally {
+                exportBtn.disabled = false;
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                    statusEl.innerHTML = '<div class="loader mx-auto mb-2"></div><p>Mempersiapkan PDF...</p>'; // Reset status
+                }, 3000);
+            }
+        }
+
 
         // Panggil inisialisasi Firebase saat DOM dimuat
         window.onload = () => {
