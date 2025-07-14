@@ -408,7 +408,7 @@
             apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
             authDomain: "coupleflow-3c5d2.firebaseapp.com",
             projectId: "coupleflow-3c5d2",
-            storageBucket: "coupleflow-3c5d2.firebasestorage.app",
+            storageBucket: "coupleflow-3c5d2.firebaseapp.com", // Pastikan ini benar
             messagingSenderId: "1087616981568",
             appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
             measurementId: "G-Q49D43SNHH"
@@ -503,6 +503,7 @@
                             currentHubId = userDocSnap.data().hubId;
                             initializeAppUI();
                         } else {
+                            // Jika pengguna terautentikasi tetapi belum memiliki hubId, tampilkan layar hub
                             showUI(hubScreen);
                         }
                     } else {
@@ -523,7 +524,7 @@
                             currentUser = null;
                             currentHubId = null;
                             unsubscribeAll();
-                            showUI(authScreen);
+                            showUI(authScreen); // Tampilkan layar autentikasi jika masuk anonim gagal
                         }
                     }
                 });
@@ -691,7 +692,7 @@
             document.getElementById('login-form')?.addEventListener('submit', handleLogin);
             document.getElementById('register-form')?.addEventListener('submit', handleRegister);
             document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
-            document.getElementById('create-hub-btn')?.addEventListener('click', createHub);
+            document.getElementById('create-hub-btn')?.addEventListener('click', createHub); // Event listener untuk tombol "Buat Hub Baru"
             document.getElementById('join-hub-form')?.addEventListener('submit', joinHub);
             document.getElementById('form-transaksi')?.addEventListener('submit', handleTransaksiSubmit);
             document.getElementById('form-tabungan')?.addEventListener('submit', handleTabunganSubmit);
@@ -873,20 +874,64 @@
             });
         }
         async function createHub() { 
-            if (!currentUser) { console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); return; }
+            console.log("Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
+            if (!currentUser) { 
+                console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
+                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi.";
+                return; 
+            }
             const hubId = doc(collection(window.db, 'hubs')).id;
             try { 
                 const batch = writeBatch(window.db);
+                // Set dokumen hub baru
                 batch.set(doc(window.db, "hubs", hubId), { members: [currentUser.uid], createdAt: serverTimestamp() });
+                // Perbarui dokumen pengguna dengan hubId
                 batch.set(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
                 await batch.commit(); 
+                console.log("Hub berhasil dibuat dan pengguna ditambahkan."); // Debug log
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
                 console.error(`Gagal membuat hub. Error: ${error.message}`);
                 document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
             } 
         }
-        async function joinHub(e) { e.preventDefault(); const hubId = document.getElementById('join-hub-id').value.trim(); if (!hubId) return; const hubRef = doc(window.db, "hubs", hubId); const hubSnap = await getDoc(hubRef); if (hubSnap.exists()) { try { const members = hubSnap.data().members || []; if (members.includes(currentUser.uid)) {} else { await updateDoc(hubRef, { members: [...members, currentUser.uid] }); } await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); } catch (error) { console.error("Join Hub Error:", error); document.getElementById('hub-error').textContent = "Gagal bergabung dengan hub."; } } else { document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; } }
+        async function joinHub(e) { 
+            e.preventDefault(); 
+            console.log("Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
+            const hubId = document.getElementById('join-hub-id').value.trim(); 
+            if (!hubId) {
+                document.getElementById('hub-error').textContent = "ID Hub tidak boleh kosong.";
+                return;
+            }
+            if (!currentUser) { 
+                console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
+                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi.";
+                return; 
+            }
+
+            const hubRef = doc(window.db, "hubs", hubId); 
+            try {
+                const hubSnap = await getDoc(hubRef); 
+                if (hubSnap.exists()) { 
+                    const members = hubSnap.data().members || []; 
+                    if (members.includes(currentUser.uid)) {
+                        console.log("Pengguna sudah menjadi anggota hub ini.");
+                        document.getElementById('hub-error').textContent = "Anda sudah menjadi anggota hub ini.";
+                    } else { 
+                        await updateDoc(hubRef, { members: [...members, currentUser.uid] }); 
+                        console.log("Pengguna berhasil ditambahkan ke hub.");
+                    } 
+                    await setDoc(doc(window.db, "users", currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); 
+                    console.log("Dokumen pengguna diperbarui dengan hubId.");
+                } else { 
+                    document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; 
+                    console.warn("ID Hub tidak ditemukan:", hubId);
+                } 
+            } catch (error) { 
+                console.error("Join Hub Error:", error); 
+                document.getElementById('hub-error').textContent = `Gagal bergabung dengan hub: ${error.code}`; 
+            } 
+        }
         
         window.copyHubId = () => {
             const hubId = document.getElementById('profile-hub-id').textContent;
