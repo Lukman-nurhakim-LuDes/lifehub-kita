@@ -17,6 +17,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf.js untuk ekspor PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         /* Gaya CSS kustom Anda */
@@ -244,6 +246,11 @@
                         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Mood</h3><p id="dashboard-mood" class="text-3xl mt-1">😶</p></div>
                         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit</h3><p id="dashboard-habit-completion" class="text-2xl font-bold mt-1">0%</p></div>
                     </div>
+                    <div class="flex justify-end">
+                        <button id="export-pdf-btn" class="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition flex items-center">
+                            <i class="fa-solid fa-file-pdf mr-2"></i>Ekspor Dashboard PDF
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="font-semibold mb-4">Grafik Pemasukan vs Pengeluaran (Bulan Ini)</h3><canvas id="incomeExpenseChart"></canvas></div>
                         <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md"><h3 class="font-semibold mb-4">Grafik Pengeluaran per Kategori</h3><canvas id="expenseChart"></canvas></div>
@@ -261,7 +268,7 @@
                     <div id="keuangan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-center">
                         <div><label for="filter-bulan" class="text-sm font-medium">Filter Bulan:</label><input type="month" id="filter-bulan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"></div>
-                        <div class="flex-grow"><label for="filter-pasangan" class="text-sm font-medium">Filter Pasangan:</label><select id="filter-pasangan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"><option value="semua">Semua</option><option value="Lukman">Lukman</option><option value="Destry">Destry</option></select></div>
+                        <div class="flex-grow"><label for="filter-pasangan" class="text-sm font-medium">Filter Pasangan:</label><select id="filter-pasangan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"><option value="semua">Semua</option><option value="Lukman">Lukman</option><option value="Destry">Destry</option></select></div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-x-auto"><table class="w-full text-left"><thead class="border-b dark:border-gray-700"><tr><th class="p-4">Tanggal</th><th class="p-4">Kategori</th><th class="p-4">Jumlah</th><th class="p-4">Oleh</th><th class="p-4">Catatan</th><th class="p-4">Aksi</th></tr></thead><tbody id="tabel-transaksi-body"></tbody></table></div>
                 </section>
@@ -385,7 +392,7 @@
     </div>
     <!-- Other Modals (Unchanged) -->
     <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
-    <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
+    <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Peralatan Badan</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Pokok</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
     <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
     <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
     <div id="modal-diary" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-lg mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tulis Diary</h2><form id="form-diary"><div class="space-y-4"><input type="hidden" id="diary-id"><div><label for="diary-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="diary-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-judul" class="block mb-1 font-medium">Judul</label><input type="text" id="diary-judul" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="diary-isi" class="block mb-1 font-medium">Isi Diary</label><textarea id="diary-isi" rows="5" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></textarea></div><div class="flex items-center justify-between"><div><label for="diary-mood" class="block mb-1 font-medium">Mood</label><select id="diary-mood" class="p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-2xl" required><option value="😊">😊 Bahagia</option><option value="😂">😂 Sangat Bahagia</option><option value="🙂">🙂 Biasa Saja</option><option value="😢">😢 Sedih</option><option value="😠">😠 Marah</option><option value="😴">😴 Lelah</option></select></div><div><label for="diary-oleh" class="block mb-1 font-medium">Penulis</label><select id="diary-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div></div><div><label for="diary-foto" class="block mb-1 font-medium">Upload Foto (Opsional)</label><input type="file" id="diary-foto" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900"><img id="diary-foto-preview" class="hidden mt-4 max-h-48 rounded-lg"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-diary')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">Simpan</button></div></form></div></div>
@@ -738,6 +745,9 @@
                 sidebar?.classList.add('-translate-x-full');
                 overlay?.classList.add('hidden');
             });
+
+            // PDF Export Button
+            document.getElementById('export-pdf-btn')?.addEventListener('click', exportDashboardToPdf);
         }
 
         function initializeAppUI() {
@@ -1831,13 +1841,21 @@
                         };
                         reader.readAsDataURL(file);
                         saveBtn.disabled = false;
+                    } else {
+                        selectedProfilePicFile = null;
+                        preview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih"; // Reset to default placeholder
+                        preview.classList.remove('hidden'); // Ensure it's visible with placeholder
+                        saveBtn.disabled = true;
                     }
                 });
             }
         }
 
         async function handleProfilePicUpload() {
-            if (!selectedProfilePicFile || !currentUser) return;
+            if (!selectedProfilePicFile || !currentUser) {
+                console.warn("Tidak ada file yang dipilih atau pengguna tidak terautentikasi.");
+                return;
+            }
             const saveBtn = document.getElementById('save-profile-pic-btn');
             if (!saveBtn) return;
 
@@ -1846,18 +1864,19 @@
 
             const storageRef = ref(window.storage, `profile_pictures/${currentUser.uid}`);
             try {
-                await uploadBytes(storageRef, selectedProfilePicFile);
-                const downloadURL = await getDownloadURL(storageRef);
+                const snapshot = await uploadBytes(storageRef, selectedProfilePicFile);
+                const downloadURL = await getDownloadURL(snapshot.ref);
                 await updateDoc(doc(window.db, "users", currentUser.uid), {
                     photoURL: downloadURL
                 });
-                console.log('Foto profil berhasil diperbarui!');
+                console.log('Foto profil berhasil diperbarui! URL:', downloadURL);
                 saveBtn.textContent = 'Simpan Foto';
-                // Update dashboard profile pics if they are the current user
+                saveBtn.disabled = false; // Re-enable after successful upload
+                // Update dashboard profile pics
                 renderDashboardHeader();
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
-                console.error('Gagal mengunggah foto.');
+                console.error('Gagal mengunggah foto:', error.message);
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Simpan Foto';
             }
@@ -1876,18 +1895,68 @@
 
             const profilePicLukman = document.getElementById('profile-pic-lukman');
             const profilePicDestry = document.getElementById('profile-pic-destry');
+            const profilePicPreview = document.getElementById('profile-pic-preview'); // For the profile page preview
 
             if (lukmanUser && lukmanUser.data()?.photoURL && profilePicLukman) {
                 profilePicLukman.src = lukmanUser.data().photoURL;
+                console.log("Lukman Photo URL:", lukmanUser.data().photoURL);
             } else if (profilePicLukman) {
                 profilePicLukman.src = "https://placehold.co/64x64/3b82f6/ffffff?text=L"; // Default if no photo
+                console.log("Lukman Photo URL: Default (no photo or user not found)");
             }
             if (destryUser && destryUser.data()?.photoURL && profilePicDestry) {
                 profilePicDestry.src = destryUser.data().photoURL;
+                console.log("Destry Photo URL:", destryUser.data().photoURL);
             } else if (profilePicDestry) {
                 profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
+                console.log("Destry Photo URL: Default (no photo or user not found)");
+            }
+
+            // Update the profile page's own profile picture preview
+            if (currentUser && currentUser.uid) {
+                const currentUserDoc = userDocs.find(d => d.id === currentUser.uid);
+                if (currentUserDoc && currentUserDoc.data()?.photoURL && profilePicPreview) {
+                    profilePicPreview.src = currentUserDoc.data().photoURL;
+                    profilePicPreview.classList.remove('hidden');
+                } else if (profilePicPreview) {
+                    profilePicPreview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih";
+                    profilePicPreview.classList.remove('hidden');
+                }
             }
         }
+
+        // --- PDF Export Function ---
+        function exportDashboardToPdf() {
+            const dashboardSection = document.getElementById('dashboard');
+            if (dashboardSection) {
+                // Temporarily hide elements that shouldn't be in the PDF if any
+                // For example, the export button itself or fixed/absolute positioned elements
+                const exportButton = document.getElementById('export-pdf-btn');
+                if (exportButton) exportButton.style.display = 'none';
+
+                // Re-render charts to ensure they are up-to-date and correctly drawn
+                // This is important because chart.js canvases might not render correctly if not visible or recent
+                renderDashboard(); 
+
+                html2pdf(dashboardSection, {
+                    margin: 10,
+                    filename: 'dashboard-lifehub.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).then(() => {
+                    // Restore hidden elements after PDF generation
+                    if (exportButton) exportButton.style.display = 'flex';
+                }).catch(error => {
+                    console.error("Error generating PDF:", error);
+                    // Ensure button is restored even on error
+                    if (exportButton) exportButton.style.display = 'flex';
+                });
+            } else {
+                console.error("Dashboard section not found for PDF export.");
+            }
+        }
+
 
         // Panggil inisialisasi Firebase saat DOM dimuat
         window.onload = () => {
