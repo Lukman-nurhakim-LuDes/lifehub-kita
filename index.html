@@ -406,7 +406,7 @@
         </div>
     </div>
     <!-- Other Modals (Unchanged) -->
-    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></div></form></div></div>
+    <div id="modal-habit" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Habit Baru</h2><form id="form-habit"><div class="space-y-4"><div><label for="habit-nama" class="block mb-1 font-medium">Nama Habit</label><input type="text" id="habit-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-habit')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600">Simpan</button></div></form></div></div>
     <div id="modal-transaksi" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Transaksi Baru</h2><form id="form-transaksi"><div class="space-y-4"><input type="hidden" id="transaksi-id"><div><label for="transaksi-tanggal" class="block mb-1 font-medium">Tanggal</label><input type="date" id="transaksi-tanggal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-kategori" class="block mb-1 font-medium">Kategori</label><select id="transaksi-kategori" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Pemasukan</option><option>Makan & Minum</option><option>Belanja</option><option>Transportasi</option><option>Liburan</option><option>Hiburan</option><option>Tagihan</option><option>Kesehatan</option><option>Lainnya</option></select></div><div><label for="transaksi-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="transaksi-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="transaksi-oleh" class="block mb-1 font-medium">Oleh</label><select id="transaksi-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Lukman</option><option>Destry</option></select></div><div><label for="transaksi-catatan" class="block mb-1 font-medium">Catatan</label><textarea id="transaksi-catatan" rows="2" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"></textarea></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-transaksi')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Simpan</button></div></form></div></div>
     <div id="modal-tabungan" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Target Tabungan Baru</h2><form id="form-tabungan"><div class="space-y-4"><input type="hidden" id="tabungan-id"><div><label for="tabungan-nama" class="block mb-1 font-medium">Nama Target</label><input type="text" id="tabungan-nama" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-target" class="block mb-1 font-medium">Target Jumlah (Rp)</label><input type="number" id="tabungan-target" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tabungan-awal" class="block mb-1 font-medium">Nominal Awal (Rp)</label><input type="number" id="tabungan-awal" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" value="0" required></div><div><label for="tabungan-oleh" class="block mb-1 font-medium">Dibuat Oleh</label><select id="tabungan-oleh" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required><option>Bersama</option><option>Lukman</option><option>Destry</option></select></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tabungan')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Simpan</button></div></form></div></div>
     <div id="modal-tambah-dana" class="modal-backdrop"><div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-6"><h2 class="text-2xl font-bold mb-4">Tambah Dana ke Tabungan</h2><form id="form-tambah-dana"><input type="hidden" id="tambah-dana-id"><div><label for="tambah-dana-jumlah" class="block mb-1 font-medium">Jumlah (Rp)</label><input type="number" id="tambah-dana-jumlah" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" required></div><div><label for="tambah-dana-catatan" class="block mb-1 font-medium">Catatan</label><input type="text" id="tambah-dana-catatan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600" placeholder="misal: Gaji bulan ini"></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" onclick="closeModal('modal-tambah-dana')" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded-lg">Batal</button><button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Tambah</button></div></form></div></div>
@@ -431,8 +431,8 @@
             authDomain: "coupleflow-3c5d2.firebaseapp.com",
             projectId: "coupleflow-3c5d2",
             storageBucket: "coupleflow-3c5d2.firebaseapp.com", // Pastikan ini benar
-            messagingSenderId: "1087616981568",
-            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
+            messagingSenderId: "1087616981568", // PASTIKAN INI COCOK DENGAN KONSOL FIREBASE ANDA
+            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5", // PASTIKAN INI COCOK DENGAN KONSOL FIREBASE ANDA
             measurementId: "G-Q49D43SNHH"
         };
 
@@ -713,51 +713,48 @@
         }
 
         // --- Logika Aplikasi Utama (fungsi mainApp) ---
-        function mainApp() {
-            setupAllEventListeners(); // Panggil ini setelah semua elemen DOM tersedia
-        }
-
-        function setupAllEventListeners() {
+        // Mengubah fungsi-fungsi penting menjadi global agar dapat diakses oleh HTML
+        window.setupAllEventListeners = () => {
             // Auth View Toggling
             document.getElementById('show-register-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-view').style.display = 'none'; document.getElementById('register-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
             document.getElementById('show-login-link')?.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-view').style.display = 'none'; document.getElementById('login-view').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
             
             // Forms
-            document.getElementById('login-form')?.addEventListener('submit', handleLogin);
-            document.getElementById('register-form')?.addEventListener('submit', handleRegister);
-            document.getElementById('logout-btn')?.addEventListener('click', handleLogout);
-            document.getElementById('create-hub-btn')?.addEventListener('click', createHub); // Event listener untuk tombol "Buat Hub Baru"
-            document.getElementById('join-hub-form')?.addEventListener('submit', joinHub);
-            document.getElementById('form-transaksi')?.addEventListener('submit', handleTransaksiSubmit);
-            document.getElementById('form-tabungan')?.addEventListener('submit', handleTabunganSubmit);
-            document.getElementById('form-tambah-dana')?.addEventListener('submit', handleTambahDanaSubmit);
-            document.getElementById('form-diary')?.addEventListener('submit', handleDiarySubmit);
-            document.getElementById('form-habit')?.addEventListener('submit', handleHabitSubmit);
-            document.getElementById('form-wishlist')?.addEventListener('submit', handleWishlistSubmit);
-            document.getElementById('form-aktivitas')?.addEventListener('submit', handleAktivitasSubmit);
-            document.getElementById('form-notifikasi')?.addEventListener('submit', handleNotifikasiSubmit);
-            document.getElementById('spin-btn')?.addEventListener('click', spinWheel);
-            document.getElementById('save-profile-pic-btn')?.addEventListener('click', handleProfilePicUpload);
-            document.getElementById('export-dashboard-pdf-btn')?.addEventListener('click', handleExportPdf); // New event listener for PDF export
+            document.getElementById('login-form')?.addEventListener('submit', window.handleLogin);
+            document.getElementById('register-form')?.addEventListener('submit', window.handleRegister);
+            document.getElementById('logout-btn')?.addEventListener('click', window.handleLogout);
+            document.getElementById('create-hub-btn')?.addEventListener('click', window.createHub);
+            document.getElementById('join-hub-form')?.addEventListener('submit', window.joinHub);
+            document.getElementById('form-transaksi')?.addEventListener('submit', window.handleTransaksiSubmit);
+            document.getElementById('form-tabungan')?.addEventListener('submit', window.handleTabunganSubmit);
+            document.getElementById('form-tambah-dana')?.addEventListener('submit', window.handleTambahDanaSubmit);
+            document.getElementById('form-diary')?.addEventListener('submit', window.handleDiarySubmit);
+            document.getElementById('form-habit')?.addEventListener('submit', window.handleHabitSubmit);
+            document.getElementById('form-wishlist')?.addEventListener('submit', window.handleWishlistSubmit);
+            document.getElementById('form-aktivitas')?.addEventListener('submit', window.handleAktivitasSubmit);
+            document.getElementById('form-notifikasi')?.addEventListener('submit', window.handleNotifikasiSubmit);
+            document.getElementById('spin-btn')?.addEventListener('click', window.spinWheel);
+            document.getElementById('save-profile-pic-btn')?.addEventListener('click', window.handleProfilePicUpload);
+            document.getElementById('export-dashboard-pdf-btn')?.addEventListener('click', window.handleExportPdf);
             
             // UI Elements
             if (document.getElementById('filter-bulan')) {
                 document.getElementById('filter-bulan').value = new Date().toISOString().slice(0, 7);
-                document.getElementById('filter-bulan').addEventListener('change', renderKeuangan);
+                document.getElementById('filter-bulan').addEventListener('change', window.renderKeuangan);
             }
-            document.getElementById('filter-pasangan')?.addEventListener('change', renderKeuangan);
-            document.getElementById('habit-prev-month')?.addEventListener('click', () => changeHabitMonth(-1));
-            document.getElementById('habit-next-month')?.addEventListener('click', () => changeHabitMonth(1));
-            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(-1));
-            document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1));
-            setupImagePreview('diary-foto', 'diary-foto-preview');
-            setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
-            setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
-            document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(modal.id); }));
+            document.getElementById('filter-pasangan')?.addEventListener('change', window.renderKeuangan);
+            document.getElementById('habit-prev-month')?.addEventListener('click', () => window.changeHabitMonth(-1));
+            document.getElementById('habit-next-month')?.addEventListener('click', () => window.changeHabitMonth(1));
+            document.getElementById('prev-month')?.addEventListener('click', () => window.changeCalendarMonth(-1));
+            document.getElementById('next-month')?.addEventListener('click', () => window.changeCalendarMonth(1));
+            window.setupImagePreview('diary-foto', 'diary-foto-preview');
+            window.setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
+            window.setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
+            document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', (e) => { if (e.target === modal) window.closeModal(modal.id); }));
             document.getElementById('theme-toggle')?.addEventListener('click', () => {
                 const isDark = !document.documentElement.classList.contains('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                applyTheme(isDark);
+                window.applyTheme(isDark);
             });
             
             // Mobile Menu
@@ -773,13 +770,13 @@
                 sidebar?.classList.add('-translate-x-full');
                 overlay?.classList.add('hidden');
             });
-        }
+        };
 
-        function initializeAppUI() {
-            setupNavigation();
-            setupTheme();
-            navigateTo('dashboard', 'Dashboard');
-            attachRealtimeListeners();
+        window.initializeAppUI = () => {
+            window.setupNavigation();
+            window.setupTheme();
+            window.navigateTo('dashboard', 'Dashboard');
+            window.attachRealtimeListeners();
             showUI(appContainer);
             // Periksa keberadaan elemen sebelum mengakses properti
             if (document.getElementById('profile-email')) {
@@ -791,23 +788,23 @@
             if (document.getElementById('profile-hub-id')) {
                 document.getElementById('profile-hub-id').textContent = currentHubId;
             }
-        }
+        };
 
-        function attachRealtimeListeners() {
+        window.attachRealtimeListeners = () => {
             if (!currentHubId) return;
-            unsubscribeAll();
+            window.unsubscribeAll();
             const collectionsToRender = {
-                'transactions': [renderKeuangan, renderDashboard, renderIndividualSummaries],
-                'savings': [renderTabungan, renderDashboard],
-                'diary': [renderDiary, renderDashboard, renderIndividualSummaries],
-                'habits': [renderHabitTable, renderDashboard, renderIndividualSummaries],
-                'habitEntries': [renderHabitTable, renderDashboard, renderIndividualSummaries],
-                'wishlist': [renderWishlist],
-                'events': [renderCalendar],
-                'notifications': [renderNotifikasi, checkUnreadNotifications]
+                'transactions': [window.renderKeuangan, window.renderDashboard, window.renderIndividualSummaries],
+                'savings': [window.renderTabungan, window.renderDashboard],
+                'diary': [window.renderDiary, window.renderDashboard, window.renderIndividualSummaries],
+                'habits': [window.renderHabitTable, window.renderDashboard, window.renderIndividualSummaries],
+                'habitEntries': [window.renderHabitTable, window.renderDashboard, window.renderIndividualSummaries],
+                'wishlist': [window.renderWishlist],
+                'events': [window.renderCalendar],
+                'notifications': [window.renderNotifikasi, window.checkUnreadNotifications]
             };
             const hubDocRef = doc(window.db, "hubs", currentHubId);
-            const hubUnsubscribe = onSnapshot(hubDocRef, renderDashboardHeader);
+            const hubUnsubscribe = onSnapshot(hubDocRef, window.renderDashboardHeader);
             unsubscribeListeners.push(hubUnsubscribe);
 
             Object.keys(collectionsToRender).forEach(col => {
@@ -821,7 +818,7 @@
                                 // Determine recipient name based on current user's email
                                 const recipientName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
                                 if (newNotif.recipient.toLowerCase() === recipientName.toLowerCase() && newNotif.sender.toLowerCase() !== recipientName.toLowerCase()) {
-                                    showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
+                                    window.showToastNotification(`Pesan dari ${newNotif.sender}`, newNotif.message);
                                 }
                             }
                         });
@@ -830,10 +827,10 @@
                 }, (error) => { console.error(`Error listening to ${col}:`, error); });
                 unsubscribeListeners.push(unsubscribe);
             });
-        }
-        function unsubscribeAll() { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; }
+        };
+        window.unsubscribeAll = () => { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; };
 
-        function setupNavigation() {
+        window.setupNavigation = () => {
             const navItems = [
                 { id: 'dashboard', icon: 'fa-solid fa-table-columns', text: 'Dashboard' },
                 { id: 'keuangan', icon: 'fa-solid fa-wallet', text: 'Keuangan' },
@@ -851,9 +848,9 @@
             const navList = document.getElementById('nav-list');
             if (navList) {
                 navList.innerHTML = navItems.map(item => `<li><a href="#" class="nav-link relative flex items-center p-2 lg:p-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700" data-target="${item.id}" data-title="${item.text}"><i class="${item.icon} w-6 text-center text-lg"></i><span class="ml-4">${item.text}</span></a></li>`).join('');
-                document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.target, link.dataset.title); }));
+                document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); window.navigateTo(link.dataset.target, link.dataset.title); }));
             }
-        }
+        };
         window.navigateTo = (pageId, pageTitle) => {
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             document.getElementById(pageId)?.classList.add('active');
@@ -869,23 +866,23 @@
             document.getElementById('mobile-menu-overlay')?.classList.add('hidden');
             
             if (pageId === 'individu') {
-                renderIndividualSummaries();
+                window.renderIndividualSummaries();
             }
             if (pageId === 'notifikasi') {
-                markNotificationsAsRead();
+                window.markNotificationsAsRead();
             }
             if (pageId === 'roda-kencan') {
-                setupWheel();
+                window.setupWheel();
             }
             if (pageId === 'export-pdf') {
-                renderExportPdf(); // Call render function for PDF export
+                window.renderExportPdf(); // Call render function for PDF export
             }
             window.scrollTo(0, 0);
-        }
+        };
         window.openModal = (modalId) => { document.getElementById(modalId).style.display = 'flex'; };
         window.closeModal = (modalId) => { document.getElementById(modalId).style.display = 'none'; };
 
-        function applyTheme(isDark) {
+        window.applyTheme = (isDark) => {
             const toggleIcon = document.querySelector('#theme-toggle i');
             const toggleText = document.querySelector('#theme-toggle span');
             if (document.documentElement) {
@@ -897,22 +894,22 @@
             if (toggleText) {
                 toggleText.textContent = isDark ? 'Mode Terang' : 'Mode Gelap';
             }
-            if(expenseChartInstance || incomeExpenseChartInstance) renderDashboard();
+            if(expenseChartInstance || incomeExpenseChartInstance) window.renderDashboard();
         };
 
-        function setupTheme() {
+        window.setupTheme = () => {
             const currentTheme = localStorage.getItem('theme');
-            applyTheme(currentTheme === 'dark');
-        }
+            window.applyTheme(currentTheme === 'dark');
+        };
         
-        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
-        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
-        async function handleLogout() {
-            showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
+        window.handleLogin = async (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } };
+        window.handleRegister = async (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } };
+        window.handleLogout = async () => {
+            window.showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
                 await signOut(window.auth);
             });
-        }
-        async function createHub() { 
+        };
+        window.createHub = async () => { 
             console.log("Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
             if (!currentUser) { 
                 console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
@@ -934,8 +931,8 @@
                 console.error(`Gagal membuat hub. Error: ${error.message}`);
                 document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
             } 
-        }
-        async function joinHub(e) { 
+        };
+        window.joinHub = async (e) => { 
             e.preventDefault(); 
             console.log("Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
             const hubId = document.getElementById('join-hub-id').value.trim(); 
@@ -972,7 +969,7 @@
                 console.error("Join Hub Error:", error); 
                 document.getElementById('hub-error').textContent = `Gagal bergabung dengan hub: ${error.code}`; 
             } 
-        }
+        };
         
         window.copyHubId = () => {
             const hubId = document.getElementById('profile-hub-id').textContent;
@@ -1002,11 +999,11 @@
                 console.log('ID Hub disalin (fallback)!');
             }
         };
-        function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
-        function changeCalendarMonth(delta) { calendarDate.setMonth(calendarDate.getMonth() + delta); renderCalendar(); }
+        window.changeHabitMonth = (delta) => { habitDate.setMonth(habitDate.getMonth() + delta); window.renderHabitTable(); };
+        window.changeCalendarMonth = (delta) => { calendarDate.setMonth(calendarDate.getMonth() + delta); window.renderCalendar(); };
         
         // --- ALL FUNCTIONS ARE NOW FULLY IMPLEMENTED ---
-        async function renderKeuangan() {
+        window.renderKeuangan = async () => {
             if (!currentHubId) return;
             const monthFilter = document.getElementById('filter-bulan')?.value;
             const personFilter = document.getElementById('filter-pasangan')?.value;
@@ -1050,21 +1047,21 @@
                         <td class="p-4 font-semibold ${amountColor}">${amountPrefix} ${formatCurrency(t.jumlah)}</td>
                         <td class="p-4">${t.oleh}</td>
                         <td class="p-4">${t.catatan || '-'}</td>
-                        <td class="p-4"><button onclick="deleteTransaction('${t.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="p-4"><button onclick="window.deleteTransaction('${t.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
                 }).join('');
                 if (transactions.length === 0) {
                     body.innerHTML = `<tr><td colspan="6" class="text-center p-8 text-gray-500">Belum ada transaksi di bulan ini.</td></tr>`;
                 }
             }
-        }
+        };
         window.deleteTransaction = async (id) => {
-            showConfirmModal('Hapus Transaksi', 'Yakin hapus transaksi ini?', async () => {
+            window.showConfirmModal('Hapus Transaksi', 'Yakin hapus transaksi ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "transactions", id));
             });
         };
         
-        async function handleTransaksiSubmit(e) {
+        window.handleTransaksiSubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const dateValue = document.getElementById('transaksi-tanggal')?.value;
@@ -1078,11 +1075,11 @@
                 catatan: document.getElementById('transaksi-catatan')?.value,
                 createdAt: serverTimestamp(), createdBy: currentUser.uid
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); closeModal('modal-transaksi'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "transactions"), newTransaksi); window.closeModal('modal-transaksi'); form.reset(); }
             catch (error) { console.error("Error adding transaction: ", error); console.error("Gagal menyimpan transaksi."); }
-        }
+        };
 
-        async function renderTabungan() {
+        window.renderTabungan = async () => {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "savings");
@@ -1117,25 +1114,25 @@
                     return `<div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md flex flex-col fade-in">
                         <div class="flex justify-between items-start">
                             <div><h3 class="text-xl font-bold">${s.nama}</h3><p class="text-sm text-gray-500 dark:text-gray-400">Oleh: ${s.oleh}</p></div>
-                            <button onclick="deleteTabungan('${s.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="window.deleteTabungan('${s.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         <div class="my-4 flex-grow">
                             <div class="flex justify-between text-sm font-medium mb-1"><span>${formatCurrency(s.terkumpul)}</span><span class="text-gray-500">${formatCurrency(s.target)}</span></div>
                             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4"><div class="${progressColor} h-4 rounded-full" style="width: ${progress}%"></div></div>
                             <p class="text-right text-sm font-bold mt-1">${progress.toFixed(1)}%</p>
                         </div>
-                        <button onclick="openTambahDanaModal('${s.id}')" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Tambah Dana</button>
+                        <button onclick="window.openTambahDanaModal('${s.id}')" class="mt-4 w-full bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">Tambah Dana</button>
                     </div>`;
                 }).join('');
             }
-        }
+        };
         window.deleteTabungan = async (id) => {
-            showConfirmModal('Hapus Target Tabungan', 'Yakin hapus target tabungan ini?', async () => {
+            window.showConfirmModal('Hapus Target Tabungan', 'Yakin hapus target tabungan ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "savings", id));
             });
         };
-        window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; openModal('modal-tambah-dana'); };
-        async function handleTabunganSubmit(e) {
+        window.openTambahDanaModal = (id) => { document.getElementById('tambah-dana-id').value = id; window.openModal('modal-tambah-dana'); };
+        window.handleTabunganSubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const newTabungan = {
@@ -1145,10 +1142,10 @@
                 oleh: document.getElementById('tabungan-oleh')?.value,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); closeModal('modal-tabungan'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "savings"), newTabungan); window.closeModal('modal-tabungan'); form.reset(); }
             catch (error) { console.error("Error adding savings goal:", error); console.error("Gagal menyimpan target."); }
-        }
-        async function handleTambahDanaSubmit(e) {
+        };
+        window.handleTambahDanaSubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const id = document.getElementById('tambah-dana-id')?.value;
@@ -1159,11 +1156,11 @@
                 const newTerkumpul = (tabunganSnap.data().terkumpul || 0) + jumlah;
                 await updateDoc(tabunganRef, { terkumpul: newTerkumpul });
             }
-            closeModal('modal-tambah-dana');
+            window.closeModal('modal-tambah-dana');
             form.reset();
-        }
+        };
 
-        async function renderDiary() {
+        window.renderDiary = async () => {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "diary");
@@ -1180,19 +1177,19 @@
                     <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md fade-in">
                         <div class="flex justify-between items-start">
                             <div><h3 class="text-2xl font-bold">${entry.judul} <span class="text-3xl">${entry.mood}</span></h3><p class="text-sm text-gray-500 dark:text-gray-400">${formatDate(entry.tanggal)} - oleh ${entry.oleh}</p></div>
-                            <button onclick="deleteDiary('${entry.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="window.deleteDiary('${entry.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                         ${entry.foto ? `<img src="${entry.foto}" alt="Foto diary" class="my-4 rounded-lg max-h-80 w-auto mx-auto">` : ''}
                         <p class="mt-4 whitespace-pre-wrap">${entry.isi}</p>
                     </div>`).join('');
             }
-        }
+        };
         window.deleteDiary = async (id) => {
-            showConfirmModal('Hapus Diary', 'Yakin hapus entri diary ini?', async () => {
+            window.showConfirmModal('Hapus Diary', 'Yakin hapus entri diary ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "diary", id));
             });
         };
-        async function handleDiarySubmit(e) {
+        window.handleDiarySubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const fotoPreview = document.getElementById('diary-foto-preview');
@@ -1207,11 +1204,11 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "diary"), newEntry); window.closeModal('modal-diary'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
             catch (error) { console.error("Error adding diary:", error); console.error("Gagal menyimpan diary."); }
-        }
+        };
 
-        async function renderWishlist() {
+        window.renderWishlist = async () => {
             if (!currentHubId) return;
             // Fetch without orderBy, then sort in JS
             const q = collection(window.db, "hubs", currentHubId, "wishlist");
@@ -1232,17 +1229,17 @@
                             <p class="text-sm text-gray-500 dark:text-gray-400">${wish.kategori}</p>
                             <p class="text-sm mt-2">Keinginan: <span class="font-semibold">${wish.oleh}</span></p>
                             <p class="text-sm mt-2 text-gray-600 dark:text-gray-300">${wish.deskripsi || ''}</p>
-                            <button onclick="deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
+                            <button onclick="window.deleteWishlist('${wish.id}')" class="mt-4 text-xs text-red-500 hover:underline">Hapus</button>
                         </div>
                     </div>`).join('');
             }
-        }
+        };
         window.deleteWishlist = async (id) => {
-            showConfirmModal('Hapus Wishlist', 'Yakin hapus wishlist ini?', async () => {
+            window.showConfirmModal('Hapus Wishlist', 'Yakin hapus wishlist ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "wishlist", id));
             });
         };
-        async function handleWishlistSubmit(e) {
+        window.handleWishlistSubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const fotoPreview = document.getElementById('wishlist-foto-preview');
@@ -1254,11 +1251,11 @@
                 foto: fotoPreview?.src?.startsWith('data:image') ? fotoPreview.src : null,
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "wishlist"), newWish); window.closeModal('modal-wishlist'); form.reset(); if (fotoPreview) { fotoPreview.classList.add('hidden'); fotoPreview.src = ''; } }
             catch (error) { console.error("Error adding wishlist:", error); console.error("Gagal menyimpan wishlist."); }
-        }
+        };
 
-        async function renderCalendar() {
+        window.renderCalendar = async () => {
             if (!currentHubId) return;
             const year = calendarDate.getFullYear();
             const month = calendarDate.getMonth();
@@ -1298,12 +1295,12 @@
                     if (hasEvent) dayEl.classList.add('has-event');
                     dayEl.textContent = day;
                     dayEl.dataset.date = dateISO;
-                    dayEl.addEventListener('click', () => renderDailyActivities(dateISO, eventsThisMonth));
+                    dayEl.addEventListener('click', () => window.renderDailyActivities(dateISO, eventsThisMonth));
                     grid.appendChild(dayEl);
                 }
             }
-        }
-        function renderDailyActivities(dateISO, eventsThisMonth) {
+        };
+        window.renderDailyActivities = (dateISO, eventsThisMonth) => {
             document.querySelectorAll('.calendar-day.bg-gray-300').forEach(d => d.classList.remove('bg-gray-300', 'dark:bg-gray-600'));
             const dayEl = document.querySelector(`.calendar-day[data-date="${dateISO}"]`);
             if(dayEl) dayEl.classList.add('bg-gray-300', 'dark:bg-gray-600');
@@ -1326,17 +1323,17 @@
                                     ${event.ikut.destry ? '<span class="bg-pink-200 text-pink-800 px-2 py-0.5 rounded-full">Destry</span>' : ''}
                                 </div>
                             </div>
-                            <button onclick="deleteAktivitas('${event.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="window.deleteAktivitas('${event.id}')" class="text-gray-400 hover:text-red-500 text-sm"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`).join('');
             }
-        }
+        };
         window.deleteAktivitas = async (id) => {
-            showConfirmModal('Hapus Aktivitas', 'Yakin hapus aktivitas ini?', async () => {
+            window.showConfirmModal('Hapus Aktivitas', 'Yakin hapus aktivitas ini?', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "events", id));
             });
         };
-        async function handleAktivitasSubmit(e) {
+        window.handleAktivitasSubmit = async (e) => {
             e.preventDefault();
             const form = e.target;
             const date = new Date(document.getElementById('aktivitas-tanggal')?.value);
@@ -1349,12 +1346,12 @@
                 ikut: { lukman: document.getElementById('aktivitas-ikut-lukman')?.checked, destry: document.getElementById('aktivitas-ikut-destry')?.checked },
                 createdAt: serverTimestamp()
             };
-            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); closeModal('modal-aktivitas'); form.reset(); }
+            try { await addDoc(collection(window.db, "hubs", currentHubId, "events"), newEvent); window.closeModal('modal-aktivitas'); form.reset(); }
             catch (error) { console.error("Error adding event:", error); console.error("Gagal menyimpan aktivitas."); }
-        }
+        };
 
-        async function handleHabitSubmit(e) { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } }
-        async function renderHabitTable() {
+        window.handleHabitSubmit = async (e) => { e.preventDefault(); const name = document.getElementById('habit-nama')?.value.trim(); if (!name) return; try { await addDoc(collection(window.db, "hubs", currentHubId, "habits"), { name: name, createdAt: serverTimestamp() }); window.closeModal('modal-habit'); e.target.reset(); } catch (error) { console.error("Error adding habit: ", error); } };
+        window.renderHabitTable = async () => {
             if (!currentHubId) return;
             const habitMonthYear = document.getElementById('habit-month-year');
             if (habitMonthYear) {
@@ -1393,18 +1390,18 @@
                             if (status.lukman && status.destry) statusClass = 'status-both';
                             else if (status.lukman) statusClass = 'status-lukman';
                             else if (status.destry) statusClass = 'status-destry';
-                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
+                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="window.cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
                         }
-                        tableHTML += `<td><button onclick="deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
+                        tableHTML += `<td><button onclick="window.deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
                         tableHTML += '</tr>';
                     });
                 }
                 tableHTML += '</tbody></table>';
                 container.innerHTML = tableHTML;
             }
-        }
+        };
         window.deleteHabit = async (id) => {
-            showConfirmModal('Hapus Habit', 'Yakin hapus habit ini? Semua data progresnya juga akan hilang.', async () => {
+            window.showConfirmModal('Hapus Habit', 'Yakin hapus habit ini? Semua data progresnya juga akan hilang.', async () => {
                 await deleteDoc(doc(window.db, "hubs", currentHubId, "habits", id));
             });
         };
@@ -1444,7 +1441,7 @@
             const newStatuses = { ...currentStatuses, [habitId]: nextStatus };
             try { await setDoc(entryRef, { date: Timestamp.fromDate(date), statuses: newStatuses }, { merge: true }); } catch (error) { console.error("Error updating habit status: ", error); }
         };
-        function setupImagePreview(inputId, previewId) { 
+        window.setupImagePreview = (inputId, previewId) => { 
             const input = document.getElementById(inputId); 
             const preview = document.getElementById(previewId); 
             if (input && preview) {
@@ -1463,9 +1460,9 @@
                     } 
                 }); 
             }
-        }
+        };
 
-        async function handleProfilePicUpload() {
+        window.handleProfilePicUpload = async () => {
             if (!selectedProfilePicFile || !currentUser) return;
             const saveBtn = document.getElementById('save-profile-pic-btn');
             const profilePicPreview = document.getElementById('profile-pic-preview'); 
@@ -1510,10 +1507,18 @@
                         height *= maxWidth / width;
                         width = maxWidth;
                     }
+                    if (height > maxHeight) { // Check height after adjusting width
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
                 } else {
                     if (height > maxHeight) {
                         width *= maxHeight / height;
                         height = maxHeight;
+                    }
+                    if (width > maxWidth) { // Check width after adjusting height
+                        height *= maxWidth / width;
+                        width = maxWidth;
                     }
                 }
 
@@ -1544,7 +1549,7 @@
                 console.log('Foto profil berhasil diperbarui!');
                 saveBtn.textContent = 'Simpan Foto';
                 profilePicPreview.src = downloadURL; // Update preview with the actual uploaded URL
-                renderDashboardHeader(); // Refresh dashboard header images
+                window.renderDashboardHeader(); // Refresh dashboard header images
 
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
@@ -1552,9 +1557,9 @@
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Simpan Foto';
             }
-        }
+        };
 
-        async function renderDashboardHeader() {
+        window.renderDashboardHeader = async () => {
             if (!currentHubId) return;
             const hubDoc = await getDoc(doc(window.db, "hubs", currentHubId));
             if (!hubDoc.exists()) return;
@@ -1578,18 +1583,18 @@
             } else if (profilePicDestry) {
                 profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
             }
-        }
+        };
 
         // --- PDF Export Functions ---
-        function renderExportPdf() {
+        window.renderExportPdf = () => {
             // This function can be used to render any specific UI for the PDF export page
             // For now, the static HTML section is sufficient.
             console.log("Halaman Ekspor PDF dimuat.");
-        }
+        };
 
-        async function handleExportPdf() {
+        window.handleExportPdf = async () => {
             if (!currentHubId) {
-                alert("Tidak ada Hub yang aktif untuk diekspor.");
+                window.alert("Tidak ada Hub yang aktif untuk diekspor."); // Menggunakan window.alert
                 return;
             }
 
@@ -1608,7 +1613,7 @@
                 }
 
                 // Make sure the dashboard is rendered with latest data before capturing
-                await renderDashboard(); 
+                await window.renderDashboard(); 
                 
                 // Save current display state of sections
                 const originalDisplay = {};
@@ -1631,7 +1636,7 @@
                     section.style.display = originalDisplay[section.id];
                 });
                 // Re-navigate to the current page to ensure correct active section
-                navigateTo(document.querySelector('.nav-link.bg-blue-100')?.dataset.target || 'dashboard', document.getElementById('page-title').textContent);
+                window.navigateTo(document.querySelector('.nav-link.bg-blue-100')?.dataset.target || 'dashboard', document.getElementById('page-title').textContent);
 
 
                 const imgData = canvas.toDataURL('image/png');
@@ -1666,13 +1671,12 @@
                     statusEl.innerHTML = '<div class="loader mx-auto mb-2"></div><p>Mempersiapkan PDF...</p>'; // Reset status
                 }, 3000);
             }
-        }
-
+        };
 
         // Panggil inisialisasi Firebase saat DOM dimuat
         window.onload = () => {
             initializeFirebase();
-            mainApp(); // Panggil mainApp setelah inisialisasi Firebase
+            // mainApp() dipanggil di dalam initializeFirebase setelah otentikasi
             // --- Pendaftaran Service Worker ---
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/firebase-messaging-sw.js')
