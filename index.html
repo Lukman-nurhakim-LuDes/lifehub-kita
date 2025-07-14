@@ -583,6 +583,10 @@
                         if (messagingInfoElement) {
                             messagingInfoElement.textContent = 'Izin notifikasi diberikan, tetapi tidak ada token. Pastikan VAPID key benar.';
                         }
+                        if (requestPermissionBtn) {
+                            requestPermissionBtn.style.display = 'block'; // Tampilkan tombol jika izin ditolak
+                            requestPermissionBtn.onclick = setupFirebaseMessaging; // Tambahkan event listener untuk tombol
+                        }
                     }
                 } else {
                     console.warn('Izin notifikasi ditolak.');
