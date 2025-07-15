@@ -98,6 +98,59 @@
             border-right: 20px solid transparent;
             border-top: 30px solid #ec4899; /* pink-500 */
         }
+
+        /* Truth or Dare Card Styles */
+        .card-container {
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            margin: 2rem auto;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-sizing: border-box;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-front {
+            background-color: #f6ad55; /* orange-400 */
+            color: white;
+            background-image: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            border: 2px solid #ed8936;
+        }
+
+        .card-back {
+            background-color: #4299e1; /* blue-500 */
+            color: white;
+            transform: rotateY(180deg);
+            background-image: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            border: 2px solid #3182ce;
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-x-hidden p-4 sm:p-6 lg:p-8">
@@ -130,6 +183,22 @@
             </div>
         </div>
     </div>
+
+    <!-- Punishment Wheel Modal -->
+    <div id="modal-punishment-wheel" class="modal-backdrop">
+        <div class="modal-content bg-white dark:bg-gray-800 w-11/12 md:max-w-md mx-auto rounded-xl shadow-lg p-8 text-center">
+            <h2 class="text-2xl font-bold mb-4">Hukuman!</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Anda menolak tantangan... Putar roda hukuman!</p>
+            <div class="wheel-container">
+                <div id="punishment-spinner-pointer"></div>
+                <canvas id="punishment-spinner-canvas" width="300" height="300"></canvas>
+            </div>
+            <button id="spin-punishment-btn" class="mt-8 bg-purple-500 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg hover:bg-purple-600 transition transform hover:scale-105">Putar Hukuman!</button>
+            <p id="punishment-result-text" class="text-xl font-bold text-purple-600 dark:text-purple-400 mt-6 hidden"></p>
+            <button id="punishment-close-btn" class="mt-4 w-full bg-gray-300 dark:bg-gray-600 p-3 rounded-lg font-semibold hover:bg-gray-400 hidden">Lanjutkan</button>
+        </div>
+    </div>
+
 
     <!-- Loading Screen -->
     <div id="loading-screen" class="fixed inset-0 bg-gray-100 dark:bg-gray-900 flex flex-col justify-center items-center z-[100]">
@@ -343,14 +412,42 @@
                 </section>
                 <section id="truth-or-dare" class="content-section text-center space-y-6">
                     <h1 class="text-3xl font-bold hidden lg:block mb-6">Truth or Dare</h1>
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-md mx-auto">
-                        <p class="text-lg mb-4">Pilih kategori untuk memulai:</p>
-                        <div class="flex justify-center gap-4 mb-6">
-                            <button id="get-truth-btn" class="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition">Truth</button>
-                            <button id="get-dare-btn" class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition">Dare</button>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md max-w-lg mx-auto">
+                        <div id="tod-setup">
+                            <h2 class="text-xl font-bold mb-4">Siapkan Pemain</h2>
+                            <div class="flex flex-col sm:flex-row gap-2 mb-4">
+                                <input type="text" id="player-name-input" placeholder="Nama Pemain" class="flex-grow p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                                <button id="add-player-btn" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Tambah Pemain</button>
+                            </div>
+                            <div id="player-list" class="mb-6 text-left">
+                                <p class="font-semibold mb-2">Pemain:</p>
+                                <ul id="players-ul" class="list-disc list-inside space-y-1">
+                                    <!-- Player list will be rendered here -->
+                                </ul>
+                            </div>
+                            <button id="start-tod-game-btn" class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50" disabled>Mulai Game</button>
                         </div>
-                        <div id="tod-result" class="min-h-[100px] flex items-center justify-center text-xl font-medium text-gray-700 dark:text-gray-300 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
-                            Klik tombol di atas untuk mendapatkan Truth atau Dare!
+
+                        <div id="tod-game-area" class="hidden">
+                            <p class="text-lg mb-4">Giliran: <span id="current-player-display" class="font-bold text-pink-500"></span></p>
+                            <div class="card-container">
+                                <div id="tod-card" class="card">
+                                    <div class="card-face card-front">
+                                        <p>Pilih Truth atau Dare!</p>
+                                    </div>
+                                    <div class="card-face card-back">
+                                        <p id="tod-question-text"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-center gap-4 mt-8">
+                                <button id="select-truth-btn" class="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition">Truth</button>
+                                <button id="select-dare-btn" class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition">Dare</button>
+                            </div>
+                            <div class="flex justify-center gap-4 mt-4">
+                                <button id="refuse-tod-btn" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition">Tolak (Hukuman!)</button>
+                                <button id="next-player-btn" class="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition">Selanjutnya</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -766,9 +863,17 @@
             // PDF Export Button
             document.getElementById('export-pdf-btn')?.addEventListener('click', exportDashboardToPdf);
 
-            // Truth or Dare Buttons
-            document.getElementById('get-truth-btn')?.addEventListener('click', () => getTruthOrDare('truth'));
-            document.getElementById('get-dare-btn')?.addEventListener('click', () => getTruthOrDare('dare'));
+            // Truth or Dare Game Buttons
+            document.getElementById('add-player-btn')?.addEventListener('click', addPlayerToTodGame);
+            document.getElementById('start-tod-game-btn')?.addEventListener('click', startTodGame);
+            document.getElementById('select-truth-btn')?.addEventListener('click', () => selectTodCard('truth'));
+            document.getElementById('select-dare-btn')?.addEventListener('click', () => selectTodCard('dare'));
+            document.getElementById('refuse-tod-btn')?.addEventListener('click', refuseTodCard);
+            document.getElementById('next-player-btn')?.addEventListener('click', nextTodPlayer);
+
+            // Punishment Wheel Buttons
+            document.getElementById('spin-punishment-btn')?.addEventListener('click', spinPunishmentWheel);
+            document.getElementById('punishment-close-btn')?.addEventListener('click', () => closeModal('modal-punishment-wheel'));
         }
 
         function initializeAppUI() {
@@ -828,6 +933,21 @@
                 }, (error) => { console.error(`Error listening to ${col}:`, error); });
                 unsubscribeListeners.push(unsubscribe);
             });
+
+            // Truth or Dare Game Listener
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            const todUnsubscribe = onSnapshot(todGameDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    todGameState = docSnap.data();
+                    renderTodGameUI();
+                } else {
+                    todGameState = null;
+                    renderTodGameUI(); // Reset UI if game doesn't exist
+                }
+            }, (error) => {
+                console.error("Error listening to Truth or Dare game state:", error);
+            });
+            unsubscribeListeners.push(todUnsubscribe);
         }
         function unsubscribeAll() { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; }
 
@@ -875,6 +995,9 @@
             if (pageId === 'roda-kencan') {
                 setupWheel();
             }
+            if (pageId === 'truth-or-dare') {
+                renderTodGameUI(); // Ensure UI is rendered when navigating to ToD
+            }
             window.scrollTo(0, 0);
         }
         window.openModal = (modalId) => { document.getElementById(modalId).style.display = 'flex'; };
@@ -909,25 +1032,39 @@
         }
         async function createHub() { 
             console.log("Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
+            document.getElementById('hub-error').textContent = ''; // Clear previous errors
+
             if (!currentUser) { 
                 console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
-                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi.";
+                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi. Silakan login ulang.";
                 return; 
             }
+            console.log("Current User UID:", currentUser.uid);
+            console.log("App ID:", appId);
+
             // Jalur untuk dokumen hub baru
             const hubId = doc(collection(window.db, `artifacts/${appId}/public/data/hubs`)).id;
+            console.log("Generated Hub ID:", hubId);
+
             try { 
                 const batch = writeBatch(window.db);
+                
                 // Set dokumen hub baru
-                batch.set(doc(window.db, `artifacts/${appId}/public/data/hubs`, hubId), { members: [currentUser.uid], createdAt: serverTimestamp() });
+                const hubDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs`, hubId);
+                console.log("Setting new hub document at path:", hubDocRef.path);
+                batch.set(hubDocRef, { members: [currentUser.uid], createdAt: serverTimestamp() });
+                
                 // Perbarui dokumen pengguna dengan hubId
-                batch.set(doc(window.db, `artifacts/${appId}/users`, currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
+                const userDocRef = doc(window.db, `artifacts/${appId}/users`, currentUser.uid);
+                console.log("Updating user document at path:", userDocRef.path);
+                batch.set(userDocRef, { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
+                
+                console.log("Committing batch operation...");
                 await batch.commit(); 
-                console.log("Hub berhasil dibuat dan pengguna ditambahkan."); // Debug log
+                console.log("Batch commit successful. Hub created and user updated."); // Debug log
             } catch (error) { 
                 console.error("Create Hub Error:", error); 
-                console.error(`Gagal membuat hub. Error: ${error.message}`);
-                document.getElementById('hub-error').textContent = `Error: ${error.code}`; 
+                document.getElementById('hub-error').textContent = `Gagal membuat hub: ${error.code || error.message}`; 
             } 
         }
         async function joinHub(e) { 
@@ -1764,7 +1901,7 @@
         }
 
         // --- RODA KENCAN ---
-        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Cari Kopi", "Karaoke"];
+        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "liburan"];
         const wheelCanvas = document.getElementById('spinner-canvas');
         const spinBtn = document.getElementById('spin-btn');
         let isSpinning = false;
@@ -1851,74 +1988,320 @@
             }, 5000); // Must match the transition duration in CSS
         }
 
-        // --- TRUTH OR DARE GAME ---
+        // --- TRUTH OR DARE GAME LOGIC ---
+        let todGameState = null; // State will be synced with Firestore
+
         const truths = [
-            "Apa hal paling gila yang pernah kamu lakukan di depan umum?",
-            "Apa rahasia terbesar yang belum pernah kamu ceritakan kepada siapa pun?",
-            "Jika kamu bisa mengubah satu hal tentang masa lalumu, apa itu dan mengapa?",
-            "Apa penyesalan terbesarmu dalam hidup?",
-            "Apa kebiasaan terburukmu yang tidak diketahui orang lain?",
-            "Pernahkah kamu berbohong untuk menghindari masalah besar? Ceritakan.",
-            "Apa hal yang paling membuatmu takut di masa depan?",
-            "Apa pendapat jujurmu tentang hubungan kita saat ini?",
-            "Jika kamu bisa bertukar hidup dengan seseorang selama sehari, siapa itu dan mengapa?",
-            "Apa hal yang paling memalukan yang pernah terjadi padamu?",
-            "Apa fantasi tersembunyimu?",
-            "Apa hal yang paling kamu banggakan dalam hidupmu yang tidak diketahui banyak orang?",
-            "Jika kamu harus memilih satu orang di ruangan ini (atau di hidupmu) untuk mencium, siapa itu dan mengapa?",
-            "Apa hal yang paling membuatmu kesal tentang aku?",
-            "Kapan terakhir kali kamu menangis dan mengapa?",
-            "Apa hal paling berani yang pernah kamu lakukan?",
-            "Apa hal yang paling aneh yang pernah kamu makan?",
-            "Jika kamu bisa memiliki kekuatan super, apa itu dan bagaimana kamu akan menggunakannya?",
-            "Apa hal yang paling kamu inginkan saat ini?",
-            "Apa pendapatmu tentang cinta pada pandangan pertama?",
-            "Apa hal terburuk yang pernah kamu katakan kepada seseorang?",
-            "Jika kamu bisa melakukan perjalanan waktu, ke mana kamu akan pergi dan mengapa?",
-            "Apa hal paling romantis yang pernah kamu lakukan untuk seseorang?",
-            "Apa yang kamu pikirkan tentang masa depan kita bersama?",
-            "Apa hal yang paling kamu hargai dalam sebuah hubungan?"
+            "Apa fantasi terliarmu yang belum pernah kamu ceritakan pada siapa pun?",
+            "Apa hal paling 'nakal' yang pernah kamu lakukan di tempat umum?",
+            "Jika kamu bisa menghabiskan satu malam dengan selebriti mana pun, siapa itu dan mengapa?",
+            "Apa kebiasaan tersembunyi yang kamu miliki saat sendirian?",
+            "Apa hal paling memalukan yang pernah kamu katakan atau lakukan di depan gebetan/pasangan?",
+            "Apa pendapat jujurmu tentang 'one-night stand'?",
+            "Pernahkah kamu mengirim atau menerima 'pesan nakal'? Ceritakan tanpa detail pribadi.",
+            "Apa yang paling membuatmu tertarik secara fisik pada seseorang?",
+            "Jika kamu bisa bertukar tubuh dengan pasanganmu selama sehari, apa hal pertama yang akan kamu lakukan?",
+            "Apa hal paling berani yang pernah kamu lakukan di tempat tidur?",
+            "Apa yang kamu anggap 'turn-on' terbesar yang mungkin mengejutkan orang lain?",
+            "Pernahkah kamu berbohong tentang pengalaman seksualmu? Mengapa?",
+            "Apa satu hal yang ingin kamu coba di ranjang tetapi belum pernah kamu lakukan?",
+            "Apa pendapatmu tentang perselingkuhan emosional?",
+            "Jika kamu bisa menonton ulang satu momen intim dalam hidupmu, apa itu dan mengapa?",
+            "Apa hal paling tabu yang pernah kamu pikirkan?",
+            "Apa hal yang paling kamu inginkan dari pasanganmu secara intim?",
+            "Pernahkah kamu pura-pura menyukai sesuatu hanya untuk menyenangkan pasanganmu? Apa itu?",
+            "Apa hal paling romantis (atau genit) yang pernah dilakukan seseorang untukmu?",
+            "Jika kamu bisa menghidupkan kembali satu momen dari kencan pertamamu, apa itu dan mengapa?"
         ];
 
         const dares = [
-            "Biarkan pasanganmu memilih pakaianmu untuk sisa hari ini.",
-            "Lakukan tarian konyol selama 30 detik di depan pasanganmu.",
-            "Kirim pesan teks genit ke pasanganmu dan biarkan mereka membacanya keras-keras.",
-            "Nyanyikan lagu favoritmu dengan suara paling konyol yang bisa kamu lakukan.",
-            "Biarkan pasanganmu menggambar sesuatu di wajahmu dengan spidol yang bisa dihapus.",
-            "Telepon orang tuamu (atau teman terdekat) dan katakan 'Aku mencintaimu' tanpa penjelasan.",
-            "Makan satu sendok teh saus pedas (jika aman dan kamu tidak alergi).",
-            "Posting foto wajah konyolmu di media sosial dan biarkan selama 10 menit.",
-            "Berikan pijatan punggung selama 5 menit kepada pasanganmu.",
-            "Lakukan 10 push-up atau sit-up.",
-            "Berjalanlah di sekitar ruangan dengan mata tertutup (pastikan aman).",
-            "Ceritakan lelucon terburuk yang kamu tahu.",
-            "Tiru suara hewan favoritmu selama 1 menit.",
-            "Tulis puisi singkat tentang pasanganmu dan bacakan.",
-            "Lakukan split (atau coba) dan tahan selama 5 detik.",
-            "Ubah status media sosialmu menjadi sesuatu yang lucu dan biarkan selama 15 menit.",
-            "Biarkan pasanganmu merias wajahmu (jika ada make up).",
-            "Lakukan akting ulang adegan film favoritmu.",
-            "Berikan pujian tulus kepada 3 orang yang berbeda di media sosial.",
-            "Makan makanan yang tidak kamu sukai (satu gigitan).",
-            "Tukar pakaian dengan pasanganmu untuk 5 menit (jika memungkinkan).",
-            "Lakukan 'catwalk' di sekitar ruangan seolah-olah kamu seorang model.",
-            "Tuliskan 5 hal yang kamu sukai dari dirimu sendiri.",
-            "Cobalah untuk menjilat sikumu.",
-            "Berikan pasanganmu 'lap dance' singkat."
+            "Biarkan pasanganmu memilih pakaian dalammu untuk besok.",
+            "Tunjukan godaan-godaan kamu ke pasangan, sampe membuat pasangan ingin menidurimu.",
+            "Kirim pesan suara genit ke pasanganmu sekarang.",
+            "Biarkan pasanganmu mengikat tanganmu dengan syal selama 10 menit dan lakukan hubungan intim.",
+            "yang mendapatkan kartu ini bebas memilih apa yang mau di lakukan kepada pasangan",
+            "Berikan pasanganmu pijatan plus-plus yang sensual selama 5 menit.",
+            "Posting 'fotbar bersama pasanganmu di media sosial.",
+            "lakukan ciuman mesra bersama pasanganmu selamat 2 menit.",
+            "Tiru suara desahan yang paling meyakinkan yang kamu bisa.",
+            "Buka bajumu dan celana dalamu selama 10 menit",
+            "Tuliskan 3 hal yang paling kamu sukai dari tubuh pasanganmu dan bacakan keras-keras.",
+            "Lakukan 'eye contact challenge' yang intens dengan pasanganmu selama 1 menit tanpa tertawa.",
+            "Berikan pasanganmu 'gigitan cinta' di leher (ringan, jangan sampai memar!).",
+            "Ganti pakaianmu menjadi sesuatu yang genit dan lakukan 'catwalk' di depan pasanganmu.",
+            "Kirimkan 'emoji nakal' ke pasanganmu dan jelaskan artinya.",
+            "Berikan pasanganmu ciuman yang paling bergairah yang kamu bisa.",
+            "Berjalanlah di sekitar ruangan hanya dengan pakaian dalammu selama 1 menit.",
+            "Ceritakan fantasi terliarmu dalam 30 detik.",
+            "Biarkan pasanganmu mengoleskan dan memainkanya (kedalam keintimanmu).",
+            "Lakukan 'pelukan erat' yang panjang dan sensual dengan pasanganmu selama 5  menit."
         ];
 
-        function getTruthOrDare(type) {
-            const resultDisplay = document.getElementById('tod-result');
-            if (!resultDisplay) return;
+        const punishments = [
+            "Lakukan 10 push-up di atas pasanganmu.",
+            "Nyanyikan lagu yang menggoda pasangan.",
+            "Berikan pujian tulus kepada setiap pemain lain.",
+            "Makan satu sendok teh saus pedas (jika aman).",
+            "Lakukan hal yang mesra kepada pasanganmu.",
+            "Ceritakan lelucon terburuk yang kamu tahu.",
+            "Tiru suara hewan selama 30 detik.",
+            "Biarkan pemain lain menggambar sesuatu di wajahmu.",
+            "lakukan 10 sit up di atas pasanganmu.",
+            "Berikan pijatan plus-plus kepada pasangan."
+        ];
 
-            let selectedItem;
-            if (type === 'truth') {
-                selectedItem = truths[Math.floor(Math.random() * truths.length)];
-            } else if (type === 'dare') {
-                selectedItem = dares[Math.floor(Math.random() * dares.length)];
+        function renderTodGameUI() {
+            const setupArea = document.getElementById('tod-setup');
+            const gameArea = document.getElementById('tod-game-area');
+            const playersUl = document.getElementById('players-ul');
+            const startBtn = document.getElementById('start-tod-game-btn');
+            const currentPlayerDisplay = document.getElementById('current-player-display');
+            const todCard = document.getElementById('tod-card');
+            const todQuestionText = document.getElementById('tod-question-text');
+            const selectTruthBtn = document.getElementById('select-truth-btn');
+            const selectDareBtn = document.getElementById('select-dare-btn');
+            const refuseTodBtn = document.getElementById('refuse-tod-btn');
+            const nextPlayerBtn = document.getElementById('next-player-btn');
+
+            if (!todGameState || todGameState.status === 'waiting') {
+                setupArea?.classList.remove('hidden');
+                gameArea?.classList.add('hidden');
+                playersUl.innerHTML = todGameState?.players?.map(p => `<li>${p} <button onclick="removePlayerFromTodGame('${p}')" class="text-red-400 hover:text-red-600 ml-2 text-sm"><i class="fa-solid fa-times"></i></button></li>`).join('') || '';
+                startBtn.disabled = !(todGameState?.players && todGameState.players.length >= 2);
+            } else if (todGameState.status === 'playing' || todGameState.status === 'refused') {
+                setupArea?.classList.add('hidden');
+                gameArea?.classList.remove('hidden');
+                currentPlayerDisplay.textContent = todGameState.players[todGameState.currentPlayerIndex];
+                
+                // Reset card flip and content
+                todCard?.classList.remove('flipped');
+                todQuestionText.textContent = ''; // Clear previous question
+
+                // Show/hide buttons based on game state
+                if (todGameState.currentCardText) {
+                    // Card has been selected and flipped
+                    todCard?.classList.add('flipped');
+                    todQuestionText.textContent = todGameState.currentCardText;
+                    selectTruthBtn.disabled = true;
+                    selectDareBtn.disabled = true;
+                    refuseTodBtn.disabled = false;
+                    nextPlayerBtn.disabled = false;
+                } else {
+                    // Waiting for Truth/Dare selection
+                    selectTruthBtn.disabled = false;
+                    selectDareBtn.disabled = false;
+                    refuseTodBtn.disabled = true;
+                    nextPlayerBtn.disabled = true;
+                }
+
+                if (todGameState.status === 'refused') {
+                    // If punishment wheel is active, disable other buttons
+                    selectTruthBtn.disabled = true;
+                    selectDareBtn.disabled = true;
+                    refuseTodBtn.disabled = true;
+                    nextPlayerBtn.disabled = true; // Next player only after punishment is done
+                }
             }
-            resultDisplay.textContent = selectedItem;
+        }
+
+        async function addPlayerToTodGame() {
+            if (!currentHubId) return;
+            const playerNameInput = document.getElementById('player-name-input');
+            const playerName = playerNameInput?.value.trim();
+            if (!playerName) return;
+
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            try {
+                let currentPlayers = todGameState?.players || [];
+                if (!currentPlayers.includes(playerName)) {
+                    currentPlayers.push(playerName);
+                    await setDoc(todGameDocRef, { players: currentPlayers, status: 'waiting', createdAt: serverTimestamp() }, { merge: true });
+                    playerNameInput.value = '';
+                } else {
+                    console.warn("Pemain dengan nama ini sudah ada.");
+                }
+            } catch (error) {
+                console.error("Error adding player:", error);
+            }
+        }
+
+        async function removePlayerFromTodGame(playerName) {
+            if (!currentHubId || !todGameState) return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            try {
+                let updatedPlayers = todGameState.players.filter(p => p !== playerName);
+                if (updatedPlayers.length === 0) {
+                    // If no players left, delete the game document
+                    await deleteDoc(todGameDocRef);
+                } else {
+                    await updateDoc(todGameDocRef, { players: updatedPlayers });
+                }
+            } catch (error) {
+                console.error("Error removing player:", error);
+            }
+        }
+
+        async function startTodGame() {
+            if (!currentHubId || !todGameState || todGameState.players.length < 2) return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            try {
+                await updateDoc(todGameDocRef, {
+                    status: 'playing',
+                    currentPlayerIndex: 0,
+                    currentCardType: null,
+                    currentCardText: null,
+                    lastUpdated: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error starting game:", error);
+            }
+        }
+
+        async function selectTodCard(type) {
+            if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            let selectedText;
+            if (type === 'truth') {
+                selectedText = truths[Math.floor(Math.random() * truths.length)];
+            } else if (type === 'dare') {
+                selectedText = dares[Math.floor(Math.random() * dares.length)];
+            }
+
+            try {
+                await updateDoc(todGameDocRef, {
+                    currentCardType: type,
+                    currentCardText: selectedText,
+                    lastUpdated: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error selecting card:", error);
+            }
+        }
+
+        async function refuseTodCard() {
+            if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            try {
+                await updateDoc(todGameDocRef, {
+                    status: 'refused',
+                    lastUpdated: serverTimestamp()
+                });
+                openModal('modal-punishment-wheel');
+                setupPunishmentWheel(); // Draw the wheel
+            } catch (error) {
+                console.error("Error refusing card:", error);
+            }
+        }
+
+        async function nextTodPlayer() {
+            if (!currentHubId || !todGameState) return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            
+            let nextIndex = (todGameState.currentPlayerIndex + 1) % todGameState.players.length;
+            try {
+                await updateDoc(todGameDocRef, {
+                    currentPlayerIndex: nextIndex,
+                    currentCardType: null,
+                    currentCardText: null,
+                    status: 'playing', // Reset status to playing for next turn
+                    lastUpdated: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error advancing player:", error);
+            }
+        }
+
+        // --- PUNISHMENT WHEEL LOGIC ---
+        const punishmentWheelCanvas = document.getElementById('punishment-spinner-canvas');
+        const spinPunishmentBtn = document.getElementById('spin-punishment-btn');
+        const punishmentResultText = document.getElementById('punishment-result-text');
+        const punishmentCloseBtn = document.getElementById('punishment-close-btn');
+        let isPunishmentSpinning = false;
+        let currentPunishmentAngle = 0;
+        const punishmentColors = ["#ef4444", "#f97316", "#eab308", "#84cc16", "#22c55e", "#14b8a6", "#06b6d4", "#3b82f6"];
+
+        function drawPunishmentWheel() {
+            if (!punishmentWheelCanvas) return;
+            const ctx = punishmentWheelCanvas.getContext('2d');
+            const centerX = punishmentWheelCanvas.width / 2;
+            const centerY = punishmentWheelCanvas.height / 2;
+            const radius = centerX - 5;
+            const arcSize = 2 * Math.PI / punishments.length;
+
+            ctx.clearRect(0, 0, punishmentWheelCanvas.width, punishmentWheelCanvas.height);
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(currentPunishmentAngle);
+            ctx.translate(-centerX, -centerY);
+
+            for (let i = 0; i < punishments.length; i++) {
+                const startAngle = i * arcSize;
+                const endAngle = startAngle + arcSize;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = punishmentColors[i % punishmentColors.length];
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + arcSize / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 14px Inter";
+                ctx.fillText(punishments[i], radius - 10, 5);
+                ctx.restore();
+            }
+            ctx.restore();
+        }
+        
+        function setupPunishmentWheel() {
+            drawPunishmentWheel();
+            punishmentResultText.classList.add('hidden');
+            spinPunishmentBtn.classList.remove('hidden');
+            punishmentCloseBtn.classList.add('hidden');
+            punishmentWheelCanvas.style.transition = 'none'; // Reset transition
+            punishmentWheelCanvas.style.transform = `rotate(0deg)`; // Reset rotation
+            currentPunishmentAngle = 0;
+        }
+
+        function spinPunishmentWheel() {
+            if (isPunishmentSpinning || !punishmentWheelCanvas) return;
+            isPunishmentSpinning = true;
+            spinPunishmentBtn.disabled = true; // Disable button during spin
+
+            const randomSpins = Math.floor(Math.random() * 5) + 8;
+            const randomStopAngle = Math.floor(Math.random() * 360);
+            const totalRotation = (randomSpins * 360) + randomStopAngle;
+            
+            punishmentWheelCanvas.style.transition = 'transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            punishmentWheelCanvas.style.transform = `rotate(${totalRotation}deg)`;
+
+            setTimeout(() => {
+                const segmentAngle = 360 / punishments.length;
+                const finalAngle = totalRotation % 360;
+                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
+                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
+
+                const result = punishments[winningIndex];
+                
+                punishmentResultText.textContent = result;
+                punishmentResultText.classList.remove('hidden');
+                spinPunishmentBtn.classList.add('hidden'); // Hide spin button
+                punishmentCloseBtn.classList.remove('hidden'); // Show close button
+
+                isPunishmentSpinning = false;
+                spinPunishmentBtn.disabled = false; // Re-enable for next time
+                punishmentWheelCanvas.style.transition = 'none';
+                punishmentWheelCanvas.style.transform = `rotate(${finalAngle}deg)`;
+                currentPunishmentAngle = finalAngle;
+            }, 5000);
         }
 
         // --- PROFIL PICTURE ---
