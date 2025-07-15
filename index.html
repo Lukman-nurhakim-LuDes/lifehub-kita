@@ -663,14 +663,13 @@
         // Konfigurasi Firebase Anda (dari konsol Firebase)
         // Gunakan variabel global jika tersedia (dari lingkungan Canvas), jika tidak, gunakan konfigurasi hardcoded Anda
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
-            authDomain: "coupleflow-3c5d2.firebaseapp.com",
-            projectId: "coupleflow-3c5d2",
-            storageBucket: "coupleflow-3c5d2.appspot.com", // <-- Diperbaiki sesuai screenshot Anda
-            messagingSenderId: "1087616981568",
-            appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
-            measurementId: "G-Q49D43SNHH"
-        };
+            apiKey: "AIzaSyCkYFTsdefDKWNlELHkZTYaejLx1LzzhiU",
+            authDomain: "rencana-kita.firebaseapp.com",
+            projectId: "rencana-kita",
+            storageBucket: "rencana-kita.firebasestorage.app",
+            messagingSenderId: "933508706878",
+            appId: "1:933508706878:web:36092931498a9605b9d76f"
+         };
 
         // Variabel global yang disediakan oleh lingkungan Canvas
         const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId; // Menggunakan projectId sebagai fallback
@@ -840,7 +839,7 @@
                     console.log('[Messaging Setup] Izin notifikasi diberikan.');
 
                     // Mendapatkan token pendaftaran perangkat (FCM Token)
-                    const vapidKey = 'BJ-LJBU-09cwNok7guCYQk3diDgcdvgS7grU2-nwagIuYqhrNm5p050W7CwDmvMLztB0zCvJKPebLQC4yw5ijaA'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
+                    const vapidKey = 'BL_Jwx9-mA5TdekdkLFBr1zcrL8yznKFTWDpIbKOrx8sdo4nvvAF-Xqf2skq2jlJ3JDcuKuue0Y_VzJYJuLPFxY'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
                     const currentToken = await getToken(window.messaging, { vapidKey: vapidKey });
                     if (currentToken) {
                         if (fcmTokenElement) {
