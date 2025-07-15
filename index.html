@@ -425,7 +425,7 @@
                                     <!-- Player list will be rendered here -->
                                 </ul>
                             </div>
-                            <button id="start-tod-game-btn" class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50" disabled>Mulai Game</button>
+                            <button id="start-tod-game-btn" class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50">Mulai Game</button>
                         </div>
 
                         <div id="tod-game-area" class="hidden">
@@ -962,7 +962,8 @@
             });
 
             // Truth or Dare Game Listener
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             const todUnsubscribe = onSnapshot(todGameDocRef, (docSnap) => {
                 console.log("[Realtime Listener] Truth or Dare game state changed.");
                 if (docSnap.exists()) {
@@ -1984,7 +1985,7 @@
         }
 
         // --- RODA KENCAN ---
-        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "ciuman enak x"];
+        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "liburan"];
         const wheelCanvas = document.getElementById('spinner-canvas');
         const spinBtn = document.getElementById('spin-btn');
         let isSpinning = false;
@@ -2193,7 +2194,8 @@
             const playerName = playerNameInput?.value.trim();
             if (!playerName) return;
 
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
                 let currentPlayers = todGameState?.players || [];
@@ -2211,7 +2213,8 @@
 
         async function removePlayerFromTodGame(playerName) {
             if (!currentHubId || !todGameState) return;
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
                 let updatedPlayers = todGameState.players.filter(p => p !== playerName);
@@ -2228,7 +2231,8 @@
 
         async function startTodGame() {
             if (!currentHubId || !todGameState || todGameState.players.length < 2) return;
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
                 await updateDoc(todGameDocRef, {
@@ -2245,7 +2249,8 @@
 
         async function selectTodCard(type) {
             if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             let selectedText;
             if (type === 'truth') {
@@ -2267,7 +2272,8 @@
 
         async function refuseTodCard() {
             if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
                 await updateDoc(todGameDocRef, {
@@ -2283,7 +2289,8 @@
 
         async function nextTodPlayer() {
             if (!currentHubId || !todGameState) return;
-            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
+            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             let nextIndex = (todGameState.currentPlayerIndex + 1) % todGameState.players.length;
             try {
