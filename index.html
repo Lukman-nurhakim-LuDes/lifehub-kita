@@ -2311,7 +2311,7 @@
                 startBtn.disabled = !(todGameState?.players && todGameState.players.length >= 2);
             } else if (todGameState.status === 'playing' || todGameState.status === 'refused') {
                 setupArea?.classList.add('hidden');
-                gameArea?.classList.remove('hidden');
+                gameArea?.classList.add('hidden');
                 currentPlayerDisplay.textContent = todGameState.players[todGameState.currentPlayerIndex];
                 
                 // Reset flip kartu dan konten
