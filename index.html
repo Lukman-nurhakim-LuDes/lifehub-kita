@@ -151,6 +151,11 @@
             background-image: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
             border: 2px solid #3182ce;
         }
+
+        /* Custom styles for punishment wheel text */
+        #punishment-spinner-canvas {
+            /* Ensure text is readable by adjusting font within drawPunishmentWheel */
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-x-hidden p-4 sm:p-6 lg:p-8">
@@ -310,10 +315,27 @@
                         <img id="profile-pic-destry" src="https://placehold.co/64x64/f472b6/ffffff?text=D" alt="Profil Destry" class="w-16 h-16 rounded-full border-2 border-pink-400 object-cover">
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Saldo</h3><p id="dashboard-saldo" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p></div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Tabungan</h3><p id="dashboard-tabungan" class="text-2xl font-bold text-blue-500 mt-1">Rp 0</p></div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Mood</h3><p id="dashboard-mood" class="text-3xl mt-1">😶</p></div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit</h3><p id="dashboard-habit-completion" class="text-2xl font-bold mt-1">0%</p></div>
+                        <!-- Dashboard Score Cards -->
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-money-bill-wave text-3xl text-green-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Saldo</h3>
+                            <p id="dashboard-saldo" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-piggy-bank text-3xl text-blue-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Tabungan</h3>
+                            <p id="dashboard-tabungan" class="text-2xl font-bold text-blue-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-face-smile text-3xl text-purple-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Mood</h3>
+                            <p id="dashboard-mood" class="text-3xl mt-1">😶</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-check-double text-3xl text-indigo-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit</h3>
+                            <p id="dashboard-habit-completion" class="text-2xl font-bold mt-1">0%</p>
+                        </div>
                     </div>
                     <div class="flex justify-end">
                         <button id="export-pdf-btn" class="bg-teal-500 text-white px-4 py-2 rounded-lg shadow hover:bg-teal-600 transition flex items-center">
@@ -334,7 +356,24 @@
                 </section>
                 <section id="keuangan" class="content-section">
                     <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Keuangan Harian</h1><button onclick="openModal('modal-transaksi')" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
-                    <div id="keuangan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
+                    <!-- Keuangan Score Cards -->
+                    <div id="keuangan-score-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-arrow-down-long text-3xl text-green-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                            <p id="keuangan-pemasukan" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-arrow-up-long text-3xl text-red-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                            <p id="keuangan-pengeluaran" class="text-2xl font-bold text-red-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-coins text-3xl text-blue-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Saldo Bersih</h3>
+                            <p id="keuangan-saldo-bersih" class="text-2xl font-bold text-blue-500 mt-1">Rp 0</p>
+                        </div>
+                    </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-center">
                         <div><label for="filter-bulan" class="text-sm font-medium">Filter Bulan:</label><input type="month" id="filter-bulan" class="bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg p-2"></div>
                         <div class="flex-grow"><label for="filter-pasangan" class="text-sm font-medium">Filter Pasangan:</label><select id="filter-pasangan" class="w-full p-2 border rounded-lg bg-gray-100 dark:bg-gray-700 dark:border-gray-600"><option value="semua">Semua</option><option value="Lukman">Lukman</option><option value="Destry">Destry</option></select></div>
@@ -343,7 +382,24 @@
                 </section>
                 <section id="tabungan" class="content-section">
                     <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Target Tabungan</h1><button onclick="openModal('modal-tabungan')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
-                    <div id="tabungan-score-cards" class="grid grid-cols-3 gap-2 md:gap-4 mb-6"></div>
+                    <!-- Tabungan Score Cards -->
+                    <div id="tabungan-score-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-bullseye text-3xl text-purple-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Total Target</h3>
+                            <p id="tabungan-total-target" class="text-2xl font-bold text-purple-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-wallet text-3xl text-green-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Terkumpul</h3>
+                            <p id="tabungan-terkumpul" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                            <i class="fa-solid fa-hourglass-half text-3xl text-yellow-500 mb-2"></i>
+                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Sisa</h3>
+                            <p id="tabungan-sisa" class="text-2xl font-bold text-yellow-500 mt-1">Rp 0</p>
+                        </div>
+                    </div>
                     <div id="savings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </section>
                 <section id="diary" class="content-section">
@@ -456,11 +512,55 @@
                     <div class="space-y-8">
                         <div>
                             <h2 class="text-2xl font-bold text-blue-500 mb-4">Lukman</h2>
-                            <div id="summary-individu-lukman" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                            <!-- Ringkasan Individu Lukman -->
+                            <div id="summary-individu-lukman" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-arrow-down-long text-3xl text-green-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                                    <p id="lukman-pemasukan" class="text-xl md:text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-arrow-up-long text-3xl text-red-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                                    <p id="lukman-pengeluaran" class="text-xl md:text-2xl font-bold text-red-500 mt-1">Rp 0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-book-open text-3xl text-purple-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
+                                    <p id="lukman-diary" class="text-xl md:text-2xl font-bold text-purple-500 mt-1">0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-check-double text-3xl text-indigo-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
+                                    <p id="lukman-habits-done" class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">0</p>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <h2 class="text-2xl font-bold text-pink-500 mb-4">Destry</h2>
-                            <div id="summary-individu-destry" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                            <!-- Ringkasan Individu Destry -->
+                            <div id="summary-individu-destry" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-arrow-down-long text-3xl text-green-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                                    <p id="destry-pemasukan" class="text-xl md:text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-arrow-up-long text-3xl text-red-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                                    <p id="destry-pengeluaran" class="text-xl md:text-2xl font-bold text-red-500 mt-1">Rp 0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-book-open text-3xl text-purple-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
+                                    <p id="destry-diary" class="text-xl md:text-2xl font-bold text-purple-500 mt-1">0</p>
+                                </div>
+                                <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
+                                    <i class="fa-solid fa-check-double text-3xl text-indigo-500 mb-2"></i>
+                                    <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
+                                    <p id="destry-habits-done" class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">0</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -1243,13 +1343,15 @@
             const totalPemasukan = transactions.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const totalPengeluaran = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const sisa = totalPemasukan - totalPengeluaran;
-            const keuanganScoreCards = document.getElementById('keuangan-score-cards');
-            if (keuanganScoreCards) {
-                keuanganScoreCards.innerHTML = `
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Pemasukan</h3><p class="text-lg md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(totalPemasukan)}</p></div>
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Pengeluaran</h3><p class="text-lg md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(totalPengeluaran)}</p></div>
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Sisa/Defisit</h3><p class="text-lg md:text-2xl font-bold ${sisa >= 0 ? 'text-blue-500' : 'text-yellow-500'} mt-1">${formatCurrency(sisa)}</p></div>
-                `;
+            const keuanganPemasukanEl = document.getElementById('keuangan-pemasukan');
+            const keuanganPengeluaranEl = document.getElementById('keuangan-pengeluaran');
+            const keuanganSaldoBersihEl = document.getElementById('keuangan-saldo-bersih');
+
+            if (keuanganPemasukanEl) keuanganPemasukanEl.textContent = formatCurrency(totalPemasukan);
+            if (keuanganPengeluaranEl) keuanganPengeluaranEl.textContent = formatCurrency(totalPengeluaran);
+            if (keuanganSaldoBersihEl) {
+                keuanganSaldoBersihEl.textContent = formatCurrency(sisa);
+                keuanganSaldoBersihEl.className = `text-2xl font-bold mt-1 ${sisa >= 0 ? 'text-blue-500' : 'text-yellow-500'}`;
             }
 
             if (personFilter && personFilter !== 'semua') {
@@ -1313,14 +1415,14 @@
             const totalTarget = savings.reduce((sum, s) => sum + s.target, 0);
             const totalTerkumpul = savings.reduce((sum, s) => sum + s.terkumpul, 0);
             const sisaMengejar = totalTarget - totalTerkumpul;
-            const tabunganScoreCards = document.getElementById('tabungan-score-cards');
-            if (tabunganScoreCards) {
-                tabunganScoreCards.innerHTML = `
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Total Target</h3><p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${formatCurrency(totalTarget)}</p></div>
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Terkumpul</h3><p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(totalTerkumpul)}</p></div>
-                    <div class="flex-1 bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-md text-center"><h3 class="font-semibold text-gray-500 dark:text-gray-400 text-xs md:text-sm">Sisa</h3><p class="text-xl md:text-2xl font-bold text-yellow-500 mt-1">${formatCurrency(sisaMengejar)}</p></div>
-                `;
-            }
+            
+            const tabunganTotalTargetEl = document.getElementById('tabungan-total-target');
+            const tabunganTerkumpulEl = document.getElementById('tabungan-terkumpul');
+            const tabunganSisaEl = document.getElementById('tabungan-sisa');
+
+            if (tabunganTotalTargetEl) tabunganTotalTargetEl.textContent = formatCurrency(totalTarget);
+            if (tabunganTerkumpulEl) tabunganTerkumpulEl.textContent = formatCurrency(totalTerkumpul);
+            if (tabunganSisaEl) tabunganSisaEl.textContent = formatCurrency(sisaMengejar);
 
             const list = document.getElementById('savings-list');
             if (list) {
@@ -1595,9 +1697,11 @@
                 const entriesMap = new Map();
                 entriesSnapshot.docs.forEach(doc => { const data = doc.data(); const dateKey = new Date(data.date.seconds * 1000).toISOString().split('T')[0]; entriesMap.set(dateKey, { id: doc.id, ...data }); });
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
                 let tableHTML = '<table class="habit-table"><thead><tr><th class="habit-name">Habit</th>';
                 for (let i = 1; i <= daysInMonth; i++) { tableHTML += `<th>${i}</th>`; }
                 tableHTML += '<th>Aksi</th></tr></thead><tbody>';
+                
                 if (habits.length === 0) { tableHTML += `<tr><td colspan="${daysInMonth + 2}" class="text-center p-8 text-gray-500">Belum ada habit. Tambahkan satu!</td></tr>`; } 
                 else {
                     habits.forEach(habit => {
@@ -1606,11 +1710,27 @@
                             const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                             const entry = entriesMap.get(dateKey);
                             const status = entry?.statuses?.[habit.id] || { lukman: false, destry: false };
-                            let statusClass = 'status-none';
-                            if (status.lukman && status.destry) statusClass = 'status-both';
-                            else if (status.lukman) statusClass = 'status-lukman';
-                            else if (status.destry) statusClass = 'status-destry';
-                            tableHTML += `<td><div class="habit-day-cell ${statusClass}" onclick="cycleHabitStatus('${habit.id}', '${dateKey}')"></div></td>`;
+                            
+                            // Calculate progress for the day
+                            let dailyCompleted = 0;
+                            if (status.lukman) dailyCompleted++;
+                            if (status.destry) dailyCompleted++;
+                            const dailyProgress = (dailyCompleted / 2) * 100; // Assuming 2 people
+                            const progressColor = dailyProgress === 100 ? 'bg-green-500' : (dailyProgress > 0 ? 'bg-blue-400' : 'bg-gray-300');
+
+                            tableHTML += `<td>
+                                <div class="flex flex-col items-center justify-center h-full">
+                                    <div class="flex space-x-1 mb-1">
+                                        <input type="checkbox" id="lukman-${habit.id}-${dateKey}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" ${status.lukman ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateKey}', 'lukman', event)">
+                                        <label for="lukman-${habit.id}-${dateKey}" class="text-xs text-gray-500">L</label>
+                                        <input type="checkbox" id="destry-${habit.id}-${dateKey}" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500" ${status.destry ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateKey}', 'destry', event)">
+                                        <label for="destry-${habit.id}-${dateKey}" class="text-xs text-gray-500">D</label>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                                        <div class="${progressColor} h-1.5 rounded-full" style="width: ${dailyProgress}%"></div>
+                                    </div>
+                                </div>
+                            </td>`;
                         }
                         tableHTML += `<td><button onclick="deleteHabit('${habit.id}')" class="text-red-500 hover:text-red-700 p-2"><i class="fa-solid fa-trash"></i></button></td>`;
                         tableHTML += '</tr>';
@@ -1625,40 +1745,22 @@
                 await deleteDoc(doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "habits", id));
             });
         };
-        window.cycleHabitStatus = async (habitId, dateKey) => {
+        window.cycleHabitStatus = async (habitId, dateKey, person, event) => {
+            // Prevent default checkbox behavior as we're handling state via Firestore
+            event.preventDefault(); 
             const date = new Date(dateKey);
             date.setUTCHours(12);
             const entryDocId = dateKey;
             const entryRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "habitEntries", entryDocId);
             const entrySnap = await getDoc(entryRef);
             const currentStatuses = entrySnap.exists() ? entrySnap.data().statuses : {};
-            const currentStatus = currentStatuses[habitId] || { lukman: false, destry: false };
-            let nextStatus = { lukman: false, destry: false };
+            const currentStatusForHabit = currentStatuses[habitId] || { lukman: false, destry: false };
             
-            const currentUserEmail = currentUser.email.toLowerCase();
-            const isLukman = currentUserEmail.includes('lukman');
-            const isDestry = currentUserEmail.includes('destry');
+            // Toggle the status for the specific person
+            const newStatusForHabit = { ...currentStatusForHabit };
+            newStatusForHabit[person] = !newStatusForHabit[person];
 
-            if (isLukman && isDestry) { // If both users are logged in (unlikely for single user app, but for completeness)
-                // Cycle through None -> Lukman -> Destry -> Both -> None
-                if (!currentStatus.lukman && !currentStatus.destry) { // None -> Lukman
-                    nextStatus = { lukman: true, destry: false };
-                } else if (currentStatus.lukman && !currentStatus.destry) { // Lukman -> Destry
-                    nextStatus = { lukman: false, destry: true };
-                } else if (!currentStatus.lukman && currentStatus.destry) { // Destry -> Both
-                    nextStatus = { lukman: true, destry: true };
-                } else { // Both -> None
-                    nextStatus = { lukman: false, destry: false };
-                }
-            } else if (isLukman) { // Only Lukman is logged in
-                nextStatus.lukman = !currentStatus.lukman;
-                nextStatus.destry = currentStatus.destry; // Preserve Destry's status
-            } else if (isDestry) { // Only Destry is logged in
-                nextStatus.destry = !currentStatus.destry;
-                nextStatus.lukman = currentStatus.lukman; // Preserve Lukman's status
-            }
-
-            const newStatuses = { ...currentStatuses, [habitId]: nextStatus };
+            const newStatuses = { ...currentStatuses, [habitId]: newStatusForHabit };
             try { await setDoc(entryRef, { date: Timestamp.fromDate(date), statuses: newStatuses }, { merge: true }); } catch (error) { console.error("Error updating habit status: ", error); }
         };
         function setupImagePreview(inputId, previewId) { 
@@ -1783,44 +1885,43 @@
             if (!currentHubId) return;
             const txQuery = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "transactions");
             const diaryQuery = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "diary");
+            const habitsQuery = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "habits");
             const habitEntriesQuery = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "habitEntries");
-            const [txSnap, diarySnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitEntriesQuery)]);
+            const [txSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
+            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()})); // All habits
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()})); // All habit entries
             
             const renderSummaryFor = (person, containerId) => {
                 const pengeluaran = transactions.filter(t => t.oleh === person && t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
                 const pemasukan = transactions.filter(t => t.oleh === person && t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
                 const diaryCount = diary.filter(d => d.oleh === person).length;
+                
                 let habitsDone = 0;
+                // Iterate through all habit entries
                 habitEntries.forEach(entry => {
                     if (entry.statuses) {
+                        // For each habit in the entry, check if the specific person completed it
                         Object.values(entry.statuses).forEach(status => {
-                            if (status[person.toLowerCase()]) habitsDone++;
+                            if (status[person.toLowerCase()]) {
+                                habitsDone++;
+                            }
                         });
                     }
                 });
+
                 const containerEl = document.getElementById(containerId);
                 if (containerEl) {
-                    containerEl.innerHTML = `
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
-                            <p class="text-xl md:text-2xl font-bold text-green-500 mt-1">${formatCurrency(pemasukan)}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
-                            <p class="text-xl md:text-2xl font-bold text-red-500 mt-1">${formatCurrency(pengeluaran)}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Entri Diary</h3>
-                            <p class="text-xl md:text-2xl font-bold text-purple-500 mt-1">${diaryCount}</p>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center">
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Habit Selesai</h3>
-                            <p class="text-xl md:text-2xl font-bold text-indigo-500 mt-1">${habitsDone}</p>
-                        </div>
-                    `;
+                    const pemasukanEl = containerEl.querySelector(`#${person.toLowerCase()}-pemasukan`);
+                    const pengeluaranEl = containerEl.querySelector(`#${person.toLowerCase()}-pengeluaran`);
+                    const diaryEl = containerEl.querySelector(`#${person.toLowerCase()}-diary`);
+                    const habitsDoneEl = containerEl.querySelector(`#${person.toLowerCase()}-habits-done`);
+
+                    if (pemasukanEl) pemasukanEl.textContent = formatCurrency(pemasukan);
+                    if (pengeluaranEl) pengeluaranEl.textContent = formatCurrency(pengeluaran);
+                    if (diaryEl) diaryEl.textContent = diaryCount;
+                    if (habitsDoneEl) habitsDoneEl.textContent = habitsDone;
                 }
             };
             renderSummaryFor('Lukman', 'summary-individu-lukman');
@@ -2344,7 +2445,7 @@
                 ctx.rotate(startAngle + arcSize / 2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = "#fff";
-                ctx.font = "bold 14px Inter";
+                ctx.font = "bold 12px Inter"; // Adjusted font size for better visibility
                 ctx.fillText(punishments[i], radius - 10, 5);
                 ctx.restore();
             }
