@@ -156,6 +156,38 @@
         #punishment-spinner-canvas {
             /* Ensure text is readable by adjusting font within drawPunishmentWheel */
         }
+
+        /* Custom score card styles */
+        .score-card-primary {
+            background-image: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* blue-500 to blue-700 */
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .score-card-secondary {
+            background-color: #fff;
+            color: #374151; /* gray-800 */
+            padding: 1rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        html.dark .score-card-secondary {
+            background-color: #1f2937; /* gray-900 */
+            color: #e5e7eb; /* gray-200 */
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 overflow-x-hidden p-4 sm:p-6 lg:p-8">
@@ -356,22 +388,25 @@
                 </section>
                 <section id="keuangan" class="content-section">
                     <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Keuangan Harian</h1><button onclick="openModal('modal-transaksi')" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
-                    <!-- Keuangan Score Cards -->
-                    <div id="keuangan-score-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-arrow-down-long text-3xl text-green-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
-                            <p id="keuangan-pemasukan" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                    <!-- Keuangan Score Cards (Updated Layout) -->
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Ringkasan Keuangan</h2>
+                            <button class="text-gray-500 dark:text-gray-400"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-arrow-up-long text-3xl text-red-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
-                            <p id="keuangan-pengeluaran" class="text-2xl font-bold text-red-500 mt-1">Rp 0</p>
+                        <div class="score-card-primary mb-4">
+                            <h3 class="text-lg font-semibold text-white/80">Saldo Bersih Bulan Ini</h3>
+                            <p id="keuangan-saldo-bersih" class="text-4xl font-bold mt-2">Rp 0</p>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-coins text-3xl text-blue-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Saldo Bersih</h3>
-                            <p id="keuangan-saldo-bersih" class="text-2xl font-bold text-blue-500 mt-1">Rp 0</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="score-card-secondary">
+                                <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pemasukan</h3>
+                                <p id="keuangan-pemasukan" class="text-xl font-bold text-green-500 mt-1">Rp 0</p>
+                            </div>
+                            <div class="score-card-secondary">
+                                <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Pengeluaran</h3>
+                                <p id="keuangan-pengeluaran" class="text-xl font-bold text-red-500 mt-1">Rp 0</p>
+                            </div>
                         </div>
                     </div>
                     <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6 flex flex-wrap gap-4 items-center">
@@ -382,22 +417,25 @@
                 </section>
                 <section id="tabungan" class="content-section">
                     <div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-bold hidden lg:block">Target Tabungan</h1><button onclick="openModal('modal-tabungan')" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition fixed bottom-20 right-5 z-20 lg:static lg:bottom-auto lg:right-auto"><i class="fa-solid fa-plus"></i><span class="hidden lg:inline ml-2">Tambah</span></button></div>
-                    <!-- Tabungan Score Cards -->
-                    <div id="tabungan-score-cards" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-bullseye text-3xl text-purple-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Total Target</h3>
-                            <p id="tabungan-total-target" class="text-2xl font-bold text-purple-500 mt-1">Rp 0</p>
+                    <!-- Tabungan Score Cards (Updated Layout) -->
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Ringkasan Tabungan</h2>
+                            <button class="text-gray-500 dark:text-gray-400"><i class="fa-solid fa-ellipsis-vertical"></i></button>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-wallet text-3xl text-green-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Terkumpul</h3>
-                            <p id="tabungan-terkumpul" class="text-2xl font-bold text-green-500 mt-1">Rp 0</p>
+                        <div class="score-card-primary mb-4">
+                            <h3 class="text-lg font-semibold text-white/80">Total Terkumpul</h3>
+                            <p id="tabungan-terkumpul" class="text-4xl font-bold mt-2">Rp 0</p>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md text-center flex flex-col items-center justify-center">
-                            <i class="fa-solid fa-hourglass-half text-3xl text-yellow-500 mb-2"></i>
-                            <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Sisa</h3>
-                            <p id="tabungan-sisa" class="text-2xl font-bold text-yellow-500 mt-1">Rp 0</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="score-card-secondary">
+                                <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Total Target</h3>
+                                <p id="tabungan-total-target" class="text-xl font-bold text-purple-500 mt-1">Rp 0</p>
+                            </div>
+                            <div class="score-card-secondary">
+                                <h3 class="font-semibold text-gray-500 dark:text-gray-400 text-sm">Sisa Target</h3>
+                                <p id="tabungan-sisa" class="text-xl font-bold text-yellow-500 mt-1">Rp 0</p>
+                            </div>
                         </div>
                     </div>
                     <div id="savings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -955,7 +993,7 @@
             document.getElementById('filter-pasangan')?.addEventListener('change', renderKeuangan);
             document.getElementById('habit-prev-month')?.addEventListener('click', () => changeHabitMonth(-1));
             document.getElementById('habit-next-month')?.addEventListener('click', () => changeHabitMonth(1));
-            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(-1));
+            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(1));
             document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1));
             setupImagePreview('diary-foto', 'diary-foto-preview');
             setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
@@ -1343,6 +1381,7 @@
             const totalPemasukan = transactions.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const totalPengeluaran = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const sisa = totalPemasukan - totalPengeluaran;
+            
             const keuanganPemasukanEl = document.getElementById('keuangan-pemasukan');
             const keuanganPengeluaranEl = document.getElementById('keuangan-pengeluaran');
             const keuanganSaldoBersihEl = document.getElementById('keuangan-saldo-bersih');
@@ -1351,7 +1390,7 @@
             if (keuanganPengeluaranEl) keuanganPengeluaranEl.textContent = formatCurrency(totalPengeluaran);
             if (keuanganSaldoBersihEl) {
                 keuanganSaldoBersihEl.textContent = formatCurrency(sisa);
-                keuanganSaldoBersihEl.className = `text-2xl font-bold mt-1 ${sisa >= 0 ? 'text-blue-500' : 'text-yellow-500'}`;
+                // Class for saldo bersih is now handled by score-card-primary, no need to change text color here
             }
 
             if (personFilter && personFilter !== 'semua') {
