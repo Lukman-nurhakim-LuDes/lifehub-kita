@@ -476,7 +476,7 @@
                             <h2 class="text-2xl font-bold mb-4">Ubah Foto Profil</h2>
                             <img id="profile-pic-preview" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover" src="https://placehold.co/128x128/e2e8f0/64748b?text=Pilih" alt="Pratinjau Foto">
                             <input type="file" id="profile-pic-input" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/50 dark:file:text-blue-300 dark:hover:file:bg-blue-900">
-                            <button id="save-profile-pic-btn" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50" disabled>
+                            <button id="save-profile-pic-btn" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg font-semibold hover:bg-blue-600 disabled:opacity-50">
                                 <span id="save-profile-pic-text">Simpan Foto</span>
                                 <i id="save-profile-pic-spinner" class="fa-solid fa-spinner fa-spin ml-2 hidden"></i>
                             </button>
@@ -570,6 +570,7 @@
             return date.toLocaleDateString('id-ID', options);
         };
         const showUI = (element) => {
+            console.log(`[showUI] Menyembunyikan semua layar, menampilkan: ${element ? element.id : 'none'}`);
             loadingScreen.style.display = 'none';
             authScreen.style.display = 'none';
             hubScreen.style.display = 'none';
@@ -592,12 +593,19 @@
                 messageListElement = document.getElementById('message-list');
                 requestPermissionBtn = document.getElementById('request-permission-btn');
 
+                console.log("[Firebase Init] Memulai inisialisasi Firebase...");
+                console.log("[Firebase Init] firebaseConfig:", firebaseConfig);
+                console.log("[Firebase Init] appId:", appId);
+                console.log("[Firebase Init] initialAuthToken:", initialAuthToken ? "Tersedia" : "Tidak Tersedia");
+
                 // Inisialisasi Firebase App dan layanannya
                 window.app = initializeApp(firebaseConfig);
                 window.db = getFirestore(window.app);
                 window.auth = getAuth(window.app);
                 window.messaging = getMessaging(window.app);
                 window.storage = getStorage(window.app);
+                console.log("[Firebase Init] Firebase App dan layanan berhasil diinisialisasi.");
+
 
                 if (authInfoElement) {
                     authInfoElement.textContent = 'Mengotentikasi...';
@@ -605,14 +613,15 @@
 
                 // Listener untuk perubahan status otentikasi
                 onAuthStateChanged(window.auth, async (user) => {
+                    console.log("[Auth State Changed] Status otentikasi berubah. User:", user ? user.uid : "null");
                     if (user) {
                         currentUser = user;
                         userId = user.uid;
                         if (authInfoElement) {
-                            authInfoElement.textContent = `Berhasil masuk sebagai: ${userId}`;
+                            authInfoElement.textContent = `Berhasil masuk sebagai: ${user.email || user.uid}`;
                         }
                         isAuthReady = true;
-                        console.log("Pengguna masuk:", userId);
+                        console.log("[Auth State Changed] Pengguna masuk:", userId);
                         
                         // Lanjutkan dengan penyiapan Messaging setelah otentikasi selesai
                         setupFirebaseMessaging();
@@ -620,24 +629,30 @@
                         // Path untuk dokumen pengguna di Firestore
                         const userDocRef = doc(window.db, `artifacts/${appId}/users`, user.uid);
                         const userDocSnap = await getDoc(userDocRef);
+                        console.log("[Auth State Changed] User Doc Snapshot exists:", userDocSnap.exists());
                         if (userDocSnap.exists() && userDocSnap.data().hubId) {
                             currentHubId = userDocSnap.data().hubId;
+                            console.log("[Auth State Changed] Hub ID ditemukan:", currentHubId);
                             initializeAppUI();
                         } else {
+                            console.log("[Auth State Changed] Hub ID tidak ditemukan. Menampilkan layar Hub.");
                             // Jika pengguna terautentikasi tetapi belum memiliki hubId, tampilkan layar hub
                             showUI(hubScreen);
                         }
                     } else {
+                        console.log("[Auth State Changed] Tidak ada pengguna. Mencoba masuk anonim atau menampilkan layar Auth.");
                         // Jika tidak ada pengguna, coba masuk secara anonim
                         try {
                             if (initialAuthToken) {
+                                console.log("[Auth State Changed] Mencoba signInWithCustomToken...");
                                 await signInWithCustomToken(window.auth, initialAuthToken);
                             } else {
+                                console.log("[Auth State Changed] Mencoba signInAnonymously...");
                                 await signInAnonymously(window.auth);
                             }
                             // onAuthStateChanged akan dipanggil lagi setelah masuk
                         } catch (error) {
-                            console.error("Kesalahan saat masuk anonim:", error);
+                            console.error("[Auth State Changed] Kesalahan saat masuk anonim/kustom:", error);
                             if (authInfoElement) {
                                 authInfoElement.textContent = `Kesalahan otentikasi: ${error.message}`;
                             }
@@ -651,12 +666,13 @@
                 });
 
             } catch (error) {
-                console.error("Kesalahan saat menginisialisasi Firebase:", error);
+                console.error("[Firebase Init] Kesalahan saat menginisialisasi Firebase:", error);
                 if (authInfoElement) {
                     authInfoElement.textContent = `Kesalahan inisialisasi Firebase: ${error.message}`;
                 } else {
                     console.error("Tidak dapat memperbarui status otentikasi di UI karena elemen tidak ditemukan.");
                 }
+                showUI(authScreen); // Pastikan layar auth ditampilkan jika ada kesalahan fatal
             }
         }
 
@@ -665,7 +681,11 @@
          */
         async function setupFirebaseMessaging() {
             if (!isAuthReady) {
-                console.log("Otentikasi belum siap, menunda penyiapan Messaging.");
+                console.log("[Messaging Setup] Otentikasi belum siap, menunda penyiapan Messaging.");
+                return;
+            }
+            if (!window.messaging) {
+                console.error("[Messaging Setup] Firebase Messaging belum diinisialisasi.");
                 return;
             }
 
@@ -679,7 +699,7 @@
                     if (messagingInfoElement) {
                         messagingInfoElement.textContent = 'Izin notifikasi diberikan.';
                     }
-                    console.log('Izin notifikasi diberikan.');
+                    console.log('[Messaging Setup] Izin notifikasi diberikan.');
 
                     // Mendapatkan token pendaftaran perangkat (FCM Token)
                     const vapidKey = 'BJ-LJBU-09cwNok7guCYQk3diDgcdvgS7grU2-nwagIuYqhrNm5p050W7CwDmvMLztB0zCvJKPebLQC4yw5ijaA'; // <-- PASTIKAN INI VAPID KEY ANDA YANG BENAR!
@@ -688,7 +708,7 @@
                         if (fcmTokenElement) {
                             fcmTokenElement.textContent = currentToken;
                         }
-                        console.log('FCM Token:', currentToken);
+                        console.log('[Messaging Setup] FCM Token:', currentToken);
                         // Anda bisa mengirim token ini ke server backend Anda
                         // untuk mengirim notifikasi ke perangkat ini.
                         if (messagingInfoElement) {
@@ -698,7 +718,7 @@
                             requestPermissionBtn.style.display = 'none'; // Sembunyikan tombol setelah izin diberikan
                         }
                     } else {
-                        console.warn('Tidak ada token pendaftaran yang tersedia. Perlu meminta izin.');
+                        console.warn('[Messaging Setup] Tidak ada token pendaftaran yang tersedia. Perlu meminta izin.');
                         if (fcmTokenElement) {
                             fcmTokenElement.textContent = 'Tidak ada token (izin mungkin tidak diberikan atau VAPID key salah).';
                         }
@@ -711,7 +731,7 @@
                         }
                     }
                 } else {
-                    console.warn('Izin notifikasi ditolak.');
+                    console.warn('[Messaging Setup] Izin notifikasi ditolak.');
                     if (messagingInfoElement) {
                         messagingInfoElement.textContent = 'Izin notifikasi ditolak.';
                     }
@@ -724,7 +744,7 @@
                     }
                 }
             } catch (error) {
-                console.error('Kesalahan saat mendapatkan token:', error);
+                console.error('[Messaging Setup] Kesalahan saat mendapatkan token:', error);
                 if (messagingInfoElement) {
                     messagingInfoElement.textContent = `Kesalahan saat mendapatkan token: ${error.message}`;
                 }
@@ -760,9 +780,10 @@
         function setupFirestoreListener() {
             // userId dijamin sudah terdefinisi karena fungsi ini dipanggil setelah onAuthStateChanged(user)
             if (!window.db || !userId) {
-                console.log("Firestore atau userId belum siap.");
+                console.log("[Firestore Listener] Firestore atau userId belum siap.");
                 return;
             }
+            console.log("[Firestore Listener] Menyiapkan listener Firestore untuk hub:", currentHubId);
 
             // Contoh: Mendengarkan data publik
             const publicCollectionRef = collection(window.db, `artifacts/${appId}/public/data/messages`);
@@ -877,6 +898,7 @@
         }
 
         function initializeAppUI() {
+            console.log("[App UI Init] Menginisialisasi UI Aplikasi utama.");
             setupNavigation();
             setupTheme();
             navigateTo('dashboard', 'Dashboard');
@@ -895,7 +917,11 @@
         }
 
         function attachRealtimeListeners() {
-            if (!currentHubId) return;
+            if (!currentHubId) {
+                console.log("[Realtime Listeners] currentHubId tidak ditemukan, tidak dapat melampirkan listener.");
+                return;
+            }
+            console.log("[Realtime Listeners] Melampirkan listener realtime untuk hub:", currentHubId);
             unsubscribeAll();
             const collectionsToRender = {
                 'transactions': [renderKeuangan, renderDashboard, renderIndividualSummaries],
@@ -916,6 +942,7 @@
                 // Mengubah jalur koleksi untuk data hub
                 const q = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, col);
                 const unsubscribe = onSnapshot(q, (snapshot) => {
+                    console.log(`[Realtime Listener] Data ${col} berubah.`);
                     // In-app notification logic
                     if (col === 'notifications') {
                         snapshot.docChanges().forEach((change) => {
@@ -937,6 +964,7 @@
             // Truth or Dare Game Listener
             const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, 'truthOrDareGame');
             const todUnsubscribe = onSnapshot(todGameDocRef, (docSnap) => {
+                console.log("[Realtime Listener] Truth or Dare game state changed.");
                 if (docSnap.exists()) {
                     todGameState = docSnap.data();
                     renderTodGameUI();
@@ -949,7 +977,11 @@
             });
             unsubscribeListeners.push(todUnsubscribe);
         }
-        function unsubscribeAll() { unsubscribeListeners.forEach(unsub => unsub()); unsubscribeListeners = []; }
+        function unsubscribeAll() { 
+            console.log("[Unsubscribe All] Menghentikan semua listener Firestore.");
+            unsubscribeListeners.forEach(unsub => unsub()); 
+            unsubscribeListeners = []; 
+        }
 
         function setupNavigation() {
             const navItems = [
@@ -973,6 +1005,7 @@
             }
         }
         window.navigateTo = (pageId, pageTitle) => {
+            console.log(`[Navigation] Navigasi ke: ${pageId} (${pageTitle})`);
             document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
             document.getElementById(pageId)?.classList.add('active');
             document.querySelectorAll('.nav-link').forEach(link => {
@@ -1000,8 +1033,14 @@
             }
             window.scrollTo(0, 0);
         }
-        window.openModal = (modalId) => { document.getElementById(modalId).style.display = 'flex'; };
-        window.closeModal = (modalId) => { document.getElementById(modalId).style.display = 'none'; };
+        window.openModal = (modalId) => { 
+            console.log(`[Modal] Membuka modal: ${modalId}`);
+            document.getElementById(modalId).style.display = 'flex'; 
+        };
+        window.closeModal = (modalId) => { 
+            console.log(`[Modal] Menutup modal: ${modalId}`);
+            document.getElementById(modalId).style.display = 'none'; 
+        };
 
         function applyTheme(isDark) {
             const toggleIcon = document.querySelector('#theme-toggle i');
@@ -1023,63 +1062,105 @@
             applyTheme(currentTheme === 'dark');
         }
         
-        async function handleLogin(e) { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; try { await signInWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Login Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
-        async function handleRegister(e) { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; const errorEl = document.getElementById('auth-error'); errorEl.textContent = ''; if (password.length < 6) { errorEl.textContent = "Password minimal 6 karakter."; return; } try { await createUserWithEmailAndPassword(window.auth, email, password); } catch (error) { console.error("Register Error:", error.code, error.message); errorEl.textContent = `Error: ${error.code}`; } }
+        async function handleLogin(e) { 
+            e.preventDefault(); 
+            const email = document.getElementById('login-email').value; 
+            const password = document.getElementById('login-password').value; 
+            const errorEl = document.getElementById('auth-error'); 
+            errorEl.textContent = ''; 
+            console.log(`[Login] Mencoba login untuk email: ${email}`);
+            try { 
+                await signInWithEmailAndPassword(window.auth, email, password); 
+                console.log(`[Login] Login berhasil untuk email: ${email}`);
+            } catch (error) { 
+                console.error("[Login Error]:", error.code, error.message); 
+                errorEl.textContent = `Login gagal: ${error.message}`; 
+            } 
+        }
+        async function handleRegister(e) { 
+            e.preventDefault(); 
+            const email = document.getElementById('register-email').value; 
+            const password = document.getElementById('register-password').value; 
+            const errorEl = document.getElementById('auth-error'); 
+            errorEl.textContent = ''; 
+            console.log(`[Register] Mencoba mendaftar untuk email: ${email}`);
+            if (password.length < 6) { 
+                errorEl.textContent = "Password minimal 6 karakter."; 
+                console.warn("[Register Warning] Password kurang dari 6 karakter.");
+                return; 
+            } 
+            try { 
+                await createUserWithEmailAndPassword(window.auth, email, password); 
+                console.log(`[Register] Pendaftaran berhasil untuk email: ${email}`);
+            } catch (error) { 
+                console.error("[Register Error]:", error.code, error.message); 
+                errorEl.textContent = `Pendaftaran gagal: ${error.message}`; 
+            } 
+        }
         async function handleLogout() {
             showConfirmModal('Konfirmasi Logout', 'Anda yakin ingin logout?', async () => {
+                console.log("[Logout] Melakukan proses logout.");
                 await signOut(window.auth);
+                console.log("[Logout] Logout berhasil. Menampilkan layar autentikasi.");
+                currentHubId = null; // Clear hub ID on logout
+                unsubscribeAll(); // Unsubscribe all listeners
+                showUI(authScreen); // Show auth screen after logout
             });
         }
         async function createHub() { 
-            console.log("Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
+            console.log("[createHub] Tombol 'Buat Hub Baru' diklik. Memulai fungsi createHub."); // Debug log
             document.getElementById('hub-error').textContent = ''; // Clear previous errors
 
             if (!currentUser) { 
-                console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
+                console.error("[createHub Error] Pengguna tidak ditemukan. Silakan coba login ulang."); 
                 document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi. Silakan login ulang.";
                 return; 
             }
-            console.log("Current User UID:", currentUser.uid);
-            console.log("App ID:", appId);
+            console.log("[createHub] Current User UID:", currentUser.uid);
+            console.log("[createHub] App ID:", appId);
 
             // Jalur untuk dokumen hub baru
             const hubId = doc(collection(window.db, `artifacts/${appId}/public/data/hubs`)).id;
-            console.log("Generated Hub ID:", hubId);
+            console.log("[createHub] Generated Hub ID:", hubId);
 
             try { 
                 const batch = writeBatch(window.db);
                 
                 // Set dokumen hub baru
                 const hubDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs`, hubId);
-                console.log("Setting new hub document at path:", hubDocRef.path);
+                console.log("[createHub] Setting new hub document at path:", hubDocRef.path);
                 batch.set(hubDocRef, { members: [currentUser.uid], createdAt: serverTimestamp() });
                 
                 // Perbarui dokumen pengguna dengan hubId
                 const userDocRef = doc(window.db, `artifacts/${appId}/users`, currentUser.uid);
-                console.log("Updating user document at path:", userDocRef.path);
+                console.log("[createHub] Updating user document at path:", userDocRef.path);
                 batch.set(userDocRef, { hubId: hubId, email: currentUser.email }, { merge: true }); // Simpan email pengguna
                 
-                console.log("Committing batch operation...");
+                console.log("[createHub] Committing batch operation...");
                 await batch.commit(); 
-                console.log("Batch commit successful. Hub created and user updated."); // Debug log
+                console.log("[createHub] Batch commit successful. Hub created and user updated."); // Debug log
+                currentHubId = hubId; // Update global hub ID
+                initializeAppUI(); // Re-initialize UI with new hub
             } catch (error) { 
-                console.error("Create Hub Error:", error); 
+                console.error("[createHub Error]:", error); 
                 document.getElementById('hub-error').textContent = `Gagal membuat hub: ${error.code || error.message}`; 
             } 
         }
         async function joinHub(e) { 
             e.preventDefault(); 
-            console.log("Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
+            console.log("[joinHub] Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
             const hubId = document.getElementById('join-hub-id').value.trim(); 
             if (!hubId) {
                 document.getElementById('hub-error').textContent = "ID Hub tidak boleh kosong.";
+                console.warn("[joinHub Warning] ID Hub kosong.");
                 return;
             }
             if (!currentUser) { 
-                console.error("Error: Pengguna tidak ditemukan. Silakan coba login ulang."); 
+                console.error("[joinHub Error] Pengguna tidak ditemukan. Silakan coba login ulang."); 
                 document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi.";
                 return; 
             }
+            console.log("[joinHub] Mencoba bergabung dengan Hub ID:", hubId);
 
             // Jalur untuk referensi hub
             const hubRef = doc(window.db, `artifacts/${appId}/public/data/hubs`, hubId); 
@@ -1088,22 +1169,24 @@
                 if (hubSnap.exists()) { 
                     const members = hubSnap.data().members || []; 
                     if (members.includes(currentUser.uid)) {
-                        console.log("Pengguna sudah menjadi anggota hub ini.");
+                        console.log("[joinHub] Pengguna sudah menjadi anggota hub ini.");
                         document.getElementById('hub-error').textContent = "Anda sudah menjadi anggota hub ini.";
                     } else { 
                         await updateDoc(hubRef, { members: [...members, currentUser.uid] }); 
-                        console.log("Pengguna berhasil ditambahkan ke hub.");
+                        console.log("[joinHub] Pengguna berhasil ditambahkan ke hub.");
                     } 
                     // Perbarui dokumen pengguna dengan hubId
                     await setDoc(doc(window.db, `artifacts/${appId}/users`, currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); 
-                    console.log("Dokumen pengguna diperbarui dengan hubId.");
+                    console.log("[joinHub] Dokumen pengguna diperbarui dengan hubId.");
+                    currentHubId = hubId; // Update global hub ID
+                    initializeAppUI(); // Re-initialize UI with new hub
                 } else { 
                     document.getElementById('hub-error').textContent = "ID Hub tidak ditemukan."; 
-                    console.warn("ID Hub tidak ditemukan:", hubId);
+                    console.warn("[joinHub Warning] ID Hub tidak ditemukan:", hubId);
                 } 
             } catch (error) { 
-                console.error("Join Hub Error:", error); 
-                document.getElementById('hub-error').textContent = `Gagal bergabung dengan hub: ${error.code}`; 
+                console.error("[joinHub Error]:", error); 
+                document.getElementById('hub-error').textContent = `Gagal bergabung dengan hub: ${error.code || error.message}`; 
             } 
         }
         
@@ -1901,7 +1984,7 @@
         }
 
         // --- RODA KENCAN ---
-        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "liburan"];
+        const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "ciuman enak x"];
         const wheelCanvas = document.getElementById('spinner-canvas');
         const spinBtn = document.getElementById('spin-btn');
         let isSpinning = false;
@@ -2458,6 +2541,7 @@
 
         // Panggil inisialisasi Firebase saat DOM dimuat
         window.onload = () => {
+            console.log("[Window Load] DOM Fully Loaded. Memulai inisialisasi Firebase.");
             initializeFirebase();
             mainApp(); // Panggil mainApp setelah inisialisasi Firebase
             // --- Pendaftaran Service Worker ---
