@@ -662,7 +662,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, addDoc, updateDoc, deleteDoc, query, where, Timestamp, writeBatch, getDocs, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         
         // Konfigurasi Firebase Anda (dari konsol Firebase)
@@ -1298,17 +1298,20 @@
             e.preventDefault(); 
             console.log("[joinHub] Tombol 'Gabung' diklik. Memulai fungsi joinHub."); // Debug log
             const hubId = document.getElementById('join-hub-id').value.trim(); 
+            document.getElementById('hub-error').textContent = ''; // Clear previous errors
+
             if (!hubId) {
                 document.getElementById('hub-error').textContent = "ID Hub tidak boleh kosong.";
                 console.warn("[joinHub Warning] ID Hub kosong.");
                 return;
             }
-            if (!currentUser) { 
-                console.error("[joinHub Error] Pengguna tidak ditemukan. Silakan coba login ulang."); 
-                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi.";
+            if (!currentUser || !currentUser.uid) { 
+                console.error("[joinHub Error] Pengguna tidak ditemukan atau UID tidak tersedia. Silakan coba login ulang."); 
+                document.getElementById('hub-error').textContent = "Error: Pengguna tidak terautentikasi atau UID tidak valid. Silakan login ulang.";
                 return; 
             }
             console.log("[joinHub] Mencoba bergabung dengan Hub ID:", hubId);
+            console.log("[joinHub] Current User UID:", currentUser.uid);
 
             // Jalur untuk referensi hub
             const hubRef = doc(window.db, `artifacts/${appId}/public/data/hubs`, hubId); 
@@ -1316,14 +1319,19 @@
                 const hubSnap = await getDoc(hubRef); 
                 if (hubSnap.exists()) { 
                     const members = hubSnap.data().members || []; 
+                    console.log("[joinHub] Current hub members:", members);
+
                     if (members.includes(currentUser.uid)) {
                         console.log("[joinHub] Pengguna sudah menjadi anggota hub ini.");
                         document.getElementById('hub-error').textContent = "Anda sudah menjadi anggota hub ini.";
                     } else { 
-                        await updateDoc(hubRef, { members: [...members, currentUser.uid] }); 
+                        console.log("[joinHub] Menambahkan pengguna ke daftar anggota hub...");
+                        // Menggunakan arrayUnion untuk menambahkan UID ke array members
+                        await updateDoc(hubRef, { members: arrayUnion(currentUser.uid) }); 
                         console.log("[joinHub] Pengguna berhasil ditambahkan ke hub.");
                     } 
                     // Perbarui dokumen pengguna dengan hubId
+                    console.log("[joinHub] Memperbarui dokumen pengguna dengan hubId...");
                     await setDoc(doc(window.db, `artifacts/${appId}/users`, currentUser.uid), { hubId: hubId, email: currentUser.email }, { merge: true }); 
                     console.log("[joinHub] Dokumen pengguna diperbarui dengan hubId.");
                     currentHubId = hubId; // Update global hub ID
@@ -2202,14 +2210,11 @@
                 const finalAngle = totalRotation % 360;
                 // Adjust for pointer position (top is 270 degrees from positive x-axis)
                 // We want to find which segment is at the pointer.
-                // The wheel rotates clockwise.
-                // If pointer is at 270 deg, and segment starts at 0 deg, it's 270 deg away.
-                // We need to calculate the angle relative to the pointer.
                 // (360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle
-                // Or simply: (pointerAngle - finalAngle + 360) % 360 to get angle from pointer to 0-line
-                // Then divide by segmentAngle and floor.
-                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
-                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
+                const pointerAngle = 270; // Pointer is at the top (12 o'clock)
+                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Adjust final angle relative to pointer
+                const winningIndex = Math.floor(normalizedFinalAngle / segmentAngle);
+
 
                 const result = dateIdeas[winningIndex];
                 
@@ -2559,8 +2564,9 @@
             setTimeout(() => {
                 const segmentAngle = 360 / punishments.length;
                 const finalAngle = totalRotation % 360;
-                const pointerOffsetAngle = (270 - finalAngle + 360) % 360;
-                const winningIndex = Math.floor(pointerOffsetAngle / segmentAngle);
+                const pointerAngle = 270; // Pointer is at the top (12 o'clock)
+                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Adjust final angle relative to pointer
+                const winningIndex = Math.floor(normalizedFinalAngle / segmentAngle);
 
                 const result = punishments[winningIndex];
                 
