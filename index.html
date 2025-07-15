@@ -542,6 +542,11 @@
                                 <button id="refuse-tod-btn" class="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600 transition">Tolak (Hukuman!)</button>
                                 <button id="next-player-btn" class="bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition">Selanjutnya</button>
                             </div>
+                            <!-- New Game Control Buttons -->
+                            <div class="flex justify-center gap-4 mt-6">
+                                <button id="back-to-tod-setup-btn" class="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition">Kembali ke Pengaturan</button>
+                                <button id="reset-tod-game-btn" class="bg-red-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-600 transition">Reset Game</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -993,8 +998,8 @@
             document.getElementById('filter-pasangan')?.addEventListener('change', renderKeuangan);
             document.getElementById('habit-prev-month')?.addEventListener('click', () => changeHabitMonth(-1));
             document.getElementById('habit-next-month')?.addEventListener('click', () => changeHabitMonth(1));
-            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(1));
-            document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1));
+            document.getElementById('prev-month')?.addEventListener('click', () => changeCalendarMonth(-1)); // Fix: changeCalendarMonth(-1)
+            document.getElementById('next-month')?.addEventListener('click', () => changeCalendarMonth(1)); // Fix: changeCalendarMonth(1)
             setupImagePreview('diary-foto', 'diary-foto-preview');
             setupImagePreview('wishlist-foto', 'wishlist-foto-preview');
             setupProfilePicPreview('profile-pic-input', 'profile-pic-preview');
@@ -1029,6 +1034,8 @@
             document.getElementById('select-dare-btn')?.addEventListener('click', () => selectTodCard('dare'));
             document.getElementById('refuse-tod-btn')?.addEventListener('click', refuseTodCard);
             document.getElementById('next-player-btn')?.addEventListener('click', nextTodPlayer);
+            document.getElementById('back-to-tod-setup-btn')?.addEventListener('click', backToTodSetup); // New event listener
+            document.getElementById('reset-tod-game-btn')?.addEventListener('click', resetTodGame); // New event listener
 
             // Punishment Wheel Buttons
             document.getElementById('spin-punishment-btn')?.addEventListener('click', spinPunishmentWheel);
@@ -1108,11 +1115,13 @@
                     todGameState = docSnap.data();
                     renderTodGameUI();
                 } else {
-                    todGameState = null;
-                    renderTodGameUI(); // Reset UI if game doesn't exist
+                    todGameState = null; // Game state doesn't exist, reset to null
+                    renderTodGameUI(); // Render UI to show setup screen
                 }
             }, (error) => {
                 console.error("Error listening to Truth or Dare game state:", error);
+                todGameState = null; // Ensure state is null on error
+                renderTodGameUI(); // Render UI to show setup screen
             });
             unsubscribeListeners.push(todUnsubscribe);
         }
@@ -1746,8 +1755,9 @@
                     habits.forEach(habit => {
                         tableHTML += `<tr><td class="habit-name" title="${habit.name}">${habit.name}</td>`;
                         for (let day = 1; day <= daysInMonth; day++) {
-                            const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                            const entry = entriesMap.get(dateKey);
+                            const date = new Date(year, month, day);
+                            const dateISO = date.toISOString().split('T')[0];
+                            const entry = entriesMap.get(dateISO); // Use dateISO for lookup
                             const status = entry?.statuses?.[habit.id] || { lukman: false, destry: false };
                             
                             // Calculate progress for the day
@@ -1760,10 +1770,10 @@
                             tableHTML += `<td>
                                 <div class="flex flex-col items-center justify-center h-full">
                                     <div class="flex space-x-1 mb-1">
-                                        <input type="checkbox" id="lukman-${habit.id}-${dateKey}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" ${status.lukman ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateKey}', 'lukman', event)">
-                                        <label for="lukman-${habit.id}-${dateKey}" class="text-xs text-gray-500">L</label>
-                                        <input type="checkbox" id="destry-${habit.id}-${dateKey}" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500" ${status.destry ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateKey}', 'destry', event)">
-                                        <label for="destry-${habit.id}-${dateKey}" class="text-xs text-gray-500">D</label>
+                                        <input type="checkbox" id="lukman-${habit.id}-${dateISO}" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" ${status.lukman ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateISO}', 'lukman', event)">
+                                        <label for="lukman-${habit.id}-${dateISO}" class="text-xs text-gray-500">L</label>
+                                        <input type="checkbox" id="destry-${habit.id}-${dateISO}" class="h-4 w-4 rounded border-gray-300 text-pink-600 focus:ring-pink-500" ${status.destry ? 'checked' : ''} onclick="cycleHabitStatus('${habit.id}', '${dateISO}', 'destry', event)">
+                                        <label for="destry-${habit.id}-${dateISO}" class="text-xs text-gray-500">D</label>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 overflow-hidden">
                                         <div class="${progressColor} h-1.5 rounded-full" style="width: ${dailyProgress}%"></div>
@@ -1809,15 +1819,19 @@
                 input.addEventListener('change', () => { 
                     const file = input.files[0]; 
                     if (file) { 
+                        selectedProfilePicFile = file;
                         const reader = new FileReader(); 
                         reader.onload = (e) => { 
                             preview.src = e.target.result; 
                             preview.classList.remove('hidden'); 
                         }; 
                         reader.readAsDataURL(file); 
+                        document.getElementById('save-profile-pic-btn').disabled = false; // Enable save button
                     } else { 
-                        preview.src = ''; 
-                        preview.classList.add('hidden'); 
+                        selectedProfilePicFile = null; 
+                        preview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih"; 
+                        preview.classList.remove('hidden'); 
+                        document.getElementById('save-profile-pic-btn').disabled = true; // Disable save button
                     } 
                 }); 
             }
@@ -2286,6 +2300,8 @@
             const selectDareBtn = document.getElementById('select-dare-btn');
             const refuseTodBtn = document.getElementById('refuse-tod-btn');
             const nextPlayerBtn = document.getElementById('next-player-btn');
+            const backToSetupBtn = document.getElementById('back-to-tod-setup-btn'); // New button
+            const resetGameBtn = document.getElementById('reset-tod-game-btn'); // New button
 
             if (!todGameState || todGameState.status === 'waiting') {
                 setupArea?.classList.remove('hidden');
@@ -2371,7 +2387,6 @@
 
         async function startTodGame() {
             if (!currentHubId || !todGameState || todGameState.players.length < 2) return;
-            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
             const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
@@ -2389,7 +2404,6 @@
 
         async function selectTodCard(type) {
             if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
-            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
             const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             let selectedText;
@@ -2412,7 +2426,6 @@
 
         async function refuseTodCard() {
             if (!currentHubId || !todGameState || todGameState.status !== 'playing') return;
-            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
             const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             try {
@@ -2429,7 +2442,6 @@
 
         async function nextTodPlayer() {
             if (!currentHubId || !todGameState) return;
-            // Mengubah jalur dokumen Truth or Dare menjadi sub-koleksi 'truthOrDareGame' dengan dokumen 'game_state'
             const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
             
             let nextIndex = (todGameState.currentPlayerIndex + 1) % todGameState.players.length;
@@ -2445,6 +2457,37 @@
                 console.error("Error advancing player:", error);
             }
         }
+
+        async function backToTodSetup() {
+            if (!currentHubId) return;
+            const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
+            try {
+                await updateDoc(todGameDocRef, {
+                    status: 'waiting',
+                    currentCardType: null,
+                    currentCardText: null,
+                    currentPlayerIndex: 0, // Reset player index
+                    lastUpdated: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error returning to TOD setup:", error);
+            }
+        }
+
+        async function resetTodGame() {
+            if (!currentHubId) return;
+            showConfirmModal('Reset Game', 'Anda yakin ingin mereset seluruh game Truth or Dare? Semua pemain dan progres akan dihapus.', async () => {
+                const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
+                try {
+                    await deleteDoc(todGameDocRef);
+                    // Optionally, re-create an empty game state if you want to immediately show the setup screen
+                    // await setDoc(todGameDocRef, { players: [], status: 'waiting', createdAt: serverTimestamp() });
+                } catch (error) {
+                    console.error("Error resetting TOD game:", error);
+                }
+            });
+        }
+
 
         // --- PUNISHMENT WHEEL LOGIC ---
         const punishmentWheelCanvas = document.getElementById('punishment-spinner-canvas');
