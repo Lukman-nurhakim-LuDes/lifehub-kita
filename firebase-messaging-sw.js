@@ -12,13 +12,12 @@ importScripts('https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js')
 // Konfigurasi Firebase Anda
 // Konfigurasi ini harus cocok dengan yang ada di file HTML utama Anda (index.html)
 const firebaseConfig = {
-    apiKey: "AIzaSyCdtBbWxJKiyR1igH45KKjy5UsXuPdCmi0",
-    authDomain: "coupleflow-3c5d2.firebaseapp.com",
-    projectId: "coupleflow-3c5d2",
-    storageBucket: "coupleflow-3c5d2.firebaseapp.com",
-    messagingSenderId: "1087616981568",
-    appId: "1:1087616981568:web:3e21efc82aeb627d67dda5",
-    measurementId: "G-Q49D43SNHH"
+            apiKey: "AIzaSyCkYFTsdefDKWNlELHkZTYaejLx1LzzhiU",
+            authDomain: "rencana-kita.firebaseapp.com",
+            projectId: "rencana-kita",
+            storageBucket: "rencana-kita.firebasestorage.app",
+            messagingSenderId: "933508706878",
+            appId: "1:933508706878:web:36092931498a9605b9d76f"
 };
 
 // Inisialisasi Firebase App
