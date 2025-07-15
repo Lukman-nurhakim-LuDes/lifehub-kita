@@ -1325,7 +1325,7 @@
                         console.log("[joinHub] Pengguna sudah menjadi anggota hub ini.");
                         document.getElementById('hub-error').textContent = "Anda sudah menjadi anggota hub ini.";
                     } else { 
-                        console.log("[joinHub] Menambahkan pengguna ke daftar anggota hub...");
+                        console.log("[joinHub] Menambahkan pengguna ke daftar anggota hub menggunakan arrayUnion...");
                         // Menggunakan arrayUnion untuk menambahkan UID ke array members
                         await updateDoc(hubRef, { members: arrayUnion(currentUser.uid) }); 
                         console.log("[joinHub] Pengguna berhasil ditambahkan ke hub.");
@@ -1348,13 +1348,13 @@
         
         window.copyHubId = () => {
             const hubId = document.getElementById('profile-hub-id').textContent;
-            // Use modern clipboard API if available, fallback to execCommand
+            // Gunakan API clipboard modern jika tersedia, fallback ke execCommand
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(hubId).then(() => {
                     console.log('ID Hub disalin!');
                 }).catch(err => {
                     console.error('Gagal menyalin ID Hub:', err);
-                    // Fallback for older browsers or restricted environments
+                    // Fallback untuk browser lama atau lingkungan terbatas
                     const textarea = document.createElement('textarea');
                     textarea.value = hubId;
                     document.body.appendChild(textarea);
@@ -1364,7 +1364,7 @@
                     console.log('ID Hub disalin (fallback)!');
                 });
             } else {
-                // Fallback for older browsers
+                // Fallback untuk browser lama
                 const textarea = document.createElement('textarea');
                 textarea.value = hubId;
                 document.body.appendChild(textarea);
@@ -1377,7 +1377,7 @@
         function changeHabitMonth(delta) { habitDate.setMonth(habitDate.getMonth() + delta); renderHabitTable(); }
         function changeCalendarMonth(delta) { calendarDate.setMonth(calendarDate.getMonth() + delta); renderCalendar(); }
         
-        // --- ALL FUNCTIONS ARE NOW FULLY IMPLEMENTED ---
+        // --- SEMUA FUNGSI SEKARANG SEPENUHNYA DIIMPLEMENTASIKAN ---
         async function renderKeuangan() {
             if (!currentHubId) return;
             const monthFilter = document.getElementById('filter-bulan')?.value;
@@ -1386,15 +1386,15 @@
             const startDate = Timestamp.fromDate(new Date(year, month - 1, 1));
             const endDate = Timestamp.fromDate(new Date(year, month, 1));
             
-            // Fetch without orderBy, then sort in JS
+            // Ambil tanpa orderBy, lalu urutkan di JS
             let q = query(collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "transactions"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate));
             const querySnapshot = await getDocs(q);
             let transactions = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             
-            // Sort by date descending in JavaScript
+            // Urutkan berdasarkan tanggal menurun di JavaScript
             transactions.sort((a, b) => b.tanggal.seconds - a.tanggal.seconds);
 
-            // Calculate and render score cards for Keuangan page
+            // Hitung dan render kartu skor untuk halaman Keuangan
             const totalPemasukan = transactions.filter(t => t.kategori === 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const totalPengeluaran = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
             const sisa = totalPemasukan - totalPengeluaran;
@@ -1407,7 +1407,7 @@
             if (keuanganPengeluaranEl) keuanganPengeluaranEl.textContent = formatCurrency(totalPengeluaran);
             if (keuanganSaldoBersihEl) {
                 keuanganSaldoBersihEl.textContent = formatCurrency(sisa);
-                // Class for saldo bersih is now handled by score-card-primary, no need to change text color here
+                // Class untuk saldo bersih sekarang ditangani oleh score-card-primary, tidak perlu mengubah warna teks di sini
             }
 
             if (personFilter && personFilter !== 'semua') {
@@ -1459,15 +1459,15 @@
 
         async function renderTabungan() {
             if (!currentHubId) return;
-            // Fetch without orderBy, then sort in JS
+            // Ambil tanpa orderBy, lalu urutkan di JS
             const q = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "savings");
             const snapshot = await getDocs(q);
             const savings = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Sort by createdAt descending in JavaScript
+            // Urutkan berdasarkan createdAt menurun di JavaScript
             savings.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-            // Calculate and render score cards for Tabungan page
+            // Hitung dan render kartu skor untuk halaman Tabungan
             const totalTarget = savings.reduce((sum, s) => sum + s.target, 0);
             const totalTerkumpul = savings.reduce((sum, s) => sum + s.terkumpul, 0);
             const sisaMengejar = totalTarget - totalTerkumpul;
@@ -1540,12 +1540,12 @@
 
         async function renderDiary() {
             if (!currentHubId) return;
-            // Fetch without orderBy, then sort in JS
+            // Ambil tanpa orderBy, lalu urutkan di JS
             const q = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "diary");
             const snapshot = await getDocs(q);
             const diary = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Sort by tanggal descending in JavaScript
+            // Urutkan berdasarkan tanggal menurun di JavaScript
             diary.sort((a, b) => (b.tanggal?.seconds || 0) - (a.tanggal?.seconds || 0));
 
             const container = document.getElementById('diary-entries');
@@ -1588,12 +1588,12 @@
 
         async function renderWishlist() {
             if (!currentHubId) return;
-            // Fetch without orderBy, then sort in JS
+            // Ambil tanpa orderBy, lalu urutkan di JS
             const q = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "wishlist");
             const snapshot = await getDocs(q);
             const wishlist = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Sort by createdAt descending in JavaScript
+            // Urutkan berdasarkan createdAt menurun di JavaScript
             wishlist.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             const gallery = document.getElementById('wishlist-gallery');
@@ -1649,11 +1649,11 @@
                 
                 const startDate = Timestamp.fromDate(new Date(year, month, 1));
                 const endDate = Timestamp.fromDate(new Date(year, month + 1, 1));
-                // Fetch without orderBy, then sort in JS
+                // Ambil tanpa orderBy, lalu urutkan di JS
                 const q = query(collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "events"), where("tanggal", ">=", startDate), where("tanggal", "<", endDate));
                 const snapshot = await getDocs(q);
                 const eventsThisMonth = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                // Sort by tanggal then waktu in JavaScript
+                // Urutkan berdasarkan tanggal lalu waktu di JavaScript
                 eventsThisMonth.sort((a, b) => {
                     const dateA = a.tanggal.seconds;
                     const dateB = b.tanggal.seconds;
@@ -1738,11 +1738,11 @@
             const container = document.getElementById('habit-table-container');
             if (container) {
                 container.innerHTML = '<div class="loader mx-auto"></div>';
-                // Fetch habits without orderBy, then sort in JS
+                // Ambil habits tanpa orderBy, lalu urutkan di JS
                 const habitsQuery = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "habits");
                 const habitsSnapshot = await getDocs(habitsQuery);
                 const habits = habitsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                habits.sort((a, b) => a.name.localeCompare(b.name)); // Sort by name
+                habits.sort((a, b) => a.name.localeCompare(b.name)); // Urutkan berdasarkan nama
 
                 const year = habitDate.getFullYear();
                 const month = habitDate.getMonth();
@@ -1765,14 +1765,14 @@
                         for (let day = 1; day <= daysInMonth; day++) {
                             const date = new Date(year, month, day);
                             const dateISO = date.toISOString().split('T')[0];
-                            const entry = entriesMap.get(dateISO); // Use dateISO for lookup
+                            const entry = entriesMap.get(dateISO); // Gunakan dateISO untuk pencarian
                             const status = entry?.statuses?.[habit.id] || { lukman: false, destry: false };
                             
-                            // Calculate progress for the day
+                            // Hitung progres untuk hari itu
                             let dailyCompleted = 0;
                             if (status.lukman) dailyCompleted++;
                             if (status.destry) dailyCompleted++;
-                            const dailyProgress = (dailyCompleted / 2) * 100; // Assuming 2 people
+                            const dailyProgress = (dailyCompleted / 2) * 100; // Asumsi 2 orang
                             const progressColor = dailyProgress === 100 ? 'bg-green-500' : (dailyProgress > 0 ? 'bg-blue-400' : 'bg-gray-300');
 
                             tableHTML += `<td>
@@ -1803,7 +1803,7 @@
             });
         };
         window.cycleHabitStatus = async (habitId, dateKey, person, event) => {
-            // Prevent default checkbox behavior as we're handling state via Firestore
+            // Mencegah perilaku default checkbox karena kita menangani status melalui Firestore
             event.preventDefault(); 
             const date = new Date(dateKey);
             date.setUTCHours(12);
@@ -1813,7 +1813,7 @@
             const currentStatuses = entrySnap.exists() ? entrySnap.data().statuses : {};
             const currentStatusForHabit = currentStatuses[habitId] || { lukman: false, destry: false };
             
-            // Toggle the status for the specific person
+            // Mengubah status untuk orang tertentu
             const newStatusForHabit = { ...currentStatusForHabit };
             newStatusForHabit[person] = !newStatusForHabit[person];
 
@@ -1834,12 +1834,12 @@
                             preview.classList.remove('hidden'); 
                         }; 
                         reader.readAsDataURL(file); 
-                        document.getElementById('save-profile-pic-btn').disabled = false; // Enable save button
+                        document.getElementById('save-profile-pic-btn').disabled = false; // Aktifkan tombol simpan
                     } else { 
                         selectedProfilePicFile = null; 
                         preview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih"; 
                         preview.classList.remove('hidden'); 
-                        document.getElementById('save-profile-pic-btn').disabled = true; // Disable save button
+                        document.getElementById('save-profile-pic-btn').disabled = true; // Nonaktifkan tombol simpan
                     } 
                 }); 
             }
@@ -1859,7 +1859,7 @@
             const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Main cards
+            // Kartu utama
             const saldo = transactions.reduce((acc, t) => t.kategori === 'Pemasukan' ? acc + t.jumlah : acc - t.jumlah, 0);
             const dashboardSaldo = document.getElementById('dashboard-saldo');
             if (dashboardSaldo) {
@@ -1879,7 +1879,7 @@
             }
             const todayHabitEntry = habitEntries.find(e => new Date(e.date.seconds * 1000).toISOString().split('T')[0] === todayISO);
             let completed = 0;
-            const totalPossible = habits.length * 2; // Each habit has two checkboxes (Lukman, Destry)
+            const totalPossible = habits.length * 2; // Setiap habit memiliki dua checkbox (Lukman, Destry)
             if(todayHabitEntry && todayHabitEntry.statuses) {
                 Object.values(todayHabitEntry.statuses).forEach(status => {
                     if (status.lukman) completed++;
@@ -1895,7 +1895,7 @@
             const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#e5e7eb' : '#374151';
 
-            // Expense Chart
+            // Grafik Pengeluaran
             const expenseData = transactions.filter(t => t.kategori !== 'Pemasukan').reduce((acc, t) => { acc[t.kategori] = (acc[t.kategori] || 0) + t.jumlah; return acc; }, {});
             const expenseChartEl = document.getElementById('expenseChart');
             if (expenseChartEl) {
@@ -1906,7 +1906,7 @@
                 });
             }
 
-            // Income vs Expense Chart
+            // Grafik Pemasukan vs Pengeluaran
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
@@ -1926,7 +1926,7 @@
                 });
             }
 
-            // Mood Tracker
+            // Pelacak Mood
             const moodContainer = document.getElementById('dashboard-mood-tracker');
             if (moodContainer) {
                 moodContainer.innerHTML = '';
@@ -1951,8 +1951,8 @@
             const [txSnap, diarySnap, habitsSnap, habitEntriesSnap] = await Promise.all([getDocs(txQuery), getDocs(diaryQuery), getDocs(habitsQuery), getDocs(habitEntriesQuery)]);
             const transactions = txSnap.docs.map(d => ({id: d.id, ...d.data()}));
             const diary = diarySnap.docs.map(d => ({id: d.id, ...d.data()}));
-            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()})); // All habits
-            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()})); // All habit entries
+            const habits = habitsSnap.docs.map(d => ({id: d.id, ...d.data()})); // Semua habit
+            const habitEntries = habitEntriesSnap.docs.map(d => ({id: d.id, ...d.data()})); // Semua entri habit
             
             const renderSummaryFor = (person, containerId) => {
                 const pengeluaran = transactions.filter(t => t.oleh === person && t.kategori !== 'Pemasukan').reduce((sum, t) => sum + t.jumlah, 0);
@@ -1960,10 +1960,10 @@
                 const diaryCount = diary.filter(d => d.oleh === person).length;
                 
                 let habitsDone = 0;
-                // Iterate through all habit entries
+                // Iterasi melalui semua entri habit
                 habitEntries.forEach(entry => {
                     if (entry.statuses) {
-                        // For each habit in the entry, check if the specific person completed it
+                        // Untuk setiap habit dalam entri, periksa apakah orang tertentu menyelesaikannya
                         Object.values(entry.statuses).forEach(status => {
                             if (status[person.toLowerCase()]) {
                                 habitsDone++;
@@ -1995,7 +1995,7 @@
             const form = e.target;
             const pesan = document.getElementById('notifikasi-pesan')?.value;
             const untuk = document.getElementById('notifikasi-untuk')?.value;
-            // Determine sender based on current user's email
+            // Tentukan pengirim berdasarkan email pengguna saat ini
             const senderName = currentUser.email.includes('lukman') ? 'Lukman' : 'Destry';
 
             if (!pesan?.trim()) return;
@@ -2018,12 +2018,12 @@
 
         async function renderNotifikasi() {
             if (!currentHubId) return;
-            // Fetch without orderBy, then sort in JS
+            // Ambil tanpa orderBy, lalu urutkan di JS
             const q = collection(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}`, "notifications");
             const snapshot = await getDocs(q);
             const notifications = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Sort by createdAt descending in JavaScript
+            // Urutkan berdasarkan createdAt menurun di JavaScript
             notifications.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
             const listContainer = document.getElementById('notifikasi-list');
@@ -2101,11 +2101,11 @@
                 closeBtn?.addEventListener('click', closeHandler);
                 replyBtn?.addEventListener('click', replyHandler);
 
-                setTimeout(hideToast, 5000); // Auto-hide after 5 seconds
+                setTimeout(hideToast, 5000); // Sembunyikan otomatis setelah 5 detik
             }
         }
 
-        // --- Custom Confirmation Modal ---
+        // --- Modal Konfirmasi Kustom ---
         let confirmResolve;
         function showConfirmModal(title, message, onConfirm) {
             const modal = document.getElementById('modal-confirm');
@@ -2141,12 +2141,12 @@
                     confirmCancelBtn.addEventListener('click', handleCancel);
                 });
             } else {
-                console.error("Confirmation modal elements not found.");
+                console.error("Elemen modal konfirmasi tidak ditemukan.");
                 return Promise.resolve(false);
             }
         }
 
-        // --- RODA KENCAN ---
+        // --- LOGIKA RODA KENCAN ---
         const dateIdeas = ["Malam Film", "Masak Bareng", "Jalan Kaki", "Piknik", "Main Game", "Lihat Sunset", "Rehat huhuy", "liburan"];
         const wheelCanvas = document.getElementById('spinner-canvas');
         const spinBtn = document.getElementById('spin-btn');
@@ -2206,15 +2206,16 @@
 
             setTimeout(() => {
                 const segmentAngle = 360 / dateIdeas.length;
-                // Normalize final angle to be within 0-360
+                // Normalisasi sudut akhir agar berada dalam 0-360
                 const finalAngle = totalRotation % 360;
-                // Adjust for pointer position (top is 270 degrees from positive x-axis)
-                // We want to find which segment is at the pointer.
+                // Sesuaikan untuk posisi pointer (atas adalah 270 derajat dari sumbu x positif)
+                // Kita ingin mencari segmen mana yang berada di pointer.
                 // (360 - (finalAngle - pointerAngle + 360) % 360) / segmentAngle
-                const pointerAngle = 270; // Pointer is at the top (12 o'clock)
-                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Adjust final angle relative to pointer
+                // Atau cukup: (pointerAngle - finalAngle + 360) % 360 untuk mendapatkan sudut dari pointer ke garis 0
+                // Kemudian bagi dengan segmentAngle dan bulatkan ke bawah.
+                const pointerAngle = 270; // Pointer berada di atas (jam 12)
+                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Sesuaikan sudut akhir relatif terhadap pointer
                 const winningIndex = Math.floor(normalizedFinalAngle / segmentAngle);
-
 
                 const result = dateIdeas[winningIndex];
                 
@@ -2224,15 +2225,15 @@
                 }
                 openModal('modal-kencan-hasil');
                 isSpinning = false;
-                // Reset transform for next spin, without transition
+                // Reset transform untuk putaran berikutnya, tanpa transisi
                 wheelCanvas.style.transition = 'none';
-                wheelCanvas.style.transform = `rotate(${finalAngle}deg)`; // Keep it at the final angle visually
-                currentAngle = finalAngle; // Update currentAngle for next spin
-            }, 5000); // Must match the transition duration in CSS
+                wheelCanvas.style.transform = `rotate(${finalAngle}deg)`; // Pertahankan pada sudut akhir secara visual
+                currentAngle = finalAngle; // Perbarui currentAngle untuk putaran berikutnya
+            }, 5000); // Harus sesuai dengan durasi transisi di CSS
         }
 
-        // --- TRUTH OR DARE GAME LOGIC ---
-        let todGameState = null; // State will be synced with Firestore
+        // --- LOGIKA GAME TRUTH OR DARE ---
+        let todGameState = null; // Status akan disinkronkan dengan Firestore
 
         const truths = [
             "Apa fantasi terliarmu yang belum pernah kamu ceritakan pada siapa pun?",
@@ -2305,8 +2306,8 @@
             const selectDareBtn = document.getElementById('select-dare-btn');
             const refuseTodBtn = document.getElementById('refuse-tod-btn');
             const nextPlayerBtn = document.getElementById('next-player-btn');
-            const backToSetupBtn = document.getElementById('back-to-tod-setup-btn'); // New button
-            const resetGameBtn = document.getElementById('reset-tod-game-btn'); // New button
+            const backToSetupBtn = document.getElementById('back-to-tod-setup-btn'); // Tombol baru
+            const resetGameBtn = document.getElementById('reset-tod-game-btn'); // Tombol baru
 
             if (!todGameState || todGameState.status === 'waiting') {
                 setupArea?.classList.remove('hidden');
@@ -2318,13 +2319,13 @@
                 gameArea?.classList.remove('hidden');
                 currentPlayerDisplay.textContent = todGameState.players[todGameState.currentPlayerIndex];
                 
-                // Reset card flip and content
+                // Reset flip kartu dan konten
                 todCard?.classList.remove('flipped');
-                todQuestionText.textContent = ''; // Clear previous question
+                todQuestionText.textContent = ''; // Hapus pertanyaan sebelumnya
 
-                // Show/hide buttons based on game state
+                // Tampilkan/sembunyikan tombol berdasarkan status game
                 if (todGameState.currentCardText) {
-                    // Card has been selected and flipped
+                    // Kartu telah dipilih dan dibalik
                     todCard?.classList.add('flipped');
                     todQuestionText.textContent = todGameState.currentCardText;
                     selectTruthBtn.disabled = true;
@@ -2332,7 +2333,7 @@
                     refuseTodBtn.disabled = false;
                     nextPlayerBtn.disabled = false;
                 } else {
-                    // Waiting for Truth/Dare selection
+                    // Menunggu pilihan Truth/Dare
                     selectTruthBtn.disabled = false;
                     selectDareBtn.disabled = false;
                     refuseTodBtn.disabled = true;
@@ -2340,11 +2341,11 @@
                 }
 
                 if (todGameState.status === 'refused') {
-                    // If punishment wheel is active, disable other buttons
+                    // Jika roda hukuman aktif, nonaktifkan tombol lain
                     selectTruthBtn.disabled = true;
                     selectDareBtn.disabled = true;
                     refuseTodBtn.disabled = true;
-                    nextPlayerBtn.disabled = true; // Next player only after punishment is done
+                    nextPlayerBtn.disabled = true; // Pemain berikutnya hanya setelah hukuman selesai
                 }
             }
         }
@@ -2380,7 +2381,7 @@
             try {
                 let updatedPlayers = todGameState.players.filter(p => p !== playerName);
                 if (updatedPlayers.length === 0) {
-                    // If no players left, delete the game document
+                    // Jika tidak ada pemain tersisa, hapus dokumen game
                     await deleteDoc(todGameDocRef);
                 } else {
                     await updateDoc(todGameDocRef, { players: updatedPlayers });
@@ -2439,7 +2440,7 @@
                     lastUpdated: serverTimestamp()
                 });
                 openModal('modal-punishment-wheel');
-                setupPunishmentWheel(); // Draw the wheel
+                setupPunishmentWheel(); // Gambar roda
             } catch (error) {
                 console.error("Error refusing card:", error);
             }
@@ -2455,7 +2456,7 @@
                     currentPlayerIndex: nextIndex,
                     currentCardType: null,
                     currentCardText: null,
-                    status: 'playing', // Reset status to playing for next turn
+                    status: 'playing', // Reset status ke playing untuk giliran berikutnya
                     lastUpdated: serverTimestamp()
                 });
             } catch (error) {
@@ -2471,7 +2472,7 @@
                     status: 'waiting',
                     currentCardType: null,
                     currentCardText: null,
-                    currentPlayerIndex: 0, // Reset player index
+                    currentPlayerIndex: 0, // Reset indeks pemain
                     lastUpdated: serverTimestamp()
                 });
             } catch (error) {
@@ -2485,7 +2486,7 @@
                 const todGameDocRef = doc(window.db, `artifacts/${appId}/public/data/hubs/${currentHubId}/truthOrDareGame`, 'game_state');
                 try {
                     await deleteDoc(todGameDocRef);
-                    // Optionally, re-create an empty game state if you want to immediately show the setup screen
+                    // Secara opsional, buat ulang status game kosong jika Anda ingin segera menampilkan layar pengaturan
                     // await setDoc(todGameDocRef, { players: [], status: 'waiting', createdAt: serverTimestamp() });
                 } catch (error) {
                     console.error("Error resetting TOD game:", error);
@@ -2494,7 +2495,7 @@
         }
 
 
-        // --- PUNISHMENT WHEEL LOGIC ---
+        // --- LOGIKA RODA HUKUMAN ---
         const punishmentWheelCanvas = document.getElementById('punishment-spinner-canvas');
         const spinPunishmentBtn = document.getElementById('spin-punishment-btn');
         const punishmentResultText = document.getElementById('punishment-result-text');
@@ -2532,7 +2533,7 @@
                 ctx.rotate(startAngle + arcSize / 2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = "#fff";
-                ctx.font = "bold 12px Inter"; // Adjusted font size for better visibility
+                ctx.font = "bold 12px Inter"; // Ukuran font disesuaikan untuk visibilitas yang lebih baik
                 ctx.fillText(punishments[i], radius - 10, 5);
                 ctx.restore();
             }
@@ -2544,15 +2545,15 @@
             punishmentResultText.classList.add('hidden');
             spinPunishmentBtn.classList.remove('hidden');
             punishmentCloseBtn.classList.add('hidden');
-            punishmentWheelCanvas.style.transition = 'none'; // Reset transition
-            punishmentWheelCanvas.style.transform = `rotate(0deg)`; // Reset rotation
+            punishmentWheelCanvas.style.transition = 'none'; // Reset transisi
+            punishmentWheelCanvas.style.transform = `rotate(0deg)`; // Reset rotasi
             currentPunishmentAngle = 0;
         }
 
         function spinPunishmentWheel() {
             if (isPunishmentSpinning || !punishmentWheelCanvas) return;
             isPunishmentSpinning = true;
-            spinPunishmentBtn.disabled = true; // Disable button during spin
+            spinPunishmentBtn.disabled = true; // Nonaktifkan tombol selama berputar
 
             const randomSpins = Math.floor(Math.random() * 5) + 8;
             const randomStopAngle = Math.floor(Math.random() * 360);
@@ -2564,26 +2565,26 @@
             setTimeout(() => {
                 const segmentAngle = 360 / punishments.length;
                 const finalAngle = totalRotation % 360;
-                const pointerAngle = 270; // Pointer is at the top (12 o'clock)
-                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Adjust final angle relative to pointer
+                const pointerAngle = 270; // Pointer berada di atas (jam 12)
+                const normalizedFinalAngle = (finalAngle + pointerAngle) % 360; // Sesuaikan sudut akhir relatif terhadap pointer
                 const winningIndex = Math.floor(normalizedFinalAngle / segmentAngle);
 
                 const result = punishments[winningIndex];
                 
                 punishmentResultText.textContent = result;
                 punishmentResultText.classList.remove('hidden');
-                spinPunishmentBtn.classList.add('hidden'); // Hide spin button
-                punishmentCloseBtn.classList.remove('hidden'); // Show close button
+                spinPunishmentBtn.classList.add('hidden'); // Sembunyikan tombol putar
+                punishmentCloseBtn.classList.remove('hidden'); // Tampilkan tombol tutup
 
                 isPunishmentSpinning = false;
-                spinPunishmentBtn.disabled = false; // Re-enable for next time
+                spinPunishmentBtn.disabled = false; // Aktifkan kembali untuk waktu berikutnya
                 punishmentWheelCanvas.style.transition = 'none';
                 punishmentWheelCanvas.style.transform = `rotate(${finalAngle}deg)`;
                 currentPunishmentAngle = finalAngle;
             }, 5000);
         }
 
-        // --- PROFIL PICTURE ---
+        // --- FOTO PROFIL ---
         function setupProfilePicPreview(inputId, previewId) {
             const input = document.getElementById(inputId);
             const preview = document.getElementById(previewId);
@@ -2602,8 +2603,8 @@
                         saveBtn.disabled = false;
                     } else {
                         selectedProfilePicFile = null;
-                        preview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih"; // Reset to default placeholder
-                        preview.classList.remove('hidden'); // Ensure it's visible with placeholder
+                        preview.src = "https://placehold.co/128x128/e2e8f0/64748b?text=Pilih"; // Reset ke placeholder default
+                        preview.classList.remove('hidden'); // Pastikan terlihat dengan placeholder
                         saveBtn.disabled = true;
                     }
                 });
@@ -2643,8 +2644,8 @@
                 console.log('Foto profil berhasil diperbarui! URL:', downloadURL);
                 saveBtnText.textContent = 'Simpan Foto';
                 saveBtnSpinner.classList.add('hidden');
-                saveBtn.disabled = false; // Re-enable after successful upload
-                // Update dashboard profile pics
+                saveBtn.disabled = false; // Aktifkan kembali setelah unggahan berhasil
+                // Perbarui foto profil dashboard
                 renderDashboardHeader();
             } catch (error) {
                 console.error("Error uploading profile picture:", error);
@@ -2672,24 +2673,24 @@
 
             const profilePicLukman = document.getElementById('profile-pic-lukman');
             const profilePicDestry = document.getElementById('profile-pic-destry');
-            const profilePicPreview = document.getElementById('profile-pic-preview'); // For the profile page preview
+            const profilePicPreview = document.getElementById('profile-pic-preview'); // Untuk pratinjau halaman profil
 
             if (lukmanUser && lukmanUser.data()?.photoURL && profilePicLukman) {
                 profilePicLukman.src = lukmanUser.data().photoURL;
                 console.log("Lukman Photo URL:", lukmanUser.data().photoURL);
             } else if (profilePicLukman) {
-                profilePicLukman.src = "https://placehold.co/64x64/3b82f6/ffffff?text=L"; // Default if no photo
-                console.log("Lukman Photo URL: Default (no photo or user not found)");
+                profilePicLukman.src = "https://placehold.co/64x64/3b82f6/ffffff?text=L"; // Default jika tidak ada foto
+                console.log("Lukman Photo URL: Default (tidak ada foto atau pengguna tidak ditemukan)");
             }
             if (destryUser && destryUser.data()?.photoURL && profilePicDestry) {
                 profilePicDestry.src = destryUser.data().photoURL;
                 console.log("Destry Photo URL:", destryUser.data().photoURL);
             } else if (profilePicDestry) {
-                profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default if no photo
-                console.log("Destry Photo URL: Default (no photo or user not found)");
+                profilePicDestry.src = "https://placehold.co/64x64/f472b6/ffffff?text=D"; // Default jika tidak ada foto
+                console.log("Destry Photo URL: Default (tidak ada foto atau pengguna tidak ditemukan)");
             }
 
-            // Update the profile page's own profile picture preview
+            // Perbarui pratinjau foto profil halaman profil sendiri
             if (currentUser && currentUser.uid) {
                 const currentUserDoc = userDocs.find(d => d.id === currentUser.uid);
                 if (currentUserDoc && currentUserDoc.data()?.photoURL && profilePicPreview) {
@@ -2702,17 +2703,17 @@
             }
         }
 
-        // --- PDF Export Function ---
+        // --- Fungsi Ekspor PDF ---
         function exportDashboardToPdf() {
             const dashboardSection = document.getElementById('dashboard');
             if (dashboardSection) {
-                // Temporarily hide elements that shouldn't be in the PDF if any
-                // For example, the export button itself or fixed/absolute positioned elements
+                // Sembunyikan sementara elemen yang tidak seharusnya ada di PDF jika ada
+                // Misalnya, tombol ekspor itu sendiri atau elemen yang diposisikan tetap/absolut
                 const exportButton = document.getElementById('export-pdf-btn');
                 if (exportButton) exportButton.style.display = 'none';
 
-                // Re-render charts to ensure they are up-to-date and correctly drawn
-                // This is important because chart.js canvases might not render correctly if not visible or recent
+                // Render ulang grafik untuk memastikan grafik mutakhir dan digambar dengan benar
+                // Ini penting karena kanvas chart.js mungkin tidak merender dengan benar jika tidak terlihat atau baru-baru ini
                 renderDashboard(); 
 
                 html2pdf(dashboardSection, {
@@ -2722,15 +2723,15 @@
                     html2canvas: { scale: 2, logging: true, dpi: 192, letterRendering: true },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 }).then(() => {
-                    // Restore hidden elements after PDF generation
+                    // Pulihkan elemen yang tersembunyi setelah pembuatan PDF
                     if (exportButton) exportButton.style.display = 'flex';
                 }).catch(error => {
                     console.error("Error generating PDF:", error);
-                    // Ensure button is restored even on error
+                    // Pastikan tombol dipulihkan meskipun ada kesalahan
                     if (exportButton) exportButton.style.display = 'flex';
                 });
             } else {
-                console.error("Dashboard section not found for PDF export.");
+                console.error("Bagian dashboard tidak ditemukan untuk ekspor PDF.");
             }
         }
 
